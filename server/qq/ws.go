@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
-
+	
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,7 +17,7 @@ func (wp *WebsocketPayload) Reset() {
 // GetHeartbeatInterval OpCodeHello 获得心跳周期 单位毫秒
 func (wp *WebsocketPayload) GetHeartbeatInterval() (uint32, error) {
 	if wp.Op != OpCodeHello {
-		return 0, errors.New("[GetHeartbeatInterval]unexpected OpCode " + strconv.Itoa(int(wp.Op)) + ", T: " + wp.T + ", D: " + BytesToString(wp.D))
+		return 0, errors.New("[GetHeartbeatInterval]unexpected OpCode " + strconv.Itoa(int(wp.Op)) + ", T: " + wp.T + ", D: " + tool.BytesToString(wp.D))
 	}
 	data := &struct {
 		H uint32 `json:"heartbeat_interval"`

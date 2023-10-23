@@ -2,7 +2,6 @@ package test
 
 import (
 	"encoding/json"
-	"strconv"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
@@ -17,7 +16,7 @@ func init() { // 插件主体
 		Help: "- /抽vtb(老婆)",
 	})
 	en.AddRex(`^/抽(vtb|VTB)(老婆)?$`).Handle(func(ctx *rosm.CTX) {
-		body, err := web.GetData(url+strconv.Itoa(int(ctx.Being.User.ID)), "")
+		body, err := web.GetData(url+ctx.Being.User.ID, "")
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
 			return

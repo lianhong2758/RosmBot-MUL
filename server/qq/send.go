@@ -21,7 +21,7 @@ func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 	log.Debugln("[send]", tool.BytesToString(data))
 	url := ""
 	//判断私聊
-	if ctx.Being.RoomID == 0 {
+	if ctx.Being.RoomID == "" {
 		if IsGroup {
 			url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
 		} else {
@@ -62,7 +62,7 @@ func makeMsgContent(ctx *rosm.CTX, IsGroup bool, msg ...message.MessageSegment) 
 			if IsGroup {
 				cnt.Types = 5
 			}
-			cnt.Text += `<@!` + tool.String(message.Data["uid"].(int64)) + `>`
+			cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
 		case "atall":
 			if IsGroup {
 				cnt.Types = 5

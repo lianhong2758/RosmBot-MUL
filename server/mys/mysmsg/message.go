@@ -5,7 +5,7 @@ import (
 )
 
 // goto the room
-func RoomLink(VillaID, RoomID int64, RoomName string) MessageSegment {
+func RoomLink(VillaID, RoomID string, RoomName string) MessageSegment {
 	return MessageSegment{
 		Type: "villa_room_link",
 		Data: H{

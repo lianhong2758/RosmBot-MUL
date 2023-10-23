@@ -3,8 +3,11 @@ package qq
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	log "github.com/sirupsen/logrus"
 )
@@ -32,4 +35,31 @@ func (c *Config) GetOpenAPI(shortUrl string, body, result any) (err error) {
 		return err
 	}
 	return json.Unmarshal(data, result)
+}
+
+// 获取频道用户信息
+func GetGuildUser(ctx *rosm.CTX, uid string) (User *GuildUser, err error) {
+	url := host + fmt.Sprintf(urlGuildGetUser, ctx.Being.RoomID2, uid)
+	data, err := web.Web(clientConst, url, http.MethodGet, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
+	log.Debugln("[GetGuildUser][", url, "]", string(data))
+	if err != nil {
+		return nil, err
+	}
+	User = new(GuildUser)
+	err = json.Unmarshal(data, &User)
+	return
+}
+
+type GuildUser struct {
+	User struct {
+		ID               string `json:"id"`
+		Username         string `json:"username"`
+		Avatar           string `json:"avatar"`
+		Bot              bool   `json:"bot"`
+		UnionOpenid      string `json:"union_openid"`
+		UnionUserAccount string `json:"union_user_account"`
+	} `json:"user"`
+	Nick     string    `json:"nick"`
+	Roles    []string  `json:"roles"`
+	JoinedAt time.Time `json:"joined_at"`
 }

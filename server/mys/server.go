@@ -11,16 +11,18 @@ import (
 	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
-func MessReceive(c *gin.Context) {
-	body, _ := c.GetRawData()
-	c.JSON(200, map[string]any{"message": "", "retcode": 0}) //确认接收
-	sign := c.GetHeader("x-rpc-bot_sign")
-	if verify(sign, helper.BytesToString(body), MYSconfig.BotToken.BotSecretConst, MYSconfig.BotToken.BotPubKey) {
-		process(body)
+func (cc *Config) MessReceive() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		body, _ := c.GetRawData()
+		c.JSON(200, map[string]any{"message": "", "retcode": 0}) //确认接收
+		sign := c.GetHeader("x-rpc-bot_sign")
+		if verify(sign, helper.BytesToString(body), cc.BotToken.BotSecretConst, cc.BotToken.BotPubKey) {
+			cc.process(body)
+		}
 	}
 }
 
-func process(body []byte) {
+func (c *Config) process(body []byte) {
 	info := new(InfoSTR)
 	err := json.Unmarshal(body, info)
 	if err != nil {
@@ -38,10 +40,10 @@ func process(body []byte) {
 		ctx := &rosm.CTX{
 			BotType: "mys",
 			Being: &rosm.Being{
-				RoomID2: int64(info.Event.Robot.VillaID),
-				User:    &rosm.UserData{ID: int64(info.Event.ExtendData.EventData.JoinVilla.JoinUID), Name: info.Event.ExtendData.EventData.JoinVilla.JoinUserNickname},
+				RoomID2: strconv.Itoa(info.Event.Robot.VillaID),
+				User:    &rosm.UserData{ID: strconv.Itoa(info.Event.ExtendData.EventData.JoinVilla.JoinUID), Name: info.Event.ExtendData.EventData.JoinVilla.JoinUserNickname},
 			},
-			Bot:     &MYSconfig,
+			Bot:     c,
 			Message: info,
 		}
 		ctx.RunEvent(rosm.Join)
@@ -51,10 +53,10 @@ func process(body []byte) {
 		ctx := &rosm.CTX{
 			BotType: "mys",
 			Being: &rosm.Being{
-				RoomID2: int64(info.Event.Robot.VillaID),
+				RoomID2: strconv.Itoa(info.Event.Robot.VillaID),
 			},
 			Message: info,
-			Bot:     &MYSconfig,
+			Bot:     c,
 		}
 		ctx.RunEvent(rosm.Create)
 	case 4:
@@ -63,10 +65,10 @@ func process(body []byte) {
 		ctx := &rosm.CTX{
 			BotType: "mys",
 			Being: &rosm.Being{
-				RoomID2: int64(info.Event.Robot.VillaID),
+				RoomID2: strconv.Itoa(info.Event.Robot.VillaID),
 			},
 			Message: info,
-			Bot:     &MYSconfig,
+			Bot:     c,
 		}
 		ctx.RunEvent(rosm.Delete)
 	case 5:
@@ -75,12 +77,12 @@ func process(body []byte) {
 		ctx := &rosm.CTX{
 			BotType: "mys",
 			Being: &rosm.Being{
-				RoomID2: int64(info.Event.Robot.VillaID),
-				User:    &rosm.UserData{ID: int64(info.Event.ExtendData.EventData.AddQuickEmoticon.UID)},
-				RoomID:  int64(info.Event.ExtendData.EventData.AddQuickEmoticon.RoomID),
+				RoomID2: strconv.Itoa(info.Event.Robot.VillaID),
+				User:    &rosm.UserData{ID: strconv.Itoa(info.Event.ExtendData.EventData.AddQuickEmoticon.UID)},
+				RoomID:  strconv.Itoa(info.Event.ExtendData.EventData.AddQuickEmoticon.RoomID),
 			},
 			Message: info,
-			Bot:     &MYSconfig,
+			Bot:     c,
 		}
 		emoticonNext(ctx)
 		ctx.RunEvent(rosm.Quick)
@@ -99,13 +101,13 @@ func process(body []byte) {
 		ctx := &rosm.CTX{
 			BotType: "mys",
 			Being: &rosm.Being{
-				RoomID2: int64(info.Event.Robot.VillaID),
-				RoomID:  int64(info.Event.ExtendData.EventData.SendMessage.RoomID),
-				User:    &rosm.UserData{Name: u.User.Name, ID: int64(id), PortraitURI: u.User.PortraitURI},
+				RoomID2: strconv.Itoa(info.Event.Robot.VillaID),
+				RoomID:  strconv.Itoa(info.Event.ExtendData.EventData.SendMessage.RoomID),
+				User:    &rosm.UserData{Name: u.User.Name, ID: strconv.Itoa(id), PortraitURI: u.User.PortraitURI},
 				ATList:  u.MentionedInfo.UserIDList,
 			},
 			Message: u,
-			Bot:     &MYSconfig,
+			Bot:     c,
 		}
 		ctx.Being.AtMe = true
 		//消息处理(切割加去除尾部空格)

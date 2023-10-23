@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"unicode/utf16"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
@@ -60,7 +59,7 @@ func makeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (content any, 
 			t := Entities{
 				Length: len(utf16.Encode([]rune(text))),
 				Offset: len(utf16.Encode([]rune(msgContent.Text))),
-				Entity: H{"type": "villa_room_link", "villa_id": strconv.Itoa(int(message.Data["villa"].(int64))), "room_id": strconv.Itoa(int(message.Data["room"].(int64)))},
+				Entity: H{"type": "villa_room_link", "villa_id": message.Data["villa"].(string), "room_id": message.Data["room"].(string)},
 			}
 			msgContent.Entities = append(msgContent.Entities, t)
 			msgContent.Text += text
@@ -68,7 +67,7 @@ func makeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (content any, 
 			t := Entities{
 				Length: len(utf16.Encode([]rune(text))),
 				Offset: len(utf16.Encode([]rune(msgContent.Text))),
-				Entity: H{"type": "mentioned_user", "user_id": strconv.Itoa(int(message.Data["uid"].(int64)))},
+				Entity: H{"type": "mentioned_user", "user_id": message.Data["uid"].(string)},
 			}
 			msgContent.Entities = append(msgContent.Entities, t)
 			msgContent.Text += text
@@ -77,7 +76,7 @@ func makeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (content any, 
 			if msgContentInfo["mentionedInfo"] != nil {
 				otherUID = msgContentInfo["mentionedInfo"].(MentionedInfoStr).UserIDList
 			}
-			otherUID = append(otherUID, strconv.Itoa(int(message.Data["uid"].(int64))))
+			otherUID = append(otherUID, message.Data["uid"].(string))
 			msgContentInfo["mentionedInfo"] = MentionedInfoStr{Type: 2, UserIDList: otherUID}
 		case "mentioned_robot":
 			t := Entities{
@@ -159,9 +158,9 @@ func makeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (content any, 
 }
 func makeHeard(ctx *rosm.CTX) func(req *http.Request) {
 	return func(req *http.Request) {
-		req.Header.Add("x-rpc-bot_id", MYSconfig.BotToken.BotID)
-		req.Header.Add("x-rpc-bot_secret", MYSconfig.BotToken.BotSecret)
-		req.Header.Add("x-rpc-bot_villa_id", strconv.Itoa(int(ctx.Being.RoomID2)))
+		req.Header.Add("x-rpc-bot_id", ctx.Bot.(*Config).BotToken.BotID)
+		req.Header.Add("x-rpc-bot_secret", ctx.Bot.(*Config).BotToken.BotSecret)
+		req.Header.Add("x-rpc-bot_villa_id", ctx.Being.RoomID2)
 		req.Header.Add("Content-Type", "application/json")
 	}
 }

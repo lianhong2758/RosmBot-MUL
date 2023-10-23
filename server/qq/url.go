@@ -3,14 +3,17 @@ package qq
 const (
 	host                = "https://api.sgroup.qq.com"
 	urlAccessToken      = "https://bots.qq.com/app/getAppAccessToken"
-	urlSendPrivate      = "/v2/users/%v/messages"  //私聊
-	urlSendGroup        = "/v2/groups/%v/messages" //群聊
-	urlSendGuild        = "/channels/%v/messages"  //子频道
-	urlSendGuildPrivate = "/v2/dms/%v/messages"    //频道私聊
-	urlSendFileGroup    = "/v2/groups/%v/files"    //群富文本
-	urlSendFilePrivate  = "/v2/users/%v/files"     //私聊富文本
+	urlSendPrivate      = "/users/%v/messages"    //私聊
+	urlSendGroup        = "/groups/%v/messages"   //群聊
+	urlSendGuild        = "/channels/%v/messages" //子频道
+	urlSendGuildPrivate = "/dms/%v/messages"      //频道私聊
+	urlSendFileGroup    = "/groups/%v/files"      //群富文本
+	urlSendFilePrivate  = "/users/%v/files"       //私聊富文本
 	urlGetway           = "/gateway"
 	urlGetwayWss        = "/gateway/bot"
+
+	//频道
+	urlGuildGetUser = "/guilds/%v/members/%v" //获取成员详情
 )
 
 /*

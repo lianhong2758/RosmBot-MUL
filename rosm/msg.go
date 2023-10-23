@@ -10,8 +10,8 @@ type CTX struct {
 
 // 常用数据
 type Being struct {
-	RoomID   int64
-	RoomID2  int64
+	RoomID   string
+	RoomID2  string
 	RoomName string
 	User     *UserData
 	ATList   any //at列表
@@ -24,6 +24,6 @@ type Being struct {
 // 触发者信息
 type UserData struct {
 	Name        string
-	ID          int64
+	ID          string
 	PortraitURI string //如果直接回调没有可以不写
 }

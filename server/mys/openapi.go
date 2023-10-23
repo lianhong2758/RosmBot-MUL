@@ -33,7 +33,7 @@ func GetRoomList(ctx *rosm.CTX) (r *RoomList, err error) {
 }
 
 // 获取用户信息
-func GetUserData(ctx *rosm.CTX, uid uint64) (r *UserData, err error) {
+func GetUserData(ctx *rosm.CTX, uid string) (r *UserData, err error) {
 	data, _ := json.Marshal(H{"uid": uid})
 	data, err = web.Web(&http.Client{}, host+getUserDataURL, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[GetUserData]", string(data))
@@ -46,7 +46,7 @@ func GetUserData(ctx *rosm.CTX, uid uint64) (r *UserData, err error) {
 }
 
 // 踢人
-func DeleteUser(ctx *rosm.CTX, uid uint64) (err error) {
+func DeleteUser(ctx *rosm.CTX, uid string) (err error) {
 	data, _ := json.Marshal(H{"uid": uid})
 	data, err = web.Web(&http.Client{}, host+deleteUserURL, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[DeleteUser]", string(data))

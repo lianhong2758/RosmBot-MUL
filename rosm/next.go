@@ -3,7 +3,7 @@ package rosm
 import ()
 
 var (
-	nextMessList = map[int64]chan *CTX{}
+	nextMessList = map[string]chan *CTX{}
 	//nextEmoticonList = map[string]chan *CTX{}
 )
 

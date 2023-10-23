@@ -4,7 +4,9 @@ import (
 	"encoding/base64"
 	"net/url"
 	"strings"
-	"unsafe"
+
+	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
 // UnderlineToCamel convert abc_def to AbcDef
@@ -37,7 +39,7 @@ func resolveURI(addr string) (network, address string) {
 			uri.Scheme = scheme // remove `+unix`/`+tcp4`
 			if ext == "unix" {
 				uri.Host, uri.Path, _ = strings.Cut(uri.Path, ":")
-				uri.Host = base64.StdEncoding.EncodeToString(StringToBytes(uri.Host)) // special handle for unix
+				uri.Host = base64.StdEncoding.EncodeToString(tool.StringToBytes(uri.Host)) // special handle for unix
 			}
 			address = uri.String()
 		}
@@ -45,29 +47,18 @@ func resolveURI(addr string) (network, address string) {
 	return
 }
 
-// slice is the runtime representation of a slice.
-// It cannot be used safely or portably and its representation may
-// change in a later release.
-//
-// Unlike reflect.SliceHeader, its Data field is sufficient to guarantee the
-// data it references will not be garbage collected.
-type slice struct {
-	data unsafe.Pointer
-	len  int
-	cap  int
+// 新建bot消息
+func NewBot(botid string) rosm.Boter {
+	return botMap[botid]
 }
 
-// BytesToString 没有内存开销的转换
-func BytesToString(b []byte) string {
-	return *(*string)(unsafe.Pointer(&b))
-}
-
-// StringToBytes 没有内存开销的转换
-func StringToBytes(s string) (b []byte) {
-	bh := (*slice)(unsafe.Pointer(&b))
-	sh := (*slice)(unsafe.Pointer(&s))
-	bh.data = sh.data
-	bh.len = sh.len
-	bh.cap = sh.len
-	return b
+// 新建上下文
+func NewCTX(botid, roomid, roomid2 string) *rosm.CTX {
+	return &rosm.CTX{
+		Bot: botMap[botid],
+		Being: &rosm.Being{
+			RoomID:  roomid,
+			RoomID2: roomid2,
+		},
+	}
 }

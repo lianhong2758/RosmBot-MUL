@@ -2,6 +2,7 @@ package rosm
 
 import (
 	"github.com/lianhong2758/RosmBot-MUL/message"
+	log "github.com/sirupsen/logrus"
 )
 
 // bot主接口
@@ -22,4 +23,12 @@ type MUL struct {
 	Types string
 	Name  string
 	BotID string
+}
+
+func Listen() {
+	for {
+		if i, ok := <-MULChan; ok {
+			log.Printf("新增注册,平台: %s,昵称: %s,BotID: %s", i.Types, i.Name, i.BotID)
+		}
+	}
 }

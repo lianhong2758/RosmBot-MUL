@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -33,21 +32,21 @@ func (c *Config) process(playload *WebsocketPayload) {
 			BotType: "qq",
 			Message: raw,
 			Being: &rosm.Being{
-				RoomID:  tool.Int64(raw.ChannelID),
-				RoomID2: tool.Int64(raw.GuildID),
+				RoomID:  raw.ChannelID,
+				RoomID2: raw.GuildID,
 				ATList:  raw.Mentions,
 				User: &rosm.UserData{
 					Name: raw.Author.Username,
-					ID:   tool.Int64(raw.Author.ID),
+					ID:   raw.Author.ID,
 				},
 				Def: H{"type": playload.T, "id": raw.ID},
 			},
 		}
 		word := raw.Content
 		//判断@
-		if strings.Contains(raw.Content, "\u003c@!"+c.Ready.User.ID+"\u003e ") {
+		if strings.Contains(raw.Content, "<@!"+c.Ready.User.ID+">") {
 			ctx.Being.AtMe = true
-			word = strings.Replace(word, "\u003c@!"+c.Ready.User.ID+"\u003e ", "", 1)
+			word = strings.Replace(word, "<@!"+c.Ready.User.ID+">", "", 1)
 		}
 		log.Debugf("[debug]关键词切割结果: %s", word)
 		ctx.RunWord(word)

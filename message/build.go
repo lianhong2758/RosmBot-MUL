@@ -23,7 +23,7 @@ func Text(text ...any) MessageSegment {
 }
 
 // at用户
-func AT(uid int64, name string) MessageSegment {
+func AT(uid, name string) MessageSegment {
 	name = "@" + name + " "
 	return MessageSegment{
 		Type: "mentioned_user",

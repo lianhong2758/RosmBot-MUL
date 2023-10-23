@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/RomiChan/websocket"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	log "github.com/sirupsen/logrus"
 )
@@ -126,7 +127,7 @@ func (c *Config) Connect() {
 				}
 				filepath, err := base64.RawURLEncoding.DecodeString(host)
 				if err == nil {
-					addr = BytesToString(filepath)
+					addr = tool.BytesToString(filepath)
 				}
 			}
 			return net.Dial(network, addr) // support unix socket transport
@@ -255,7 +256,7 @@ func (c *Config) Listen() {
 			}
 			continue
 		}
-		log.Debugln("[ws]接收到第", payload.S, "个事件:", payload.Op, ", 类型:", payload.T, ", 数据:", BytesToString(payload.D))
+		log.Debugln("[ws]接收到第", payload.S, "个事件:", payload.Op, ", 类型:", payload.T, ", 数据:", tool.BytesToString(payload.D))
 		c.seq = payload.S
 		//接收的类型进行选择
 		switch payload.Op {
@@ -289,7 +290,7 @@ func (c *Config) Listen() {
 			lastheartbeat = time.Now()
 		case OpCodeHTTPCallbackACK: // Reply
 		default:
-			log.Warnln("[ws]未知事件, 序号:", payload.S, ", Op:", payload.Op, ", 类型:", payload.T, ", 数据:", BytesToString(payload.D))
+			log.Warnln("[ws]未知事件, 序号:", payload.S, ", Op:", payload.Op, ", 类型:", payload.T, ", 数据:", tool.BytesToString(payload.D))
 		}
 	}
 }
@@ -308,7 +309,7 @@ func (c *Config) Resume() error {
 				}
 				filepath, err := base64.RawURLEncoding.DecodeString(host)
 				if err == nil {
-					addr = BytesToString(filepath)
+					addr = tool.BytesToString(filepath)
 				}
 			}
 			return net.Dial(network, addr) // support unix socket transport
@@ -332,11 +333,11 @@ func (c *Config) Resume() error {
 // GetEventReady OpCodeDispatch READY
 func (wp *WebsocketPayload) GetEventReady() (er EventReady, err error) {
 	if wp.Op != OpCodeDispatch {
-		err = errors.New("[opencode] unexpected OpCode " + strconv.Itoa(int(wp.Op)) + ", T: " + wp.T + ", D: " + BytesToString(wp.D))
+		err = errors.New("[opencode] unexpected OpCode " + strconv.Itoa(int(wp.Op)) + ", T: " + wp.T + ", D: " + tool.BytesToString(wp.D))
 		return
 	}
 	if wp.T != "READY" {
-		err = errors.New("[opencode] unexpected event type " + wp.T + ", T: " + wp.T + ", D: " + BytesToString(wp.D))
+		err = errors.New("[opencode] unexpected event type " + wp.T + ", T: " + wp.T + ", D: " + tool.BytesToString(wp.D))
 		return
 	}
 	err = json.Unmarshal(wp.D, &er)
