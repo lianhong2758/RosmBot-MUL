@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var botMap map[string]*Config
+var botMap = map[string]*Config{}
 
 type Token struct {
 	AppId     string `json:"AppId"`

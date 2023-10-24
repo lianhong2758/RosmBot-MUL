@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
@@ -105,6 +106,7 @@ func (c *Config) process(body []byte) {
 				RoomID:  strconv.Itoa(info.Event.ExtendData.EventData.SendMessage.RoomID),
 				User:    &rosm.UserData{Name: u.User.Name, ID: strconv.Itoa(id), PortraitURI: u.User.PortraitURI},
 				ATList:  u.MentionedInfo.UserIDList,
+				MsgID:   []string{info.Event.ExtendData.EventData.SendMessage.MsgUID, tool.String(info.Event.ExtendData.EventData.SendMessage.SendAt)},
 			},
 			Message: u,
 			Bot:     c,

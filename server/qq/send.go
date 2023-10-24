@@ -81,6 +81,8 @@ func makeMsgContent(ctx *rosm.CTX, IsGroup bool, msg ...message.MessageSegment) 
 			cnt.Image = message.Data["url"].(string)
 		case "reply":
 			cnt.Reference = &qqmsg.ReferenceS{ID: message.Data["ids"].([]string)[0], NeedError: true}
+		case "replyuser":
+			cnt.Reference = &qqmsg.ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
 		}
 	}
 	if ctx.Being.Def["id"] != nil {

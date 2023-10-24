@@ -53,7 +53,6 @@ func (c *Config) getAccessToken() {
 		}
 	}()*/
 	c.access = c.Authorization()
-	log.Println(c.access)
 }
 
 // getinitinfo 获得 gateway 和 shard

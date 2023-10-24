@@ -27,6 +27,10 @@ func (c *Config) process(playload *WebsocketPayload) {
 			return
 		}
 		log.Infof("[info]接收消息[%s]%s:%s", raw.GuildID, raw.Author.Username, raw.Content)
+		at := []string{}
+		for _, v := range raw.Mentions {
+			at = append(at, v.ID)
+		}
 		ctx := &rosm.CTX{
 			Bot:     c,
 			BotType: "qq",
@@ -34,12 +38,13 @@ func (c *Config) process(playload *WebsocketPayload) {
 			Being: &rosm.Being{
 				RoomID:  raw.ChannelID,
 				RoomID2: raw.GuildID,
-				ATList:  raw.Mentions,
+				ATList:  at,
 				User: &rosm.UserData{
 					Name: raw.Author.Username,
 					ID:   raw.Author.ID,
 				},
-				Def: H{"type": playload.T, "id": raw.ID},
+				MsgID: []string{raw.ID},
+				Def:   H{"type": playload.T, "id": raw.ID},
 			},
 		}
 		word := raw.Content

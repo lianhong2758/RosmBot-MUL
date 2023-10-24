@@ -45,15 +45,25 @@ type tem struct {
 
 // 用户@机器人发送消息
 type sendmessage struct {
-	Content    string `json:"content"`
-	FromUserID int    `json:"from_user_id"`
-	SendAt     int64  `json:"send_at"`
-	RoomID     int    `json:"room_id"`
-	ObjectName int    `json:"object_name"`
-	Nickname   string `json:"nickname"`
-	MsgUID     string `json:"msg_uid"`
-	BotMsgID   string `json:"bot_msg_id"`
-	VillaID    int    `json:"villa_id"`
+	Content    string   `json:"content"`
+	FromUserID int      `json:"from_user_id"` // 发送者 id
+	SendAt     int64    `json:"send_at"`      // 发送时间的时间戳
+	RoomID     int      `json:"room_id"`      // 房间 id
+	ObjectName int      `json:"object_name"`  // 目前只支持文本类型消息
+	Nickname   string   `json:"nickname"`     // 用户昵称
+	MsgUID     string   `json:"msg_uid"`      // 消息 id
+	BotMsgID   string   `json:"bot_msg_id"`   // 如果被回复的消息从属于机器人，则该字段不为空字符串
+	VillaID    int      `json:"villa_id"`     // 大别野 id
+	QuoteMsg   struct { // 回调消息引用消息的基础信息
+		Content          string `json:"content"`            // 消息摘要，如果是文本消息，则返回消息的文本内容。如果是图片消息，则返回"[图片]"
+		MsgUID           string `json:"msg_uid"`            // 消息 id
+		BotMsgID         string `json:"bot_msg_id"`         // 如果消息从属于机器人，则该字段不为空字符串
+		SendAt           int    `json:"send_at"`            // 发送时间的时间戳
+		MsgType          string `json:"msg_type"`           // 消息类型，包括"文本"，"图片"，"帖子卡片"等
+		FromUserID       int    `json:"from_user_id"`       // 发送者 id（整型）
+		FromUserNickname string `json:"from_user_nickname"` // 发送者昵称
+		FromUserIDStr    string `json:"from_user_id_str"`   // 发送者 id（字符串）可携带机器人发送者的id
+	} `json:"quote_msg"`
 }
 
 // 有新用户加入大别野

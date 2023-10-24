@@ -136,3 +136,10 @@ func ReplyOther(some ...string) MessageSegment {
 		},
 	}
 }
+
+// 根据平台增加参数个数,米游社参数为id,time
+func Reply() MessageSegment {
+	return MessageSegment{
+		Type: "replyuser",
+	}
+}

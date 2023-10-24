@@ -14,7 +14,8 @@ type Being struct {
 	RoomID2  string
 	RoomName string
 	User     *UserData
-	ATList   any //at列表
+	ATList   []string //at列表
+	MsgID    []string //用于reply,存放消息id
 	AtMe     bool
 	Word     string
 	Rex      []string
