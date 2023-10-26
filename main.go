@@ -4,19 +4,19 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/kanban"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 
-	//_ "github.com/lianhong2758/RosmBot-MUL/server/mys/init"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys"
-	_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
+	//"github.com/lianhong2758/RosmBot-MUL/server/mys"
+	_ "github.com/lianhong2758/RosmBot-MUL/server/mys/init"
+	//_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
 
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/test"
 )
 
 func main() {
-
-	var runner rosm.Boter
-	runner = mys.NewConfig("config/mys.json")
-	go runner.Run()
-
+	/*
+		var runner rosm.Boter
+		runner = mys.NewConfig("config/mys.json")
+		go runner.Run()
+	*/
 	kanban.Kanban()
 	rosm.Listen()
 }
