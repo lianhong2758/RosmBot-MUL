@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -15,12 +16,11 @@ var botMap = map[string]*Config{}
 
 // 默认值
 type Token struct {
-	Master         []string `json:"master_id"`
-	BotID          string   `json:"bot_id"`
-	BotSecret      string   `json:"bot_secret"`
-	BotPubKey      string   `json:"bot_pub_key"`
-	BotName        string   `json:"bot_name"`
-	BotSecretConst string   `json:"-"`
+	*rosm.BotCard
+	BotID          string `json:"bot_id"`
+	BotSecret      string `json:"bot_secret"`
+	BotPubKey      string `json:"bot_pub_key"`
+	BotSecretConst string `json:"-"`
 }
 type Config struct {
 	BotToken  Token  `json:"token"`
@@ -28,8 +28,8 @@ type Config struct {
 	Port      string `json:"port,omitempty"`
 }
 
-func (c *Config) Name() string {
-	return c.BotToken.BotName
+func (c *Config) Card() *rosm.BotCard {
+	return c.BotToken.BotCard
 }
 func NewConfig(path string) (c *Config) {
 	data, err := os.ReadFile(path)

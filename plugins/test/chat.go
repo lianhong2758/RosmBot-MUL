@@ -8,6 +8,6 @@ import (
 func init() {
 	en := rosm.Register(rosm.NewRegist("@回复", "- @机器人", ""))
 	en.AddWord("").SetBlock(true).Rule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text(ctx.Bot.Name(), "不在呢~"))
+		ctx.Send(message.Text(ctx.Bot.Card().BotName, "不在呢~"))
 	})
 }

@@ -20,7 +20,7 @@ func init() {
 			"- 测试表情",
 	})
 	en.AddWord("测试").Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text("你好"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mysmsg.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "本房间"), message.Text("[爱心]"))
+		ctx.Send(message.Text("你好"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mysmsg.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
 	})
 	en.AddWord("测试下标跳转房间").Handle(func(ctx *rosm.CTX) {
 		s := mysmsg.BadgeStr{
