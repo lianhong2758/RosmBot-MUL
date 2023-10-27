@@ -8,7 +8,6 @@ import (
 var filePath = "config/qq.json"
 
 func init() { //main
-	var runner rosm.Boter
-	runner = qq.NewConfig(filePath)
+	var runner rosm.Boter = qq.NewConfig(filePath)
 	go runner.Run()
 }

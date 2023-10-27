@@ -13,8 +13,7 @@ import (
 
 func main() {
 	/*
-		var runner rosm.Boter
-		runner = mys.NewConfig("config/mys.json")
+		var runner rosm.Boter = mys.NewConfig("config/mys.json")
 		go runner.Run()
 	*/
 	kanban.Kanban()

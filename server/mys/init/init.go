@@ -8,7 +8,6 @@ import (
 var filePath = "config/mys.json"
 
 func init() { //main
-	var runner rosm.Boter
-	runner = mys.NewConfig(filePath)
+	var runner rosm.Boter = mys.NewConfig(filePath)
 	go runner.Run()
 }
