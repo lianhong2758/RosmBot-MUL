@@ -60,3 +60,12 @@ func GetBot() *Config {
 	}
 	return nil
 }
+
+// RangeBot 遍历所有bot实例
+func RangeBot(fn func(id string, bot *Config) bool) {
+	for k, v := range botMap {
+		if !fn(k, v) {
+			return
+		}
+	}
+}
