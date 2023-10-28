@@ -54,3 +54,9 @@ func NewCTX(botid, roomid, villaid string) *rosm.CTX {
 		},
 	}
 }
+func GetBot() *Config {
+	for k := range botMap {
+		return botMap[k]
+	}
+	return nil
+}
