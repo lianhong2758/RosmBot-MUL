@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	log "github.com/sirupsen/logrus"
 )
@@ -59,8 +60,8 @@ func DeleteUser(ctx *rosm.CTX, uid string) (err error) {
 }
 
 // 撤回消息,消息id,房间id,发送时间
-func Recall(ctx *rosm.CTX, msgid string, msgtime, roomid int64) (err error) {
-	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": roomid, "msg_time": msgtime})
+func Recall(ctx *rosm.CTX, msgid string, msgtime int64, roomid string) (err error) {
+	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.Int64(roomid), "msg_time": msgtime})
 	data, err = web.Web(&http.Client{}, host+recallURL, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[Recall]", string(data))
 	var r ApiCode

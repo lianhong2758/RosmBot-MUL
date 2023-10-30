@@ -121,8 +121,10 @@ func init() {
 		}
 		ctx.Send(message.Text("视频测试"), mysmsg.Preview(s), mysmsg.Badge(ss))
 	})
+	en.AddWord("测试获取图片").Rule(mys.OnlyReply).Handle(func(ctx *rosm.CTX) {
+		ctx.Send(message.Text("Type:", ctx.Being.Def["Quote"].(*mys.MessageForQuote).MsgType, "Content:", ctx.Being.Def["Quote"].(*mys.MessageForQuote).Content))
+	})
 }
 
 //ctx有消息的全部信息,ctx.Being有简单的消息信息获取
-//ctx.ChangeRoome可以改变发送的消息房间等
 //ctx.Send(...)是发送消息的基本格式

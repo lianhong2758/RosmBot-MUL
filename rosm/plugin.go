@@ -128,7 +128,7 @@ func (m *Matcher) SetBlock(ok bool) *Matcher {
 }
 
 func (m *Matcher) Rule(r ...Rule) *Matcher {
-	m.rules = append(append(m.rules, r...), m.mulPass())
+	m.rules = append(append(m.rules, m.mulPass()), r...)
 	return m
 }
 

@@ -107,6 +107,9 @@ func (c *Config) process(body []byte) {
 				User:    &rosm.UserData{Name: u.User.Name, ID: strconv.Itoa(id), PortraitURI: u.User.PortraitURI},
 				ATList:  u.MentionedInfo.UserIDList,
 				MsgID:   []string{info.Event.ExtendData.EventData.SendMessage.MsgUID, tool.String(info.Event.ExtendData.EventData.SendMessage.SendAt)},
+				Def: map[string]any{
+					"Quote": &info.Event.ExtendData.EventData.SendMessage.QuoteMsg, //type  MessageForQuote
+				},
 			},
 			Message: u,
 			Bot:     c,
