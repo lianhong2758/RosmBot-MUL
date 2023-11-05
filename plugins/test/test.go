@@ -24,7 +24,7 @@ func init() {
 	})
 	en.AddWord("测试下标跳转房间").Handle(func(ctx *rosm.CTX) {
 		s := mysmsg.BadgeStr{
-			Icon: "http://8.134.179.136/favicon.ico",
+			Icon: "http://47.93.28.113/favicon.ico",
 			Text: "10248",
 			URL:  "https://dby.miyoushe.com/chat/463/10248",
 		}
@@ -32,17 +32,17 @@ func init() {
 	})
 	en.AddWord("测试下标").Handle(func(ctx *rosm.CTX) {
 		s := mysmsg.BadgeStr{
-			Icon: "http://8.134.179.136/favicon.ico",
+			Icon: "http://47.93.28.113/favicon.ico",
 			Text: "清雪官方",
-			URL:  "http://8.134.179.136",
+			URL:  "http://47.93.28.113",
 		}
 		ctx.Send(message.Text("清雪官网~"), mysmsg.Badge(s))
 	})
 	en.AddWord("测试预览").Handle(func(ctx *rosm.CTX) {
 		s := mysmsg.PreviewStr{
-			Icon:       "http://8.134.179.136/favicon.ico",
-			URL:        "http://8.134.179.136",
-			ImageURL:   "http://8.134.179.136/ippic",
+			Icon:       "http://47.93.28.113/favicon.ico",
+			URL:        "http://47.93.28.113",
+			ImageURL:   "http://47.93.28.113/ippic",
 			IsIntLink:  true,
 			SourceName: "我是喵喵喵~",
 			Title:      "这是一个标题测试",
@@ -95,8 +95,8 @@ func init() {
 	en.AddWord("测试视频").Handle(func(ctx *rosm.CTX) {
 		ctx.Send(message.Text("测试开始"))
 		s := mysmsg.PreviewStr{
-			Icon:       "http://8.134.179.136/favicon.ico",
-			URL:        "http://8.134.179.136/file?path=CSGO/1.mp4",
+			Icon:       "http://47.93.28.113/favicon.ico",
+			URL:        "http://47.93.28.113/file?path=CSGO/1.mp4",
 			IsIntLink:  true,
 			SourceName: "清雪API",
 			Title:      "测试视频",
@@ -107,17 +107,17 @@ func init() {
 	en.AddWord("测试组合").Handle(func(ctx *rosm.CTX) {
 		ctx.Send(message.Text("测试开始"))
 		s := mysmsg.PreviewStr{
-			Icon:       "http://8.134.179.136/favicon.ico",
-			URL:        "http://8.134.179.136/file?path=CSGO/1.mp4",
+			Icon:       "http://47.93.28.113/favicon.ico",
+			URL:        "http://47.93.28.113/file?path=CSGO/1.mp4",
 			IsIntLink:  true,
 			SourceName: "清雪API",
 			Title:      "测试视频",
 			Content:    "CSGO精彩击杀,完美竞技平台",
 		}
 		ss := mysmsg.BadgeStr{
-			Icon: "http://8.134.179.136/favicon.ico",
+			Icon: "http://47.93.28.113/favicon.ico",
 			Text: "清雪官方",
-			URL:  "http://8.134.179.136",
+			URL:  "http://47.93.28.113",
 		}
 		ctx.Send(message.Text("视频测试"), mysmsg.Preview(s), mysmsg.Badge(ss))
 	})
