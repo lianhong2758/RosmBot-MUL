@@ -14,3 +14,14 @@ func OnlyAtMe() Rule {
 		return ctx.Being.AtMe
 	}
 }
+
+func OnlyMaster() Rule {
+	return func(ctx *CTX) bool {
+		for _, v := range ctx.Bot.Card().Master {
+			if v == ctx.Being.User.ID {
+				return true
+			}
+		}
+		return false
+	}
+}

@@ -13,7 +13,11 @@ type Boter interface {
 	Run()
 
 	//Bot信息查询
-	Name() string
+	Card() *BotCard
+}
+type BotCard struct {
+	BotName string   `json:"bot_name"`
+	Master  []string `json:"master_id"`
 }
 
 // 进行一个通道注册,同于接收平台注册消息进行统计
@@ -26,9 +30,7 @@ type MUL struct {
 }
 
 func Listen() {
-	for {
-		if i, ok := <-MULChan; ok {
-			log.Printf("新增注册,平台: %s,昵称: %s,BotID: %s", i.Types, i.Name, i.BotID)
-		}
+	for mulData := range MULChan {
+		log.Printf("新增注册,平台: %s,昵称: %s,BotID: %s", mulData.Types, mulData.Name, mulData.BotID)
 	}
 }

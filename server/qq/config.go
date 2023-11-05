@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/RomiChan/websocket"
+	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -17,9 +18,8 @@ type Token struct {
 	Token     string `json:"Token,omitempty"`
 }
 type Config struct {
+	*rosm.BotCard
 	BotToken   Token    `json:"token"`
-	Master     []string `json:"master_id"`
-	BotName    string   `json:"bot_name"`
 	Intents    uint32   `json:"-"`           // Intents 欲接收的事件
 	IntentsNum []uint32 `json:"intents"`     //用户输入的
 	ShardIndex uint16   `json:"shard_index"` //分片序号
@@ -55,10 +55,9 @@ type User struct {
 	UnionUserAccount string `json:"union_user_account"`
 }
 
-func (c *Config) Name() string {
-	return c.BotName
+func (c *Config) Card() *rosm.BotCard {
+	return c.BotCard
 }
-
 func NewConfig(path string) (c *Config) {
 	data, err := os.ReadFile(path)
 	if err != nil {

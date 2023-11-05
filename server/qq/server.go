@@ -40,8 +40,9 @@ func (c *Config) process(playload *WebsocketPayload) {
 				RoomID2: raw.GuildID,
 				ATList:  at,
 				User: &rosm.UserData{
-					Name: raw.Author.Username,
-					ID:   raw.Author.ID,
+					Name:        raw.Author.Username,
+					ID:          raw.Author.ID,
+					PortraitURI: raw.Author.Avatar,
 				},
 				MsgID: []string{raw.ID},
 				Def:   H{"type": playload.T, "id": raw.ID},
