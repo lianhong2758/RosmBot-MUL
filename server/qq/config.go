@@ -85,5 +85,6 @@ func NewConfig(path string) (c *Config) {
 	if c.BotToken.AppId == "" || c.BotToken.Token == "" {
 		log.Fatalln("[qq]未设置bot信息")
 	}
+	c.BotCard.BotID = c.BotToken.AppId
 	return c
 }

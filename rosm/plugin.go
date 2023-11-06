@@ -12,9 +12,9 @@ import (
 
 type (
 	// Rule filter the event
-	Rule func(ctx *CTX) bool
+	Rule = func(ctx *CTX) bool
 	// Handler 事件处理函数
-	Handler func(ctx *CTX)
+	Handler = func(ctx *CTX)
 )
 
 type PluginData struct {
@@ -30,6 +30,7 @@ type Matcher struct {
 	handler    Handler
 	mul        []string
 	block      bool        //阻断
+	nestchan   chan *CTX   //用于上下文
 	PluginNode *PluginData //溯源
 }
 
@@ -44,14 +45,7 @@ var (
 	caseRegexp = map[*regexp.Regexp]*Matcher{}
 
 	//事件触发
-	caseEvent = map[int][]*Matcher{
-		Join:           {},
-		Create:         {},
-		Delete:         {},
-		Quick:          {},
-		AllMessage:     {},
-		SurplusMessage: {},
-	}
+	caseEvent = map[int][]*Matcher{}
 )
 
 // 注册插件
@@ -103,7 +97,7 @@ func (p *PluginData) AddOther(types int) *Matcher {
 	if _, ok := caseEvent[types]; ok {
 		caseEvent[types] = append(caseEvent[types], m)
 	} else {
-		log.Errorln("插件载入失败: ", p.Name, "---事件", types, "#不存在的事件类型")
+		caseEvent[types] = []*Matcher{m}
 	}
 	p.Matchers = append(p.Matchers, m)
 	m.PluginNode = p

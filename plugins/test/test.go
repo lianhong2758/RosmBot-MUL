@@ -51,7 +51,7 @@ func init() {
 		ctx.Send(message.Text("测试"), mysmsg.Preview(s))
 	})
 	en.AddWord("测试全体next").Handle(func(ctx *rosm.CTX) {
-		next, stop := ctx.GetNextAllMess()
+		next, stop := ctx.GetNext(rosm.AllMessage, true)
 		defer stop()
 		ctx.Send(message.Text("测试开始"))
 		for i := 0; i < 3; i++ {
@@ -65,7 +65,7 @@ func init() {
 		}
 	})
 	en.AddWord("测试个人next").Handle(func(ctx *rosm.CTX) {
-		next, stop := ctx.GetNextUserMess()
+		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		defer stop()
 		ctx.Send(message.Text("测试开始"))
 		for i := 0; i < 3; i++ {
@@ -80,7 +80,12 @@ func init() {
 	})
 	en.AddWord("测试表态").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		result := ctx.Send(message.Text("测试开始,表态此条消息"))
-		next, stop := mys.GetNextAllEmoticon(ctx, result.(*mys.SendState).Data.BotMsgID)
+		next, stop := ctx.GetNext(rosm.Quick, true, func(ctx *rosm.CTX) bool {
+			if result.(*mys.SendState).Data.BotMsgID == ctx.Message.(*mys.InfoSTR).Event.ExtendData.EventData.AddQuickEmoticon.BotMsgID {
+				return true
+			}
+			return false
+		})
 		defer stop()
 		for i := 0; i < 3; i++ {
 			select {

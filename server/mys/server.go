@@ -85,7 +85,6 @@ func (c *Config) process(body []byte) {
 			Message: info,
 			Bot:     c,
 		}
-		emoticonNext(ctx)
 		ctx.RunEvent(rosm.Quick)
 	//case 6:
 	//回调审核

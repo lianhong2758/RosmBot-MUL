@@ -6,6 +6,10 @@ import (
 
 // 匹配事件
 func (ctx *CTX) RunEvent(types int) {
+	log.Debug("[Event]开始匹配事件type", types)
+	if ctx.sendNext(types) {
+		return
+	}
 	for _, m := range caseEvent[types] {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
@@ -20,10 +24,6 @@ func (ctx *CTX) RunEvent(types int) {
 // 匹配修剪好的触发词
 func (ctx *CTX) RunWord(word string) {
 	ctx.Being.Word = word
-	//ctx next
-	if ctx.sendNext() {
-		return
-	}
 	//全匹配
 	ctx.RunEvent(AllMessage)
 	//关键词触发

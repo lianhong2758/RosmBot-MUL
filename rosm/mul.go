@@ -17,6 +17,7 @@ type Boter interface {
 }
 type BotCard struct {
 	BotName string   `json:"bot_name"`
+	BotID   string   `json:"bot_id,omitempty"`
 	Master  []string `json:"master_id"`
 }
 
