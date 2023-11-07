@@ -3,6 +3,7 @@ package tool
 import (
 	"reflect"
 	"strconv"
+	"strings"
 	"unsafe"
 )
 
@@ -30,4 +31,14 @@ func Int64(ID string) int64 {
 // 转字符串
 func String(ID int64) string {
 	return strconv.FormatInt(ID, 10)
+}
+
+// 20位以下id字符串合并
+func String221(one, two string) string {
+	return one + strings.Repeat(" ", 20-len(one)) + two + strings.Repeat(" ", 20-len(two))
+}
+
+// 20位以下id字符串拆分
+func String122(only string) (one, two string) {
+	return strings.TrimRight(only[:20], " "), strings.TrimRight(only[20:], " ")
 }
