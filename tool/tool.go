@@ -42,3 +42,16 @@ func String221(one, two string) string {
 func String122(only string) (one, two string) {
 	return strings.TrimRight(only[:20], " "), strings.TrimRight(only[20:], " ")
 }
+
+func Int64_221(one, two int) int64 {
+	var x int64
+	x = int64(two) << 28
+	x |= int64(one)
+	return x
+}
+
+func Int64_122(x int64) (one, two int) {
+	two = int(x >> 28)
+	one = int(x & 0xfffffff)
+	return
+}

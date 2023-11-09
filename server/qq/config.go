@@ -66,6 +66,7 @@ func NewConfig(path string) (c *Config) {
 		c.BotName = "雪儿"
 		c.IntentsNum = []uint32{0, 9, 30, 25}
 		c.ShardIndex = 0
+		c.BotCard.BotID = "123456"
 		err = os.MkdirAll("config", os.ModePerm)
 		if err != nil {
 			log.Fatalln("[qq]无法创建 config 目录: ", err)
@@ -85,6 +86,5 @@ func NewConfig(path string) (c *Config) {
 	if c.BotToken.AppId == "" || c.BotToken.Token == "" {
 		log.Fatalln("[qq]未设置bot信息")
 	}
-	c.BotCard.BotID = c.BotToken.AppId
 	return c
 }

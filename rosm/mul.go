@@ -32,6 +32,6 @@ type MUL struct {
 
 func Listen() {
 	for mulData := range MULChan {
-		log.Printf("新增注册,平台: %s,昵称: %s,BotID: %s", mulData.Types, mulData.Name, mulData.BotID)
+		log.Infof("[mul]新增注册,平台: %s,昵称: %s,BotID: %s", mulData.Types, mulData.Name, mulData.BotID)
 	}
 }
