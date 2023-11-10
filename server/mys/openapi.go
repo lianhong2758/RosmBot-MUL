@@ -85,9 +85,8 @@ func GetVillaData(ctx *rosm.CTX) (r *VillaData, err error) {
 }
 
 type RoomList struct {
-	Retcode int    `json:"retcode"`
-	Message string `json:"message"`
-	Data    struct {
+	ApiCode
+	Data struct {
 		List []struct {
 			GroupID   string `json:"group_id"`
 			GroupName string `json:"group_name"`
@@ -102,9 +101,8 @@ type RoomList struct {
 }
 
 type UserData struct {
-	Retcode int    `json:"retcode"`
-	Message string `json:"message"`
-	Data    struct {
+	ApiCode
+	Data struct {
 		Member struct {
 			Basic struct {
 				UID       string `json:"uid"`
@@ -128,9 +126,8 @@ type UserData struct {
 }
 
 type VillaData struct {
-	Retcode int    `json:"retcode"`
-	Message string `json:"message"`
-	Data    struct {
+	ApiCode
+	Data struct {
 		Villa struct {
 			VillaID        string   `json:"villa_id"`
 			Name           string   `json:"name"`
