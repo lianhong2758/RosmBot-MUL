@@ -17,7 +17,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const mysUpimageUrl = "https://bbs-api.miyoushe.com/vila/api/bot/platform/getUploadImageParams"
+const mysUpimageUrl = "/vila/api/bot/platform/getUploadImageParams"
 
 func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 	log.Info("[mys]上传图片到米游社阿里云 OSS")
@@ -34,7 +34,7 @@ func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 		return "", err
 	}
 	// 在这里获取机器人开放平台下发的 oss 参数
-	param, err := getParam(ctx, tool.BytesToString(md5hash.Sum(nil)), strings.ToLower(filepath.Ext(path)))
+	param, err := getParam(ctx, md5hash.Sum(nil), strings.ToLower(filepath.Ext(path)))
 	if err != nil {
 		log.Error("[mys]获取米游社阿里云 OSS 上传参数失败", err)
 		return "", err
@@ -62,31 +62,31 @@ func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 	if err != nil {
 		return "", err
 	}
+	_ = multiPartWriter.Close()
 
-	err = multiPartWriter.Close()
-	if err != nil {
-		return "", err
-	}
 	data, err := web.Web(web.NewDefaultClient(), param.Data.Params.Host, http.MethodPost, func(r *http.Request) {
-		r.Header.Set("Content-Type", multiPartWriter.FormDataContentType())
+		r.Header.Add("Content-Type", multiPartWriter.FormDataContentType())
 	}, &requestBody)
 	if err != nil {
+		log.Debug("[mys]上传OSS请求失败,url: ", param.Data.Params.Host)
 		return "", err
 	}
 	m := new(OssDownloadParam)
 	err = json.Unmarshal(data, m)
-	return m.URL, err
+	log.Debug("[mys]上传OSS结果:", tool.BytesToString(data))
+	return m.Data.URL, err
 }
 
 // mys消息的ctx,md5,扩展名
-func getParam(ctx *rosm.CTX, md5, ext string) (param *OssUpParam, err error) {
+func getParam(ctx *rosm.CTX, md5 []byte, ext string) (param *OssUpParam, err error) {
 	data, _ := json.Marshal(H{"md5": md5, "ext": ext})
-	data, err = web.Web(web.NewDefaultClient(), mysUpimageUrl, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
+	data, err = web.Web(web.NewDefaultClient(), host+mysUpimageUrl, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
 	m := new(OssUpParam)
 	err = json.Unmarshal(data, m)
+	log.Debug("[mys]米游社阿里云 OSS 上传参数: ", tool.BytesToString(data))
 	return m, err
 }
 
@@ -119,7 +119,10 @@ type OssUpParam struct {
 }
 
 type OssDownloadParam struct {
-	Object    int    `json:"object"`
-	SecretURL string `json:"secret_url"`
-	URL       string `json:"url"`
+	ApiCode
+	Data struct {
+		URL       string `json:"url"`
+		SecretURL string `json:"secret_url"`
+		Object    string `json:"object"`
+	} `json:"data"`
 }

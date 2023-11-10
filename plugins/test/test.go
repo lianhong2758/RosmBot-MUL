@@ -97,7 +97,7 @@ func init() {
 			}
 		}
 	})
-	en.AddWord("测试视频").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试视频").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		ctx.Send(message.Text("测试开始"))
 		s := mysmsg.PreviewStr{
 			Icon:       "http://47.93.28.113/favicon.ico",
@@ -109,7 +109,7 @@ func init() {
 		}
 		ctx.Send(message.Text("视频测试"), mysmsg.Preview(s))
 	})
-	en.AddWord("测试组合").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试组合").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		ctx.Send(message.Text("测试开始"))
 		s := mysmsg.PreviewStr{
 			Icon:       "http://47.93.28.113/favicon.ico",
@@ -126,8 +126,13 @@ func init() {
 		}
 		ctx.Send(message.Text("视频测试"), mysmsg.Preview(s), mysmsg.Badge(ss))
 	})
-	en.AddWord("测试获取图片").Rule(mys.OnlyReply).Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text("Type:", ctx.Being.Def["Quote"].(*mys.MessageForQuote).MsgType, "Content:", ctx.Being.Def["Quote"].(*mys.MessageForQuote).Content))
+	en.AddWord("测试上传图片").MUL("mys").Handle(func(ctx *rosm.CTX) {
+		url, err := mys.UploadFile(ctx, "data/public/icon.jpg")
+		if err != nil {
+			ctx.Send(message.Text("发送失败,ERROR:", err))
+			return
+		}
+		ctx.Send(message.ImageUrl(url, 0, 0, 0))
 	})
 }
 
