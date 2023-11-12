@@ -1,6 +1,7 @@
 package test
 
 import (
+	"os"
 	"time"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
@@ -127,7 +128,8 @@ func init() {
 		ctx.Send(message.Text("视频测试"), mysmsg.Preview(s), mysmsg.Badge(ss))
 	})
 	en.AddWord("测试上传图片").MUL("mys").Handle(func(ctx *rosm.CTX) {
-		url, err := mys.UploadFile(ctx, "data/public/测试.jpg")
+		file, _ := os.ReadFile("data/public/测试.jpg")
+		url, err := mys.UploadFile(ctx, file)
 		if err != nil {
 			ctx.Send(message.Text("发送失败,ERROR:", err))
 			return

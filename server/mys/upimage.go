@@ -3,13 +3,10 @@ package mys
 import (
 	"bytes"
 	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
-	"io"
 	"mime/multipart"
 	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
@@ -19,22 +16,11 @@ import (
 
 const mysUpimageUrl = "/vila/api/bot/platform/getUploadImageParams"
 
-func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
+func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
 	log.Info("[mys]上传图片到米游社阿里云 OSS")
-	// 在这里读取本地图片文件
-	file, err := os.Open(path)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	// md5
-	md5hash := md5.New()
-	if _, err := io.Copy(md5hash, file); err != nil {
-		return "", err
-	}
+	md5hash := md5.Sum(image)
 	// 在这里获取机器人开放平台下发的 oss 参数
-	param, err := getParam(ctx, md5hash.Sum(nil), strings.ToLower(filepath.Ext(path)[1:]))
+	param, err := getParam(ctx, hex.EncodeToString(md5hash[:]), "jpg")
 	if err != nil {
 		log.Error("[mys]获取米游社阿里云 OSS 上传参数失败", err)
 		return "", err
@@ -53,15 +39,9 @@ func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 	multiPartWriter.WriteField("key", param.Data.Params.Key)
 	multiPartWriter.WriteField("policy", param.Data.Params.Policy)
 	//file最后字段
-	fileWriter, err := multiPartWriter.CreateFormFile("file", filepath.Base(path))
-	if err != nil {
-		return "", err
-	}
+	fileWriter, _ := multiPartWriter.CreateFormFile("file", "test.jpg")
+	_, _ = fileWriter.Write(image)
 
-	_, err = io.Copy(fileWriter, file)
-	if err != nil {
-		return "", err
-	}
 	multiPartWriter.Close()
 
 	data, err := web.Web(web.NewDefaultClient(), param.Data.Params.Host, http.MethodPost, func(r *http.Request) {
@@ -78,7 +58,7 @@ func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 }
 
 // mys消息的ctx,md5,扩展名
-func getParam(ctx *rosm.CTX, md5 []byte, ext string) (param *OssUpParam, err error) {
+func getParam(ctx *rosm.CTX, md5 string, ext string) (param *OssUpParam, err error) {
 	data, _ := json.Marshal(H{"md5": md5, "ext": ext})
 	data, err = web.Web(web.NewDefaultClient(), host+mysUpimageUrl, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	if err != nil {
