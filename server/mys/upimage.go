@@ -34,7 +34,7 @@ func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 		return "", err
 	}
 	// 在这里获取机器人开放平台下发的 oss 参数
-	param, err := getParam(ctx, md5hash.Sum(nil), strings.ToLower(filepath.Ext(path)))
+	param, err := getParam(ctx, md5hash.Sum(nil), strings.ToLower(filepath.Ext(path)[1:]))
 	if err != nil {
 		log.Error("[mys]获取米游社阿里云 OSS 上传参数失败", err)
 		return "", err
@@ -43,17 +43,17 @@ func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 
 	multiPartWriter := multipart.NewWriter(&requestBody)
 	// 添加表单字段
-	_ = multiPartWriter.WriteField("x:extra", param.Data.Params.CallbackVar.XExtra)
-	_ = multiPartWriter.WriteField("OSSAccessKeyId", param.Data.Params.Accessid)
-	_ = multiPartWriter.WriteField("signature", param.Data.Params.Signature)
-	_ = multiPartWriter.WriteField("success_action_status", param.Data.Params.SuccessActionStatus)
-	_ = multiPartWriter.WriteField("name", param.Data.Params.Name)
-	_ = multiPartWriter.WriteField("callback", param.Data.Params.Callback)
-	_ = multiPartWriter.WriteField("x-oss-content-type", param.Data.Params.XOssContentType)
-	_ = multiPartWriter.WriteField("key", param.Data.Params.Key)
-	_ = multiPartWriter.WriteField("policy", param.Data.Params.Policy)
-
-	fileWriter, err := multiPartWriter.CreateFormFile("file", "test.jpg")
+	multiPartWriter.WriteField("x:extra", param.Data.Params.CallbackVar.XExtra)
+	multiPartWriter.WriteField("OSSAccessKeyId", param.Data.Params.Accessid)
+	multiPartWriter.WriteField("signature", param.Data.Params.Signature)
+	multiPartWriter.WriteField("success_action_status", param.Data.Params.SuccessActionStatus)
+	multiPartWriter.WriteField("name", param.Data.Params.Name)
+	multiPartWriter.WriteField("callback", param.Data.Params.Callback)
+	multiPartWriter.WriteField("x-oss-content-type", param.Data.Params.XOssContentType)
+	multiPartWriter.WriteField("key", param.Data.Params.Key)
+	multiPartWriter.WriteField("policy", param.Data.Params.Policy)
+	//file最后字段
+	fileWriter, err := multiPartWriter.CreateFormFile("file", filepath.Base(path))
 	if err != nil {
 		return "", err
 	}
@@ -62,7 +62,7 @@ func UploadFile(ctx *rosm.CTX, path string) (imageUrl string, err error) {
 	if err != nil {
 		return "", err
 	}
-	_ = multiPartWriter.Close()
+	multiPartWriter.Close()
 
 	data, err := web.Web(web.NewDefaultClient(), param.Data.Params.Host, http.MethodPost, func(r *http.Request) {
 		r.Header.Add("Content-Type", multiPartWriter.FormDataContentType())
