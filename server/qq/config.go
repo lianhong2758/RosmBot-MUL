@@ -64,7 +64,7 @@ func NewConfig(path string) (c *Config) {
 		c = new(Config)
 		c.Master = []string{"123456"}
 		c.BotName = "雪儿"
-		c.IntentsNum = []uint32{0, 9, 30, 25}
+		c.IntentsNum = []uint32{0, 1, 30}
 		c.ShardIndex = 0
 		c.BotCard.BotID = "123456"
 		err = os.MkdirAll("config", os.ModePerm)

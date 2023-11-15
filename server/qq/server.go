@@ -17,9 +17,8 @@ func (c *Config) process(playload *WebsocketPayload) {
 		//频道私聊
 	case "DIRECT_MESSAGE_CREATE":
 		//文字子频道@机器人
-	case "AT_MESSAGE_CREATE":
 		//文字子频道全量消息（私域）
-	case "MESSAGE_CREATE":
+	case "AT_MESSAGE_CREATE", "MESSAGE_CREATE":
 		raw := new(RawMessage)
 		err := json.Unmarshal(playload.D, raw)
 		if err != nil {
@@ -52,7 +51,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 		//判断@
 		if strings.Contains(raw.Content, "<@!"+c.Ready.User.ID+">") {
 			ctx.Being.AtMe = true
-			word = strings.Replace(word, "<@!"+c.Ready.User.ID+">", "", 1)
+			word = strings.TrimSpace(strings.Replace(word, "<@!"+c.Ready.User.ID+">", "", 1))
 		}
 		log.Debugf("[debug]关键词切割结果: %s", word)
 		ctx.RunWord(word)
