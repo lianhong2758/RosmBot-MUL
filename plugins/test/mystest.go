@@ -136,6 +136,19 @@ func init() {
 		}
 		ctx.Send(message.ImageUrl(url, 0, 0, 0))
 	})
+	en.AddWord("测试按钮").MUL("mys").Handle(func(ctx *rosm.CTX) {
+		p := mysmsg.NewPanel()
+		p.Big(&mysmsg.Component{
+			ID:           "input6",
+			Text:         "大按钮",
+			Type:         1,
+			CType:        2,
+			InputContent: "/大按钮",
+			Extra:        "",
+		})
+		p.Title("测试大按钮")
+		ctx.Send(message.Custom(p))
+	})
 }
 
 //ctx有消息的全部信息,ctx.Being有简单的消息信息获取

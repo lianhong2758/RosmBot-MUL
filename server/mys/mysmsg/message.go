@@ -1,12 +1,12 @@
 package mysmsg
 
 import (
-	. "github.com/lianhong2758/RosmBot-MUL/message"
+	"github.com/lianhong2758/RosmBot-MUL/message"
 )
 
 // goto the room
-func RoomLink(VillaID, RoomID string, RoomName string) MessageSegment {
-	return MessageSegment{
+func RoomLink(VillaID, RoomID string, RoomName string) message.MessageSegment {
+	return message.MessageSegment{
 		Type: "villa_room_link",
 		Data: H{
 			"text":  RoomName,
@@ -18,8 +18,8 @@ func RoomLink(VillaID, RoomID string, RoomName string) MessageSegment {
 
 // 特殊结构
 // 下标文字
-func Badge(str BadgeStr) MessageSegment {
-	return MessageSegment{
+func Badge(str BadgeStr) message.MessageSegment {
+	return message.MessageSegment{
 		Type: "badge",
 		Data: H{
 			"badge": str,
@@ -28,8 +28,8 @@ func Badge(str BadgeStr) MessageSegment {
 }
 
 // 预览组件
-func Preview(str PreviewStr) MessageSegment {
-	return MessageSegment{
+func Preview(str PreviewStr) message.MessageSegment {
+	return message.MessageSegment{
 		Type: "view",
 		Data: H{
 			"view": str,
@@ -37,8 +37,8 @@ func Preview(str PreviewStr) MessageSegment {
 	}
 }
 
-func MYContent(content any) MessageSegment {
-	return MessageSegment{
+func MYContent(content any) message.MessageSegment {
+	return message.MessageSegment{
 		Type: "my",
 		Data: H{
 			"my": content,

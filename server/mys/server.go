@@ -86,8 +86,43 @@ func (c *Config) process(body []byte) {
 			Bot:     c,
 		}
 		ctx.RunEvent(rosm.Quick)
-	//case 6:
-	//回调审核
+	case 6:
+		//回调审核
+		log.Debugln("[debug] (接收审核回调)", info.Event.ExtendData.EventData.AuditCallback)
+		log.Infof("[info] (审核回调)[%s] 审核结果: %d", info.Event.ExtendData.EventData.AuditCallback.AuditID, info.Event.ExtendData.EventData.AuditCallback.AuditResult)
+		ctx := &rosm.CTX{
+			BotType: "mys",
+			Being: &rosm.Being{
+				RoomID2: strconv.Itoa(info.Event.ExtendData.EventData.AuditCallback.VillaID),
+				User:    &rosm.UserData{ID: strconv.Itoa(info.Event.ExtendData.EventData.AuditCallback.UserID)},
+				RoomID:  strconv.Itoa(info.Event.ExtendData.EventData.AuditCallback.RoomID),
+			},
+			Message: info,
+			Bot:     c,
+		}
+		ctx.RunEvent(rosm.Audit)
+	case 7:
+		log.Debugln("[debug] (接收回溯事件)", info.Event.ExtendData.EventData.ClickMsgComponent)
+		log.Infof("[info] (回溯事件)[%d] %d: %s", info.Event.ExtendData.EventData.ClickMsgComponent.VillaID, info.Event.ExtendData.EventData.ClickMsgComponent.UID, info.Event.ExtendData.EventData.ClickMsgComponent.Extra)
+		ctx := &rosm.CTX{
+			BotType: "mys",
+			Being: &rosm.Being{
+				Word:    info.Event.ExtendData.EventData.ClickMsgComponent.Extra,
+				RoomID2: strconv.Itoa(info.Event.ExtendData.EventData.ClickMsgComponent.VillaID),
+				User:    &rosm.UserData{ID: strconv.Itoa(info.Event.ExtendData.EventData.ClickMsgComponent.UID)},
+				RoomID:  strconv.Itoa(info.Event.ExtendData.EventData.ClickMsgComponent.RoomID),
+				MsgID:   []string{info.Event.ExtendData.EventData.ClickMsgComponent.MsgUID, info.Event.ExtendData.EventData.ClickMsgComponent.BotMsgID},
+				Def: map[string]any{
+					"extra":        info.Event.ExtendData.EventData.ClickMsgComponent.Extra,
+					"component_id": info.Event.ExtendData.EventData.ClickMsgComponent.ComponentID, // 机器人自定义的组件id
+					"template_id":  info.Event.ExtendData.EventData.ClickMsgComponent.TemplateID,  // 如果该组件模板为已创建模板，则template_id不为0
+				},
+			},
+			Message: info,
+			Bot:     c,
+		}
+		ctx.RunEvent(rosm.Click)
+
 	case 2:
 		log.Debugln("[debug] (接收消息)", info.Event.ExtendData.EventData.SendMessage.Content)
 		u := new(MessageContent)

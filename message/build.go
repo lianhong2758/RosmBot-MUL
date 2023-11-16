@@ -143,3 +143,13 @@ func Reply() MessageSegment {
 		Type: "replyuser",
 	}
 }
+
+// 自定义全量消息内容
+func Custom(messageData any) MessageSegment {
+	return MessageSegment{
+		Type: "custom",
+		Data: H{
+			"data": messageData,
+		},
+	}
+}
