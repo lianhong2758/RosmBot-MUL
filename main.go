@@ -9,7 +9,8 @@ import (
 	_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
 
 	//_ "github.com/lianhong2758/RosmBot-MUL/plugins/myplugin"
-	_ "github.com/lianhong2758/RosmBot-MUL/plugins/myplugin/gscore"
+	_ "github.com/lianhong2758/RosmBot-MUL/plugins/chatgpt"
+	_ "github.com/lianhong2758/RosmBot-MUL/plugins/gscore"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/test"
 )
 
