@@ -94,11 +94,7 @@ func (p *PluginData) AddRex(rex string) *Matcher {
 func (p *PluginData) AddOther(types int) *Matcher {
 	m := new(Matcher)
 	m.block = false
-	if _, ok := caseEvent[types]; ok {
-		caseEvent[types] = append(caseEvent[types], m)
-	} else {
-		caseEvent[types] = []*Matcher{m}
-	}
+	caseEvent[types] = append(caseEvent[types], m)
 	p.Matchers = append(p.Matchers, m)
 	m.PluginNode = p
 	return m
