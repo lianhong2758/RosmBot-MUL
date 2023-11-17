@@ -35,10 +35,10 @@ func init() {
 			return
 		}
 		r := ctx.Send(message.Custom(info))
-		switch r.(type) {
+		switch t := r.(type) {
 		case *mys.SendState:
-			if r.(*mys.SendState).ApiCode.Retcode != 0 {
-				ctx.Send(message.Text("发送失败: ", r.(*mys.SendState).ApiCode.Message))
+			if t.ApiCode.Retcode != 0 {
+				ctx.Send(message.Text("发送失败: ", t.ApiCode.Message))
 			}
 		}
 	})
