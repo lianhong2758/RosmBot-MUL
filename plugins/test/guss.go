@@ -17,7 +17,7 @@ func init() {
 	})
 	en.AddWord("开始猜数字").Handle(func(ctx *rosm.CTX) {
 		num := strconv.Itoa(rand.Intn(9) + 1)
-		next, stop := ctx.GetNextUserMess()
+		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		defer stop()
 		ctx.Send(message.Reply(), message.Text("开始猜数字,大小为1-10,你有3次机会"))
 		for i := 0; i < 3; i++ {

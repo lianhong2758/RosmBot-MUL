@@ -3,12 +3,14 @@ module github.com/lianhong2758/RosmBot-MUL
 go 1.20
 
 require (
+	github.com/FloatTech/AnimeAPI v1.7.0
 	github.com/FloatTech/floatbox v0.0.0-20230331064925-9af336a84944
 	github.com/FloatTech/gg v1.1.2
-	github.com/FloatTech/imgfactory v0.2.1
-	github.com/FloatTech/rendercard v0.0.9
+	github.com/FloatTech/imgfactory v0.2.2-0.20230315152233-49741fc994f9
+	github.com/FloatTech/rendercard v0.0.10-0.20230223064326-45d29fa4ede9
 	github.com/FloatTech/sqlite v1.6.3
 	github.com/FloatTech/ttl v0.0.0-20220715042055-15612be72f5b
+	github.com/FloatTech/zbputils v1.7.0
 	github.com/RomiChan/websocket v1.4.3-0.20220227141055-9b2c6168c9c5
 	github.com/disintegration/imaging v1.6.2
 	github.com/gin-gonic/gin v1.9.1
@@ -16,11 +18,12 @@ require (
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/tidwall/gjson v1.14.4
-	github.com/wdvxdr1123/ZeroBot v1.6.11
+	github.com/wdvxdr1123/ZeroBot v1.7.4
 	golang.org/x/sys v0.8.0
 )
 
 require (
+	github.com/FloatTech/zbpctrl v1.5.3-0.20230514154630-b74e6fcca380 // indirect
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect
 	github.com/RomiChan/syncx v0.0.0-20221202055724-5f842c53020e // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
@@ -29,7 +32,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/ericpauley/go-quantize v0.0.0-20200331213906-ae555eb2afa4 // indirect
 	github.com/fumiama/cron v1.3.0 // indirect
-	github.com/fumiama/go-base16384 v1.6.4 // indirect
+	github.com/fumiama/go-base16384 v1.7.0 // indirect
 	github.com/fumiama/go-registry v0.2.6 // indirect
 	github.com/fumiama/go-simple-protobuf v0.1.0 // indirect
 	github.com/fumiama/gofastTEA v0.0.10 // indirect
@@ -46,6 +49,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mmcdole/goxpp v1.1.0 // indirect
@@ -54,6 +58,7 @@ require (
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20220927061507-ef77025ab5aa // indirect
+	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

@@ -1,7 +1,12 @@
 package rosm
 
+// 判断rule
 func (m *Matcher) RulePass(ctx *CTX) bool {
-	for _, v := range m.rules {
+	return rulePass(ctx, m.rules...)
+}
+
+func rulePass(ctx *CTX, rs ...Rule) bool {
+	for _, v := range rs {
 		if !v(ctx) {
 			return false
 		}
@@ -23,5 +28,12 @@ func OnlyMaster() Rule {
 			}
 		}
 		return false
+	}
+}
+
+// 用于getnext
+func OnlyTheUser(id string) Rule {
+	return func(ctx *CTX) bool {
+		return id == ctx.Being.User.ID
 	}
 }

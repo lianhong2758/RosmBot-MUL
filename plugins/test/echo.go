@@ -5,7 +5,7 @@ import (
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
+	"github.com/lianhong2758/RosmBot-MUL/server/mys"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
@@ -34,6 +34,12 @@ func init() {
 			ctx.Send(message.Text("解析失败", err))
 			return
 		}
-		ctx.Send(mysmsg.MYContent(info))
+		r := ctx.Send(message.Custom(info))
+		switch t := r.(type) {
+		case *mys.SendState:
+			if t.ApiCode.Retcode != 0 {
+				ctx.Send(message.Text("发送失败: ", t.ApiCode.Message))
+			}
+		}
 	})
 }

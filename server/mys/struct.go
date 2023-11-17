@@ -23,12 +23,13 @@ type InfoSTR struct {
 
 // 所有事件
 type EventData struct {
-	SendMessage      sendmessage      `json:"SendMessage"`
-	JoinVilla        joinVilla        `json:"JoinVilla"`
-	CreateRobot      changeRobot      `json:"CreateRobot"`
-	DeleteRobot      changeRobot      `json:"DeleteRobot"`
-	AddQuickEmoticon addQuickEmoticon `json:"AddQuickEmoticon"`
-	AuditCallback    auditCallback    `json:"AuditCallback"`
+	SendMessage       sendmessage       `json:"SendMessage"`
+	JoinVilla         joinVilla         `json:"JoinVilla"`
+	CreateRobot       changeRobot       `json:"CreateRobot"`
+	DeleteRobot       changeRobot       `json:"DeleteRobot"`
+	AddQuickEmoticon  addQuickEmoticon  `json:"AddQuickEmoticon"`
+	AuditCallback     auditCallback     `json:"AuditCallback"`
+	ClickMsgComponent clickMsgComponent `json:"ClickMsgComponent"`
 }
 
 // 机器人相关信息
@@ -100,6 +101,18 @@ type auditCallback struct {
 	UserID      int    `json:"user_id"`
 	PassThrough string `json:"pass_through"`
 	AuditResult int    `json:"audit_result"`
+}
+
+// 按钮回溯
+type clickMsgComponent struct {
+	VillaID     int    `json:"villa_id"`
+	RoomID      int    `json:"room_id"`
+	UID         int    `json:"uid"`
+	MsgUID      string `json:"msg_uid"`
+	BotMsgID    string `json:"bot_msg_id"`
+	ComponentID string `json:"component_id"`
+	TemplateID  string `json:"template_id"`
+	Extra       string `json:"extra"`
 }
 
 // 接收的原始消息,解析

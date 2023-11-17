@@ -17,7 +17,6 @@ var botMap = map[string]*Config{}
 // 默认值
 type Token struct {
 	*rosm.BotCard
-	BotID          string `json:"bot_id"`
 	BotSecret      string `json:"bot_secret"`
 	BotPubKey      string `json:"bot_pub_key"`
 	BotSecretConst string `json:"-"`
@@ -40,6 +39,7 @@ func NewConfig(path string) (c *Config) {
 		c.BotToken.BotPubKey = "-----BEGIN PUBLIC KEY----- abcabc123 -----END PUBLIC KEY----- "
 		c.EventPath = "/"
 		c.Port = "0.0.0.0:80"
+		c.BotToken.BotID = "bot_..."
 
 		err = os.MkdirAll("config", os.ModePerm)
 		if err != nil {

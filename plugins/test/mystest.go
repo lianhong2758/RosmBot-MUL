@@ -1,12 +1,14 @@
 package test
 
 import (
+	"os"
 	"time"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
+	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
 func init() {
@@ -20,7 +22,7 @@ func init() {
 			"- 测试表情",
 	})
 	en.AddWord("测试").Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text("你好"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mysmsg.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
+		ctx.Send(message.Text("你好"), mysmsg.BoldText(" 加粗"), mysmsg.ItalicText(" 斜体"), mysmsg.DeleteText(" 删除线"), mysmsg.UnderlineText(" 下划线"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mysmsg.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
 	})
 	en.AddWord("测试下标跳转房间").Handle(func(ctx *rosm.CTX) {
 		s := mysmsg.BadgeStr{
@@ -51,7 +53,7 @@ func init() {
 		ctx.Send(message.Text("测试"), mysmsg.Preview(s))
 	})
 	en.AddWord("测试全体next").Handle(func(ctx *rosm.CTX) {
-		next, stop := ctx.GetNextAllMess()
+		next, stop := ctx.GetNext(rosm.AllMessage, true)
 		defer stop()
 		ctx.Send(message.Text("测试开始"))
 		for i := 0; i < 3; i++ {
@@ -65,7 +67,7 @@ func init() {
 		}
 	})
 	en.AddWord("测试个人next").Handle(func(ctx *rosm.CTX) {
-		next, stop := ctx.GetNextUserMess()
+		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		defer stop()
 		ctx.Send(message.Text("测试开始"))
 		for i := 0; i < 3; i++ {
@@ -80,7 +82,9 @@ func init() {
 	})
 	en.AddWord("测试表态").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		result := ctx.Send(message.Text("测试开始,表态此条消息"))
-		next, stop := mys.GetNextAllEmoticon(ctx, result.(*mys.SendState).Data.BotMsgID)
+		next, stop := ctx.GetNext(rosm.Quick, true, func(ctx *rosm.CTX) bool {
+			return result.(*mys.SendState).Data.BotMsgID == ctx.Message.(*mys.InfoSTR).Event.ExtendData.EventData.AddQuickEmoticon.BotMsgID
+		})
 		defer stop()
 		for i := 0; i < 3; i++ {
 			select {
@@ -92,7 +96,7 @@ func init() {
 			}
 		}
 	})
-	en.AddWord("测试视频").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试视频").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		ctx.Send(message.Text("测试开始"))
 		s := mysmsg.PreviewStr{
 			Icon:       "http://47.93.28.113/favicon.ico",
@@ -104,7 +108,7 @@ func init() {
 		}
 		ctx.Send(message.Text("视频测试"), mysmsg.Preview(s))
 	})
-	en.AddWord("测试组合").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试组合").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		ctx.Send(message.Text("测试开始"))
 		s := mysmsg.PreviewStr{
 			Icon:       "http://47.93.28.113/favicon.ico",
@@ -121,8 +125,27 @@ func init() {
 		}
 		ctx.Send(message.Text("视频测试"), mysmsg.Preview(s), mysmsg.Badge(ss))
 	})
-	en.AddWord("测试获取图片").Rule(mys.OnlyReply).Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text("Type:", ctx.Being.Def["Quote"].(*mys.MessageForQuote).MsgType, "Content:", ctx.Being.Def["Quote"].(*mys.MessageForQuote).Content))
+	en.AddWord("测试上传图片").MUL("mys").Handle(func(ctx *rosm.CTX) {
+		file, _ := os.ReadFile("data/public/测试.jpg")
+		url, err := mys.UploadFile(ctx, file)
+		if err != nil {
+			ctx.Send(message.Text("发送失败,ERROR:", err))
+			return
+		}
+		ctx.Send(message.ImageUrl(url, 0, 0, 0))
+	})
+	en.AddWord("测试按钮").MUL("mys").Handle(func(ctx *rosm.CTX) {
+		p := mysmsg.NewPanel()
+		p.Big(&mysmsg.Component{
+			ID:           "input6",
+			Text:         "大按钮",
+			Type:         1,
+			CType:        2,
+			InputContent: "/大按钮",
+			Extra:        "",
+		})
+		p.TextBuild(ctx, message.Text("测试图片+按钮"), message.ImageUrlWithText(web.UpImgUrl("http://47.93.28.113/favicon.ico"), 0, 0, 0, ""))
+		ctx.Send(message.Custom(p))
 	})
 }
 

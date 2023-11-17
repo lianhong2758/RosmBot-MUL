@@ -1,46 +1,41 @@
 package rosm
 
-import ()
+import (
+	"time"
 
-var (
-	nextMessList = map[string]chan *CTX{}
-	//nextEmoticonList = map[string]chan *CTX{}
+	"github.com/sirupsen/logrus"
 )
 
-// 获取本房间全体的下一句话
-func (ctx *CTX) GetNextAllMess() (chan *CTX, func()) {
+var nextList = map[EventType]map[int]*Matcher{}
+
+// 获取下一事件
+func (ctx *CTX) GetNext(types EventType, SetBlock bool, rs ...Rule) (chan *CTX, func()) {
 	next := make(chan *CTX, 1)
-	id := ctx.Being.RoomID + ctx.Being.RoomID2
-	nextMessList[id] = next
+	ids := int(0xfffffff & time.Now().Unix())
+	m := &Matcher{block: SetBlock, rules: rs, nestchan: next}
+	if nextList[types] != nil {
+		nextList[types][ids] = m
+	} else {
+		nextList[types] = map[int]*Matcher{ids: m}
+	}
 	return next, func() {
 		close(next)
-		delete(nextMessList, id)
+		delete(nextList[types], ids)
 	}
 }
 
-// 获取本房间该用户的下一句话
-func (ctx *CTX) GetNextUserMess() (chan *CTX, func()) {
-	next := make(chan *CTX, 1)
-	id := ctx.Being.RoomID + ctx.Being.RoomID2 + ctx.Being.User.ID
-	nextMessList[id] = next
-	return next, func() {
-		close(next)
-		delete(nextMessList, id)
-	}
-}
-
-func (ctx *CTX) sendNext() (block bool) {
-	if len(nextMessList) == 0 {
+func (ctx *CTX) sendNext(types EventType) (block bool) {
+	if len(nextList) == 0 || nextList[types] == nil {
 		return false
 	}
-	//先匹配个人
-	if c, ok := nextMessList[ctx.Being.RoomID+ctx.Being.RoomID2+ctx.Being.User.ID]; ok {
-		c <- ctx
-		return true
-	}
-	if c, ok := nextMessList[ctx.Being.RoomID+ctx.Being.RoomID2]; ok {
-		c <- ctx
-		return true
+	logrus.Debug("[next]匹配事件type", types)
+	for _, v := range nextList[types] {
+		if v.RulePass(ctx) {
+			v.nestchan <- ctx
+			if v.block {
+				return true
+			}
+		}
 	}
 	return false
 }

@@ -186,7 +186,7 @@ func (c *Config) Connect() {
 		if err != nil {
 			log.Warnln("[sign]解析 EventReady 时出现错误:", err)
 			_ = conn.Close()
-			time.Sleep(2 * time.Second) // 等待两秒后重新连接
+			time.Sleep(3 * time.Second) // 等待3秒后重新连接
 			continue
 		}
 		atomic.StoreUint32(&c.heartbeat, hb)
