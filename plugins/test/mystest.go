@@ -8,6 +8,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
+	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
 func init() {
@@ -21,7 +22,7 @@ func init() {
 			"- 测试表情",
 	})
 	en.AddWord("测试").Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text("你好"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mysmsg.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
+		ctx.Send(message.Text("你好"), mysmsg.BoldText(" 加粗"), mysmsg.ItalicText(" 斜体"), mysmsg.DeleteText(" 删除线"), mysmsg.UnderlineText(" 下划线"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mysmsg.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
 	})
 	en.AddWord("测试下标跳转房间").Handle(func(ctx *rosm.CTX) {
 		s := mysmsg.BadgeStr{
@@ -146,7 +147,7 @@ func init() {
 			InputContent: "/大按钮",
 			Extra:        "",
 		})
-		p.Title("测试大按钮")
+		p.TextBuild(ctx, message.Text("测试图片+按钮"), message.ImageUrlWithText(web.UpImgUrl("http://47.93.28.113/favicon.ico"), 0, 0, 0, ""))
 		ctx.Send(message.Custom(p))
 	})
 }

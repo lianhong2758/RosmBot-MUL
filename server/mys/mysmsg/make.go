@@ -21,6 +21,14 @@ func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo a
 			continue
 		case "text":
 			msgContent.Text += text
+		case "bold", "italic", "strikethrough", "underline":
+			t := Entities{
+				Length: len(utf16.Encode([]rune(text))),
+				Offset: len(utf16.Encode([]rune(msgContent.Text))),
+				Entity: H{"type": "style", "font_style": message.Type},
+			}
+			msgContent.Entities = append(msgContent.Entities, t)
+			msgContent.Text += text
 		case "link":
 			t := Entities{
 				Length: len(utf16.Encode([]rune(text))),
