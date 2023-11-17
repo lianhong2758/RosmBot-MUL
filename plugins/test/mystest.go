@@ -83,10 +83,7 @@ func init() {
 	en.AddWord("测试表态").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		result := ctx.Send(message.Text("测试开始,表态此条消息"))
 		next, stop := ctx.GetNext(rosm.Quick, true, func(ctx *rosm.CTX) bool {
-			if result.(*mys.SendState).Data.BotMsgID == ctx.Message.(*mys.InfoSTR).Event.ExtendData.EventData.AddQuickEmoticon.BotMsgID {
-				return true
-			}
-			return false
+			return result.(*mys.SendState).Data.BotMsgID == ctx.Message.(*mys.InfoSTR).Event.ExtendData.EventData.AddQuickEmoticon.BotMsgID
 		})
 		defer stop()
 		for i := 0; i < 3; i++ {
