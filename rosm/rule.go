@@ -34,9 +34,6 @@ func OnlyMaster() Rule {
 // 用于getnext
 func OnlyTheUser(id string) Rule {
 	return func(ctx *CTX) bool {
-		if id == ctx.Being.User.ID {
-			return true
-		}
-		return false
+		return id == ctx.Being.User.ID
 	}
 }
