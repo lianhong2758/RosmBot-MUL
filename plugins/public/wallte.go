@@ -77,10 +77,6 @@ func (sql *Storage) getWalletOf(uid string) (Wallet Wallet) {
 
 // 获取钱包数据组
 func (sql *Storage) getGroupWalletOf(uids []string, issorted bool) (wallets []Wallet, err error) {
-	uidstr := make([]string, 0, len(uids))
-	for _, uid := range uids {
-		uidstr = append(uidstr, uid)
-	}
 	sql.RLock()
 	defer sql.RUnlock()
 	wallets = make([]Wallet, 0, len(uids))
@@ -89,7 +85,7 @@ func (sql *Storage) getGroupWalletOf(uids []string, issorted bool) (wallets []Wa
 		sort = "DESC"
 	}
 	info := Wallet{}
-	err = sql.db.FindFor("storage", &info, "where uid IN ("+strings.Join(uidstr, ", ")+") ORDER BY money "+sort, func() error {
+	err = sql.db.FindFor("storage", &info, "where uid IN ("+strings.Join(uids, ", ")+") ORDER BY money "+sort, func() error {
 		wallets = append(wallets, info)
 		return nil
 	})
