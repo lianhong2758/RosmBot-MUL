@@ -14,7 +14,6 @@ require (
 	github.com/RomiChan/websocket v1.4.3-0.20220227141055-9b2c6168c9c5
 	github.com/disintegration/imaging v1.6.2
 	github.com/gin-gonic/gin v1.9.1
-	github.com/gorilla/websocket v1.5.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/sirupsen/logrus v1.9.0
