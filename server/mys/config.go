@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"os"
 	"strings"
+	"sync"
 
+	"github.com/RomiChan/websocket"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	log "github.com/sirupsen/logrus"
 )
@@ -22,9 +24,14 @@ type Token struct {
 	BotSecretConst string `json:"-"`
 }
 type Config struct {
+	Protocol  string `json:"protocol"` //协议:ws/http
 	BotToken  Token  `json:"token"`
 	EventPath string `json:"eventpath,omitempty"`
 	Port      string `json:"port,omitempty"`
+
+	wr     *WebsocketInfoResp //获取的WebsocketInfoResp
+	conn   *websocket.Conn    // conn 目前的 wss 连接
+	hbonce sync.Once          // hbonce 保证仅执行一次 heartbeat
 }
 
 func (c *Config) Card() *rosm.BotCard {
@@ -35,6 +42,7 @@ func NewConfig(path string) (c *Config) {
 	if err != nil {
 		c = new(Config)
 		//初始配置
+		c.Protocol = "http"
 		c.BotToken.Master = []string{"123456"}
 		c.BotToken.BotPubKey = "-----BEGIN PUBLIC KEY----- abcabc123 -----END PUBLIC KEY----- "
 		c.EventPath = "/"
