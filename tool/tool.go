@@ -33,12 +33,12 @@ func String(ID int64) string {
 	return strconv.FormatInt(ID, 10)
 }
 
-// 20位以下id字符串合并
+// 20位以下id字符串合并,结果称为string1
 func String221(one, two string) string {
 	return one + strings.Repeat(" ", 20-len(one)) + two + strings.Repeat(" ", 20-len(two))
 }
 
-// 20位以下id字符串拆分
+// 20位以下id字符串拆分,结果称为string2
 func String122(only string) (one, two string) {
 	return strings.TrimRight(only[:20], " "), strings.TrimRight(only[20:], " ")
 }
@@ -54,4 +54,14 @@ func Int64_122(x int64) (one, two int) {
 	two = int(x >> 28)
 	one = int(x & 0xfffffff)
 	return
+}
+
+// string221结果和type的组合数据
+func StringType21(types, string1 string) string {
+	return types + string1
+}
+
+// 解析string221结果和type的组合数据
+func StringType12(value string) (types, string1 string) {
+	return value[:len(value)-40], value[len(value)-40:]
 }
