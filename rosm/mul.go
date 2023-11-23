@@ -31,6 +31,7 @@ type MUL struct {
 }
 
 func Listen() {
+	plugindbinit()
 	for mulData := range MULChan {
 		log.Infof("[mul]新增注册,平台: %s,昵称: %s,BotID: %s", mulData.Types, mulData.Name, mulData.BotID)
 	}
