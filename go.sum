@@ -1,5 +1,3 @@
-github.com/FloatTech/AnimeAPI v1.7.0 h1:CX1bTjHbVZTYlvppzrWFyLzIFzRVrIDxJmtbWo/Ew6Y=
-github.com/FloatTech/AnimeAPI v1.7.0/go.mod h1:6vYu7bW5gPQsBnXB+I6yk+eJQaaAwusoQ/I/wQMwOAI=
 github.com/FloatTech/floatbox v0.0.0-20230331064925-9af336a84944 h1:/eQoMa6Aj3coF5F7yhzZe1+SzX6SItul7MW8//pl18o=
 github.com/FloatTech/floatbox v0.0.0-20230331064925-9af336a84944/go.mod h1:FwQm6wk+b4wuW54KCKn3zccMX47Q5apnHD/Yakzv0fI=
 github.com/FloatTech/gg v1.1.2 h1:YolgOYg3uDHc1+g0bLtt6QuRA/pvLn+b9IBCIhOOX88=
@@ -12,10 +10,6 @@ github.com/FloatTech/sqlite v1.6.3 h1:MQkqBNlkPuCoKQQgoNLuTL/2Ci3tBTFAnVYBdD0Wy4
 github.com/FloatTech/sqlite v1.6.3/go.mod h1:zFbHzRfB+CJ+VidfjuVbrcin3DAz283F7hF1hIeHzpY=
 github.com/FloatTech/ttl v0.0.0-20220715042055-15612be72f5b h1:tvciXWq2nuvTbFeJGLDNIdRX3BI546D3O7k7vrVueZw=
 github.com/FloatTech/ttl v0.0.0-20220715042055-15612be72f5b/go.mod h1:fHZFWGquNXuHttu9dUYoKuNbm3dzLETnIOnm1muSfDs=
-github.com/FloatTech/zbpctrl v1.5.3-0.20230514154630-b74e6fcca380 h1:qmwoT8xVaND01aCdwy+5/j6z490nehQWZAVyTBN8ahU=
-github.com/FloatTech/zbpctrl v1.5.3-0.20230514154630-b74e6fcca380/go.mod h1:gkGC1C1eEUd/Ld/ja68zas5j2ZktIZCdnj2FMaM+Au0=
-github.com/FloatTech/zbputils v1.7.0 h1:m3L3ysH0ts6lMxhn3IKbSSXIwLfj7D8Pa884U/Uq2iY=
-github.com/FloatTech/zbputils v1.7.0/go.mod h1:JRnGR7EGeEQgxOs+c0rZAhrS9Es2BTcGHdIDHXIPRzQ=
 github.com/PuerkitoBio/goquery v1.5.1/go.mod h1:GsLWisAFVj4WgDibEWF4pvYnkVQBpKBKeU+7zCJoLcc=
 github.com/PuerkitoBio/goquery v1.8.0 h1:PJTF7AmFCFKk1N6V6jmKfrNH9tV5pNE6lZMkG0gta/U=
 github.com/PuerkitoBio/goquery v1.8.0/go.mod h1:ypIiRMtY7COPGk+I/YbZLbxsxn9g5ejnI2HSMtkjZvI=
@@ -102,7 +96,11 @@ github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHm
 github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
 github.com/klauspost/cpuid/v2 v2.2.4 h1:acbojRNwl3o09bUq+yDCtZFc1aiwaAAxtcn8YkZXnvk=
 github.com/klauspost/cpuid/v2 v2.2.4/go.mod h1:RVVoqg1df56z8g3pUjL/3lE5UfnlrJX8tyFgg4nqhuY=
+github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.3.0 h1:WgNl7dwNpEZ6jJ9k1snq4pZsg7DOEN8hP9Xw0Tsjwk0=
+github.com/kr/pretty v0.3.0/go.mod h1:640gp4NfQd8pI5XOwp5fnNeVWj67G7CFk/SaSQn7NBk=
+github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
 github.com/leodido/go-urn v1.2.4 h1:XlAE/cm/ms7TE/VMVoduSpNBoyc2dOxHs5MZSwAN63Q=
@@ -128,6 +126,7 @@ github.com/pelletier/go-toml/v2 v2.0.8 h1:0ctb6s9mE31h0/lhu+J6OPmVeDxJn+kYnJc2jZ
 github.com/pelletier/go-toml/v2 v2.0.8/go.mod h1:vuYfssBdrU2XDZ9bYydBu6t+6a6PYNcZljzZR9VXg+4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/rogpeppe/go-internal v1.6.1/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDNXVBh4M=
 github.com/rogpeppe/go-internal v1.11.0/go.mod h1:ddIwULY96R17DhadqLgMfk9H9tvdUzkipdSkR5nkCZA=
 github.com/sirupsen/logrus v1.9.0 h1:trlNQbNUG3OdDrDil03MCb1H2o9nJ1x4/5LYw7byDE0=
@@ -217,6 +216,8 @@ google.golang.org/protobuf v1.31.0 h1:g0LDEJHgrBl9N9r17Ru3sqWhkIx2NB67okBHPwC7hs
 google.golang.org/protobuf v1.31.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 h1:qIbj1fsPNlZgppZ+VLlY7N33q108Sa+fhmuc+sWQYwY=
+gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/errgo.v2 v2.1.0/go.mod h1:hNsd1EY+bozCKY1Ytp96fpM3vjJbqLJn88ws8XvfDNI=
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
