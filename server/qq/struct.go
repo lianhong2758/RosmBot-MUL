@@ -68,6 +68,7 @@ type Mention struct {
 	Username string `json:"username"`
 }
 
+// 群聊消息
 type RawGroupMessage struct {
 	Author struct {
 		ID           string `json:"id"`
@@ -78,4 +79,14 @@ type RawGroupMessage struct {
 	GroupOpenid string    `json:"group_openid"`
 	ID          string    `json:"id"`
 	Timestamp   time.Time `json:"timestamp"`
+}
+
+// 私聊消息
+type RawPrivateMessage struct {
+	Author struct {
+		UserOpenid string `json:"user_openid"`
+	} `json:"author"`
+	Content   string    `json:"content"`
+	ID        string    `json:"id"`
+	Timestamp time.Time `json:"timestamp"`
 }
