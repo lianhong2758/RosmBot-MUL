@@ -43,7 +43,8 @@ type WebsocketPayload struct {
 	T  string          `json:"t,omitempty"`
 }
 
-type RawMessage struct {
+// guild message
+type RawGuildMessage struct {
 	Author    *User  `json:"author"`
 	ChannelID string `json:"channel_id"`
 	Content   string `json:"content"`
@@ -59,9 +60,33 @@ type RawMessage struct {
 	SeqInChannel string    `json:"seq_in_channel"`
 	Timestamp    time.Time `json:"timestamp"`
 }
+
 type Mention struct {
 	Avatar   string `json:"avatar"`
 	Bot      bool   `json:"bot"`
 	ID       string `json:"id"`
 	Username string `json:"username"`
+}
+
+// 群聊消息
+type RawGroupMessage struct {
+	Author struct {
+		ID           string `json:"id"`
+		MemberOpenid string `json:"member_openid"`
+	} `json:"author"`
+	Content     string    `json:"content"`
+	GroupID     string    `json:"group_id"`
+	GroupOpenid string    `json:"group_openid"`
+	ID          string    `json:"id"`
+	Timestamp   time.Time `json:"timestamp"`
+}
+
+// 私聊消息
+type RawPrivateMessage struct {
+	Author struct {
+		UserOpenid string `json:"user_openid"`
+	} `json:"author"`
+	Content   string    `json:"content"`
+	ID        string    `json:"id"`
+	Timestamp time.Time `json:"timestamp"`
 }

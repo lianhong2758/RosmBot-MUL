@@ -5,9 +5,12 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"os"
 	"strings"
+	"sync"
 
+	"github.com/RomiChan/websocket"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	log "github.com/sirupsen/logrus"
 )
@@ -22,9 +25,14 @@ type Token struct {
 	BotSecretConst string `json:"-"`
 }
 type Config struct {
+	Protocol  string `json:"protocol"` //协议:ws/http
 	BotToken  Token  `json:"token"`
-	EventPath string `json:"eventpath,omitempty"`
-	Port      string `json:"port,omitempty"`
+	EventPath string `json:"eventpath,omitempty"` //路径
+	Port      string `json:"port,omitempty"`      //端口
+
+	wr     *WebsocketInfoResp //获取的WebsocketInfoResp
+	conn   *websocket.Conn    // conn 目前的 wss 连接
+	hbonce sync.Once          // hbonce 保证仅执行一次 heartbeat
 }
 
 func (c *Config) Card() *rosm.BotCard {
@@ -37,10 +45,28 @@ func NewConfig(path string) (c *Config) {
 		//初始配置
 		c.BotToken.Master = []string{"123456"}
 		c.BotToken.BotPubKey = "-----BEGIN PUBLIC KEY----- abcabc123 -----END PUBLIC KEY----- "
-		c.EventPath = "/"
-		c.Port = "0.0.0.0:80"
+		c.EventPath = "/rosmbot"
+		c.Port = "0.0.0.0:10001"
 		c.BotToken.BotID = "bot_..."
 
+		//#######################################
+		//输入
+		fmt.Println("请输入选择的连接方式:\n0:http连接\n1:ws正向连接")
+		for {
+			var t int
+			fmt.Scanln(&t)
+			switch t {
+			case 0:
+				c.Protocol = "http"
+			case 1:
+				c.Protocol = "ws"
+			default:
+				fmt.Println("输入错误!重新输入:")
+				continue
+			}
+			break
+		}
+		//#######################################
 		err = os.MkdirAll("config", os.ModePerm)
 		if err != nil {
 			log.Fatalln("[qq]无法创建 config 目录: ", err)
@@ -50,7 +76,8 @@ func NewConfig(path string) (c *Config) {
 		if err != nil {
 			log.Fatalln("[mys]创建config失败: ", err)
 		}
-		log.Fatalln("创建初始化配置完成\n请填写config/mys.json文件后重新运行本程序\n字段解释:\ntoken:机器人基本信息:\neventpath:回调路径\nport:端口")
+		log.Infoln("创建初始化配置完成\n请填写config/mys.json文件后重新运行本程序\n字段解释:\ntoken:机器人基本信息:\neventpath:回调路径\nport:端口")
+		os.Exit(0)
 	}
 	c = new(Config)
 	err = json.Unmarshal(data, c)

@@ -24,18 +24,18 @@ func (i *InfoContent) Byte() (info []byte) {
 }
 
 // 小型组件
-func (i *InfoContent) Small(c *Component) {
-	add(&i.Panel.SmallComponentGroupList, c, 3)
+func (i *InfoContent) Small(nextLine bool, c *Component) {
+	add(&i.Panel.SmallComponentGroupList, c, 3, nextLine)
 }
 
 // 中型组件
-func (i *InfoContent) Mid(c *Component) {
-	add(&i.Panel.MidComponentGroupList, c, 2)
+func (i *InfoContent) Mid(nextLine bool, c *Component) {
+	add(&i.Panel.MidComponentGroupList, c, 2, nextLine)
 }
 
 // 大型组件
-func (i *InfoContent) Big(c *Component) {
-	add(&i.Panel.BigComponentGroupList, c, 1)
+func (i *InfoContent) Big(nextLine bool, c *Component) {
+	add(&i.Panel.BigComponentGroupList, c, 1, nextLine)
 }
 
 // 模板id
@@ -53,12 +53,12 @@ func (i *InfoContent) Title(title ...any) {
 		Text: fmt.Sprint(title...),
 	}
 }
-func add(arr *[][]Component, c *Component, maxLen int) {
+func add(arr *[][]Component, c *Component, maxLen int, nextLine bool) {
 	// 获取最后一个子数组
 	groupIndex := len(*arr) - 1
 
 	// 如果当前组已满或者没有组，则创建新的组
-	if groupIndex < 0 || len((*arr)[groupIndex]) == maxLen {
+	if groupIndex < 0 || len((*arr)[groupIndex]) == maxLen || nextLine {
 		*arr = append(*arr, []Component{*c})
 	} else {
 		// 向当前组添加组件

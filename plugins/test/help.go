@@ -10,7 +10,7 @@ import (
 func init() {
 	en := rosm.Register(&rosm.PluginData{
 		Name: "帮助菜单",
-		Help: "- /help",
+		Help: "- /help\n",
 	})
 	en.AddWord("/help", "/帮助").Handle(func(ctx *rosm.CTX) {
 		var msg strings.Builder

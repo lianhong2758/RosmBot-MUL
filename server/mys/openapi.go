@@ -19,6 +19,7 @@ const (
 	recallURL      = "/vila/api/bot/platform/recallMessage"
 	deleteUserURL  = "/vila/api/bot/platform/deleteVillaMember"
 	getVillaURL    = "/vila/api/bot/platform/getVilla"
+	getWSurl       = "http://devapi-takumi.mihoyo.com/vila/api/bot/platform/getWebsocketInfo"
 )
 
 // 获取房间列表
@@ -44,6 +45,15 @@ func GetUserData(ctx *rosm.CTX, uid string) (r *UserData, err error) {
 	r = new(UserData)
 	err = json.Unmarshal(data, r)
 	return
+}
+
+// 获取用户名
+func GetUserName(ctx *rosm.CTX, uid string) string {
+	r, err := GetUserData(ctx, uid)
+	if err != nil {
+		return ""
+	}
+	return r.Data.Member.Basic.Nickname
 }
 
 // 踢人

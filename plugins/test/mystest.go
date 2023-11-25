@@ -136,7 +136,7 @@ func init() {
 	})
 	en.AddWord("测试按钮").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		p := mysmsg.NewPanel()
-		p.Big(&mysmsg.Component{
+		p.Big(false, &mysmsg.Component{
 			ID:           "input6",
 			Text:         "大按钮",
 			Type:         1,

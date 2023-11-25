@@ -18,6 +18,7 @@ type (
 )
 
 type PluginData struct {
+	DefaultOff bool //是否默认禁用
 	Help       string
 	Name       string
 	DataFolder string //"data/xxx/"+
@@ -108,6 +109,9 @@ func (m *Matcher) MUL(name ...string) *Matcher {
 
 // 注册Handle
 func (m *Matcher) Handle(h Handler) {
+	//加载默认的rule
+	m.rules = append(m.rules, m.mulPass(), PluginIsOn(m))
+	//执行hander
 	m.handler = h
 }
 
@@ -118,7 +122,7 @@ func (m *Matcher) SetBlock(ok bool) *Matcher {
 }
 
 func (m *Matcher) Rule(r ...Rule) *Matcher {
-	m.rules = append(append(m.rules, m.mulPass()), r...)
+	m.rules = append(m.rules, r...)
 	return m
 }
 

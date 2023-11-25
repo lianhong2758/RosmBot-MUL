@@ -10,6 +10,11 @@ RosmBot-MUL是一个多平台bot,未来将实现一个插件多平台接入使�
 ```
 之后运行即可
 
+## 部署方法
+
+## [mys部署]( server/mys/README.md)
+## [qq部署]( server/qq/README.md)
+
 ## 插件编写教程
 
 1注册插件
