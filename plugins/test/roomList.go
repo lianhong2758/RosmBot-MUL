@@ -19,6 +19,9 @@ func init() {
 			ctx.Send(message.Text("获取信息失败", err))
 		}
 		var msg strings.Builder
+		msg.WriteString("别野")
+		msg.WriteString(ctx.Being.RoomID2)
+		msg.WriteString(":\n")
 		for _, v := range result.Data.List {
 			if v.GroupID == "0" {
 				continue
