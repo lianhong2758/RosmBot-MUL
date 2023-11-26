@@ -21,7 +21,7 @@ func init() {
 		var msg strings.Builder
 		msg.WriteString("别野")
 		msg.WriteString(ctx.Being.RoomID2)
-		msg.WriteString(":\n")
+		msg.WriteString(":")
 		for _, v := range result.Data.List {
 			if v.GroupID == "0" {
 				continue
