@@ -7,9 +7,9 @@ import (
 
 // bot主接口
 type Boter interface {
-	//获取config
+	//发送消息
 	BotSend(*CTX, ...message.MessageSegment) any
-	//运行
+	//运行,用于开启接收消息和调用插件
 	Run()
 
 	//Bot信息查询

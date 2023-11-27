@@ -16,7 +16,7 @@ import (
 
 func main() {
 	/*
-		var runner rosm.Boter = mys.NewConfig("config/mys.json")
+		var runner rosm.Boter = mys.NewConfig("config/qq2.json")
 		go runner.Run()
 	*/
 	rosm.Listen()
