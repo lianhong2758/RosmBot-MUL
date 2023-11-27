@@ -5,14 +5,23 @@ VERSION=1.0.0
 
 build:
 	@echo "build!"
+	@go version
+	@go env -w GOPROXY=https://goproxy.cn,direct
+	@go mod tidy
 	@go build
 
 run:
 	@echo "run!"
+	@go version
+	@go env -w GOPROXY=https://goproxy.cn,direct
+	@go mod tidy
 	@go run main.go
 
 debug:
 	@echo "debug"
+	@go version
+	@go env -w GOPROXY=https://goproxy.cn,direct
+	@go mod tidy
 	@go run main.go -d
 	
 build_proto:
