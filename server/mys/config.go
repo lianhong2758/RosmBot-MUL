@@ -42,6 +42,7 @@ func NewConfig(path string) (c *Config) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		c = new(Config)
+		c.BotToken.BotCard = new(rosm.BotCard)
 		//初始配置
 		c.BotToken.Master = []string{"123456"}
 		c.BotToken.BotPubKey = "-----BEGIN PUBLIC KEY----- abcabc123 -----END PUBLIC KEY----- "

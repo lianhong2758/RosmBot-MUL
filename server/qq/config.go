@@ -62,9 +62,10 @@ func NewConfig(path string) (c *Config) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		c = new(Config)
+		c.BotCard = new(rosm.BotCard)
 		c.Master = []string{"123456"}
 		c.BotName = "雪儿"
-		c.IntentsNum = []uint32{0, 1, 30}
+		c.IntentsNum = []uint32{0, 1, 12, 30, 25}
 		c.ShardIndex = 0
 		c.BotCard.BotID = "123456"
 		err = os.MkdirAll("config", os.ModePerm)
