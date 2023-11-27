@@ -1,7 +1,7 @@
 NAME=RosmBot-MUL
 EXE_NAME=${NAME}exe
 PROTOPATH=server/mys/proto
-VERSION=1.0.0
+VERSION=1.1.0
 
 build:
 	@echo "build!"
