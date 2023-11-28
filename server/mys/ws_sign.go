@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Config) Login() {
-	log.Infoln("[sign]开始尝试连接到网关:", c.wr.Data.WebsocketUrl, ",BotID:", c.BotToken.BotID)
+	log.Infoln("[mys-sign]开始尝试连接到网关:", c.wr.Data.WebsocketUrl, ",BotID:", c.BotToken.BotID)
 	//准备数据结构
 	req := &vila_bot.PLogin{
 		Uid:      c.wr.Data.Uid,
