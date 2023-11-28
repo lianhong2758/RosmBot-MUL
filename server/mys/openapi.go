@@ -19,7 +19,7 @@ const (
 	recallURL      = "/vila/api/bot/platform/recallMessage"
 	deleteUserURL  = "/vila/api/bot/platform/deleteVillaMember"
 	getVillaURL    = "/vila/api/bot/platform/getVilla"
-	getWSurl       = "http://devapi-takumi.mihoyo.com/vila/api/bot/platform/getWebsocketInfo"
+	getWSurl       = "/vila/api/bot/platform/getWebsocketInfo"
 )
 
 // 获取房间列表
