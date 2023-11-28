@@ -9,7 +9,7 @@ import (
 
 // 获取ws地址
 func (c *Config) GetWebsocketUrl() error {
-	data, err := web.Web(web.NewDefaultClient(), host+getWSurl, http.MethodGet, func(r *http.Request) {
+	data, err := web.Web(web.NewDefaultClient(), Host+URLGetWS, http.MethodGet, func(r *http.Request) {
 		r.Header.Add("x-rpc-bot_id", c.BotToken.BotID)
 		r.Header.Add("x-rpc-bot_secret", c.BotToken.BotSecret)
 		r.Header.Add("x-rpc-bot_villa_id", "2077")

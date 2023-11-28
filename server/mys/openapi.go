@@ -13,18 +13,19 @@ import (
 )
 
 const (
-	host           = "https://bbs-api.miyoushe.com"
-	getRoomListURL = "/vila/api/bot/platform/getVillaGroupRoomList"
-	getUserDataURL = "/vila/api/bot/platform/getMember"
-	recallURL      = "/vila/api/bot/platform/recallMessage"
-	deleteUserURL  = "/vila/api/bot/platform/deleteVillaMember"
-	getVillaURL    = "/vila/api/bot/platform/getVilla"
-	getWSurl       = "/vila/api/bot/platform/getWebsocketInfo"
+	Host           = "https://bbs-api.miyoushe.com"
+	URLGetRoomList = "/vila/api/bot/platform/getVillaGroupRoomList"
+	URLGetUserData = "/vila/api/bot/platform/getMember"
+	URLRecall      = "/vila/api/bot/platform/recallMessage"
+	URLDeleteUser  = "/vila/api/bot/platform/deleteVillaMember"
+	URLGetVilla    = "/vila/api/bot/platform/getVilla"
+	URLPinMessage  = "/vila/api/bot/platform/pinMessage"
+	URLGetWS       = "/vila/api/bot/platform/getWebsocketInfo"
 )
 
 // 获取房间列表
 func GetRoomList(ctx *rosm.CTX) (r *RoomList, err error) {
-	data, err := web.Web(&http.Client{}, host+getRoomListURL, http.MethodGet, makeHeard(ctx), nil)
+	data, err := web.Web(&http.Client{}, Host+URLGetRoomList, http.MethodGet, makeHeard(ctx), nil)
 	log.Debugln("[GetRoomList]", string(data))
 	if err != nil {
 		return nil, err
@@ -37,7 +38,7 @@ func GetRoomList(ctx *rosm.CTX) (r *RoomList, err error) {
 // 获取用户信息
 func GetUserData(ctx *rosm.CTX, uid string) (r *UserData, err error) {
 	data, _ := json.Marshal(H{"uid": uid})
-	data, err = web.Web(&http.Client{}, host+getUserDataURL, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
+	data, err = web.Web(&http.Client{}, Host+URLGetUserData, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[GetUserData]", string(data))
 	if err != nil {
 		return nil, err
@@ -59,7 +60,7 @@ func GetUserName(ctx *rosm.CTX, uid string) string {
 // 踢人
 func DeleteUser(ctx *rosm.CTX, uid string) (err error) {
 	data, _ := json.Marshal(H{"uid": uid})
-	data, err = web.Web(&http.Client{}, host+deleteUserURL, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
+	data, err = web.Web(&http.Client{}, Host+URLDeleteUser, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[DeleteUser]", string(data))
 	var r ApiCode
 	_ = json.Unmarshal(data, &r)
@@ -69,10 +70,17 @@ func DeleteUser(ctx *rosm.CTX, uid string) (err error) {
 	return
 }
 
-// 撤回消息,消息id,房间id,发送时间
-func Recall(ctx *rosm.CTX, msgid string, msgtime int64, roomid string) (err error) {
-	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.Int64(roomid), "msg_time": msgtime})
-	data, err = web.Web(&http.Client{}, host+recallURL, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
+// 撤回消息,消息id,发送时间,房间id
+func Recall(ctx *rosm.CTX, msgid string, msgtime any, roomid string) (err error) {
+	var t int64
+	switch tt := msgtime.(type) {
+	case int64:
+		t = tt
+	case string:
+		t = tool.Int64(tt)
+	}
+	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.Int64(roomid), "msg_time": t})
+	data, err = web.Web(&http.Client{}, Host+URLRecall, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[Recall]", string(data))
 	var r ApiCode
 	_ = json.Unmarshal(data, &r)
@@ -84,13 +92,33 @@ func Recall(ctx *rosm.CTX, msgid string, msgtime int64, roomid string) (err erro
 
 // 获取别野信息
 func GetVillaData(ctx *rosm.CTX) (r *VillaData, err error) {
-	data, err := web.Web(&http.Client{}, host+getVillaURL, http.MethodGet, makeHeard(ctx), nil)
+	data, err := web.Web(&http.Client{}, Host+URLGetVilla, http.MethodGet, makeHeard(ctx), nil)
 	log.Debugln("[GetVillaData]", string(data))
 	if err != nil {
 		return nil, err
 	}
 	r = new(VillaData)
 	err = json.Unmarshal(data, r)
+	return
+}
+
+// 置顶消息,消息id,发送时间,房间id,是否取消置顶
+func PinMessage(ctx *rosm.CTX, msgid, sendat any, roomid string, iscancel bool) (err error) {
+	var t int64
+	switch tt := sendat.(type) {
+	case int64:
+		t = tt
+	case string:
+		t = tool.Int64(tt)
+	}
+	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.Int64(roomid), "send_at": t, "is_cancel": iscancel})
+	data, err = web.Web(&http.Client{}, Host+URLPinMessage, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
+	log.Debugln("[PinMessage]", string(data))
+	var r ApiCode
+	_ = json.Unmarshal(data, &r)
+	if r.Retcode != 0 {
+		return errors.New(r.Message)
+	}
 	return
 }
 

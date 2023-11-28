@@ -14,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const mysUpimageUrl = "/vila/api/bot/platform/getUploadImageParams"
+const UrlUpimage = "/vila/api/bot/platform/getUploadImageParams"
 
 func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
 	log.Info("[mys]上传图片到米游社阿里云 OSS")
@@ -60,7 +60,7 @@ func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
 // mys消息的ctx,md5,扩展名
 func getParam(ctx *rosm.CTX, md5 string, ext string) (param *OssUpParam, err error) {
 	data, _ := json.Marshal(H{"md5": md5, "ext": ext})
-	data, err = web.Web(web.NewDefaultClient(), host+mysUpimageUrl, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
+	data, err = web.Web(web.NewDefaultClient(), Host+UrlUpimage, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
