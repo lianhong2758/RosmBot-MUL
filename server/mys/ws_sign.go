@@ -84,6 +84,23 @@ func (c *Config) repHeart() {
 		time.Sleep(20 * time.Second)
 	}
 }
+
+// 重连
 func (c *Config) Resume() {
 	c.Login()
+}
+
+// 登出
+func (c *Config) LogOut() {
+	req := &vila_bot.PLogout{
+		Uid:      c.wr.Data.Uid,
+		Platform: c.wr.Data.Platform,
+		AppId:    c.wr.Data.AppId,
+		DeviceId: c.wr.Data.DeviceId,
+	}
+	data, _ := proto.Marshal(req)
+	err := c.sendTextMsg(uint32(vila_bot.Command_P_LOGOUT), data) // 发送登录请求
+	if err != nil {
+		log.Warnf("[mys-sign]尝试PLogout错误: %v", err)
+	}
 }
