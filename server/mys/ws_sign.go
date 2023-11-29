@@ -63,12 +63,7 @@ func (c *Config) Login() {
 
 // 发送消息
 func (c *Config) sendTextMsg(bizType uint32, data []byte) error {
-	wsConn := c.conn
-	pkg, err := NewDataPack(nil).Pack(NewRequestMsg(bizType, UniqMsgID(), c.wr.Data.AppId, data))
-	if err != nil {
-		return err
-	}
-	return wsConn.WriteMessage(websocket.BinaryMessage, pkg)
+	return NewDataPack(c.conn).Pack(NewRequestMsg(bizType, UniqMsgID(), c.wr.Data.AppId, data)).Send()
 }
 
 func (c *Config) repHeart() {
