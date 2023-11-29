@@ -9,6 +9,7 @@ build:
 	@go env -w GOPROXY=https://goproxy.cn,direct
 	@go mod tidy
 	@go build
+	@echo "Done!"
 
 run:
 	@echo "run!"
