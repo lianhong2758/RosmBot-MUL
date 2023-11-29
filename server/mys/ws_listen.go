@@ -61,7 +61,7 @@ func (c *Config) Listen() {
 			t := &vila_bot.RobotEvent{}
 			_ = proto.Unmarshal(msg.Body, t)
 			log.Debugln("[mys-ws]RobotEvent", t)
-			c.process(t)
+			go c.process(t)
 		default:
 			log.Warnln("[mys-ws]未知事件, 序号:", counter.Load(), "类型:", msg.Type, ", 数据:", msg.Body)
 		}
