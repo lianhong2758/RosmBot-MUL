@@ -46,8 +46,6 @@ func NewConfig(path string) (c *Config) {
 		//初始配置
 		c.BotToken.Master = []string{"123456"}
 		c.BotToken.BotPubKey = "-----BEGIN PUBLIC KEY----- abcabc123 -----END PUBLIC KEY----- "
-		c.EventPath = "/rosmbot"
-		c.Port = "0.0.0.0:10001"
 		c.BotToken.BotID = "bot_..."
 
 		//#######################################
@@ -59,6 +57,8 @@ func NewConfig(path string) (c *Config) {
 			switch t {
 			case 0:
 				c.Protocol = "http"
+				c.EventPath = "/rosmbot"
+				c.Port = "0.0.0.0:10001"
 			case 1:
 				c.Protocol = "ws"
 			default:
