@@ -128,6 +128,8 @@ func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo a
 			msgContent.Preview = &t
 		case "custom":
 			return message.Data["data"], "MHY:Text"
+		case "post":
+			return H{"content": H{"post_id": message.Data["id"].(string)}}, "MHY:Post"
 		}
 	}
 	var objectStr string

@@ -31,13 +31,15 @@ func init() {
 		ctx.Send(message.Text("gscore已关闭"))
 	})
 	en.AddOther(rosm.AllMessage).Rule(func(ctx *rosm.CTX) bool { return Config.on }).Handle(func(ctx *rosm.CTX) {
-	ReSend:
-		SendErr := SendWsMessage(MakeSendCoreMessage(ctx), Config.conn)
-		if SendErr != nil {
-			time.Sleep(time.Second * 5)
-			log.Error("[gscore]SendErr", SendErr)
-			Config.RecoveWebScoket()
-			goto ReSend
+		for {
+			SendErr := SendWsMessage(MakeSendCoreMessage(ctx), Config.conn)
+			if SendErr != nil {
+				time.Sleep(time.Second * 5)
+				log.Error("[gscore]SendErr", SendErr)
+				Config.RecoveWebScoket()
+				continue
+			}
+			break
 		}
 	})
 	//最后init

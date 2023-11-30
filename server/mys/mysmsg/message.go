@@ -70,3 +70,13 @@ func Preview(str PreviewStr) message.MessageSegment {
 		},
 	}
 }
+
+// 帖子,只能单独使用
+func Post(postid string) message.MessageSegment {
+	return message.MessageSegment{
+		Type: "post",
+		Data: H{
+			"id": postid,
+		},
+	}
+}

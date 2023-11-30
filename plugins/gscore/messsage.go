@@ -27,6 +27,10 @@ func MakeSendCoreMessage(ctx *rosm.CTX) []byte {
 				Data: ctx.Being.Word,
 			},
 		},
+		Sender: Dictionary{
+			Avater:   ctx.Being.User.PortraitURI,
+			Nickname: ctx.Being.User.Name,
+		},
 	}
 	cache.Set(ctx.Being.MsgID[0], ctx)
 	marshal, err := json.Marshal(MessageReport)
