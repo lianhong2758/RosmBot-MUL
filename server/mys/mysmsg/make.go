@@ -114,7 +114,11 @@ func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo a
 			if s := message.Data["size"].(int); s != 0 {
 				t.Size.Height = s
 			}
-			msgContent.ImageStr = t
+			if msgContent.Text == "" {
+				msgContent.ImageStr = t
+			} else {
+				msgContent.Images = append(msgContent.Images, t)
+			}
 		case "reply":
 			id, time := message.Data["ids"].([]string)[0], message.Data["ids"].([]string)[1]
 			msgContentInfo["quote"] = H{"original_message_id": id, "original_message_send_time": time, "quoted_message_id": id, "quoted_message_send_time": time}

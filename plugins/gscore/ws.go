@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"strconv"
 	"time"
 
 	"github.com/RomiChan/websocket"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys"
+	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 )
@@ -26,10 +28,17 @@ func (c *GsConfig) NewWebSocket() {
 	}
 }
 func (c *GsConfig) RecoveWebScoket() {
-	c.conn.Close()
-	c.conn = nil
+	Config.on = false
+	Config.cancel()
+	//启动ws接收
 	log.Info("[gscore]Core尝试重连")
-	c.NewWebSocket()
+	//创建ws
+	Config.NewWebSocket()
+	//启动ws接收
+	var ctxback context.Context
+	ctxback, Config.cancel = context.WithCancel(context.Background())
+	go ReadAndSendMessage(ctxback, Config.conn)
+	Config.on = true
 }
 
 func SendWsMessage(SendMessage []byte, Conn *websocket.Conn) error {
@@ -66,6 +75,7 @@ func ReadAndSendMessage(ctxback context.Context, conn *websocket.Conn) {
 func SendMessage(RecMessage *RecMessageStr) {
 	//发送信息
 	var msg []message.MessageSegment
+	var p *mysmsg.InfoContent
 	for _, v := range RecMessage.Content {
 		switch v.Type {
 		case "text":
@@ -75,17 +85,69 @@ func SendMessage(RecMessage *RecMessageStr) {
 			_ = json.Unmarshal(v.Data, &image)
 			decodedImage, err := base64.StdEncoding.DecodeString(image[9:])
 			if err != nil {
-				log.Error("[gscore]解析base64图片失败", err)
+				log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
 			}
 			msg = append(msg, message.Image(decodedImage))
 		case "buttons":
+			var buttons [][]GSButton
+			if v.Data[0] == v.Data[1] {
+				//二级目录
+				err := json.Unmarshal(v.Data, &buttons)
+				if err != nil {
+					log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
+				}
+			} else {
+				var bArry []GSButton
+				err := json.Unmarshal(v.Data, &bArry)
+				if err != nil {
+					log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
+				}
+				buttons = [][]GSButton{bArry}
+			}
+			if RecMessage.BotId == "mys" {
+				p = mysmsg.NewPanel()
+				for l, buttonArry := range buttons {
+					for i, button := range buttonArry {
+						if RecMessage.BotId == "mys" {
+							switch len([]rune(button.Text)) {
+							case 1, 2:
+								p.Small(i == 0, &mysmsg.Component{
+									ID:           strconv.Itoa(l) + strconv.Itoa(i),
+									Text:         button.Text,
+									Type:         1,
+									CType:        2,
+									InputContent: button.Data,
+									Extra:        "",
+								})
+							case 3, 4:
+								p.Mid(i == 0, &mysmsg.Component{
+									ID:           strconv.Itoa(l) + strconv.Itoa(i),
+									Text:         button.Text,
+									Type:         1,
+									CType:        2,
+									InputContent: button.Data,
+									Extra:        "",
+								})
+							default:
+								p.Big(i == 0, &mysmsg.Component{
+									ID:           strconv.Itoa(l) + strconv.Itoa(i),
+									Text:         button.Text,
+									Type:         1,
+									CType:        2,
+									InputContent: button.Data,
+									Extra:        "",
+								})
+							}
 
+						}
+					}
+				}
+			}
 		case "node":
-			//	RecMessage.Content = append(RecMessage.Content, v.Data.([]Message)...)
 			var m []Message
 			err := json.Unmarshal(v.Data, &m)
 			if err != nil {
-				log.Error("[gscore]解析node消息失败: ", tool.BytesToString(v.Data))
+				log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
 			}
 			RecMessage.Content = append(RecMessage.Content, m...)
 		}
@@ -97,6 +159,13 @@ func SendMessage(RecMessage *RecMessageStr) {
 			room, villa := tool.String122(RecMessage.TargetId)
 			ctx = mys.NewCTX(RecMessage.BotSelfId, room, villa)
 		}
+	}
+	if p != nil {
+		p.TextBuild(ctx, msg...)
+		if p.Content.Text == "" {
+			p.TextBuild(ctx, append([]message.MessageSegment{message.Text("喵~")}, msg...)...)
+		}
+		msg = []message.MessageSegment{message.Custom(p)}
 	}
 	if ctx != nil {
 		ctx.Send(msg...)
@@ -145,4 +214,16 @@ type Dictionary struct {
 	Title    string `json:"title"`
 	UserID   int    `json:"user_id"`
 	Avater   string `json:"avater"`
+}
+
+type GSButton struct {
+	Text           string   `json:"text"`
+	Data           string   `json:"data"`
+	PressedText    *string  `json:"pressed_text,omitempty"`
+	Style          int      `json:"style"`
+	Action         int      `json:"action"`
+	Permission     int      `json:"permission"`
+	SpecifyRoleIds []string `json:"specify_role_ids"`
+	SpecifyUserIds []string `json:"specify_user_ids"`
+	UnsupportTips  string   `json:"unsupport_tips"`
 }

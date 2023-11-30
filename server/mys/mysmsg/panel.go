@@ -49,8 +49,12 @@ func (i *InfoContent) TextBuild(ctx *rosm.CTX, m ...message.MessageSegment) {
 
 // 简易快捷的构建,和上面的build二选一
 func (i *InfoContent) Title(title ...any) {
-	i.Content = &Content{
-		Text: fmt.Sprint(title...),
+	if i.Content == nil {
+		i.Content = &Content{
+			Text: fmt.Sprint(title...),
+		}
+	} else {
+		i.Content.Text = fmt.Sprint(title...)
 	}
 }
 func add(arr *[][]Component, c *Component, maxLen int, nextLine bool) {
