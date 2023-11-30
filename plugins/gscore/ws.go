@@ -90,19 +90,13 @@ func SendMessage(RecMessage *RecMessageStr) {
 			msg = append(msg, message.Image(decodedImage))
 		case "buttons":
 			var buttons [][]GSButton
-			if v.Data[0] == v.Data[1] {
+			if v.Data[0] != v.Data[1] {
 				//二级目录
-				err := json.Unmarshal(v.Data, &buttons)
-				if err != nil {
-					log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
-				}
-			} else {
-				var bArry []GSButton
-				err := json.Unmarshal(v.Data, &bArry)
-				if err != nil {
-					log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
-				}
-				buttons = [][]GSButton{bArry}
+				v.Data = append(append([]byte{91}, v.Data...), 93)
+			}
+			err := json.Unmarshal(v.Data, &buttons)
+			if err != nil {
+				log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
 			}
 			if RecMessage.BotId == "mys" {
 				p = mysmsg.NewPanel()
