@@ -8,6 +8,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
+	vila_bot "github.com/lianhong2758/RosmBot-MUL/server/mys/proto"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
@@ -83,7 +84,7 @@ func init() {
 	en.AddWord("测试表态").MUL("mys").Handle(func(ctx *rosm.CTX) {
 		result := ctx.Send(message.Text("测试开始,表态此条消息"))
 		next, stop := ctx.GetNext(rosm.Quick, true, func(ctx *rosm.CTX) bool {
-			return result.(*mys.SendState).Data.BotMsgID == ctx.Message.(*mys.InfoSTR).Event.ExtendData.EventData.AddQuickEmoticon.BotMsgID
+			return result.(*mys.SendState).Data.BotMsgID == ctx.Message.(*vila_bot.RobotEvent).ExtendData.GetAddQuickEmoticon().GetBotMsgId()
 		})
 		defer stop()
 		for i := 0; i < 3; i++ {
@@ -92,7 +93,7 @@ func init() {
 				ctx.Send(message.Text("时间太久了"))
 				return
 			case ctx2 := <-next:
-				ctx.Send(message.Text("这是表态结果:\n", ctx2.Message.(*mys.InfoSTR).Event.ExtendData.EventData.AddQuickEmoticon))
+				ctx.Send(message.Text("这是表态结果:\n", ctx2.Message.(*vila_bot.RobotEvent).ExtendData.GetAddQuickEmoticon()))
 			}
 		}
 	})

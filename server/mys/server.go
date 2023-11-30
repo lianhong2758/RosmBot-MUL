@@ -10,7 +10,6 @@ import (
 	vila_bot "github.com/lianhong2758/RosmBot-MUL/server/mys/proto"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
-	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
 func (cc *Config) MessReceive() func(c *gin.Context) {
@@ -18,7 +17,7 @@ func (cc *Config) MessReceive() func(c *gin.Context) {
 		body, _ := c.GetRawData()
 		c.JSON(200, map[string]any{"message": "", "retcode": 0}) //确认接收
 		sign := c.GetHeader("x-rpc-bot_sign")
-		if verify(sign, helper.BytesToString(body), cc.BotToken.BotSecretConst, cc.BotToken.BotPubKey) {
+		if verify(sign, tool.BytesToString(body), cc.BotToken.BotSecretConst, cc.BotToken.BotPubKey) {
 			event := new(vila_bot.RobotEvent)
 			err := json.Unmarshal(body, event)
 			if err != nil {

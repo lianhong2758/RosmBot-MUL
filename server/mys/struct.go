@@ -5,6 +5,7 @@ import ()
 type H = map[string]any
 
 // 回调的请求结构
+/*
 type InfoSTR struct {
 	Event struct {
 		Robot struct {
@@ -19,7 +20,7 @@ type InfoSTR struct {
 		ID        string `json:"id"`
 		SendAt    int    `json:"send_at"`
 	} `json:"event"`
-}
+}*/
 
 // 所有事件
 type EventData struct {
