@@ -21,6 +21,7 @@ func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 		msgContent = qqmsg.GroupMsgContent(ctx, msg...)
 		//图片发送改为富文本
 		if msgContent.Image != "" {
+			msgContent.Types = 7
 			if r, err := UpFile(ctx, msgContent.Image, 1); err == nil {
 				msgContent.Image = ""
 				msgContent.Media = &qqmsg.Media{FileInfo: r.FileINFO}
