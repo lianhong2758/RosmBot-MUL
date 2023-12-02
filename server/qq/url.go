@@ -7,8 +7,8 @@ const (
 	urlSendGroup        = "/v2/groups/%v/messages" //群聊
 	urlSendGuild        = "/channels/%v/messages"  //子频道
 	urlSendGuildPrivate = "/dms/%v/messages"       //频道私聊
-	urlSendFileGroup    = "/groups/%v/files"       //群富文本
-	urlSendFilePrivate  = "/users/%v/files"        //私聊富文本
+	urlUPFileGroup      = "/v2/groups/%v/files"    //群富文本
+	urlUPFilePrivate    = "/v2/users/%v/files"     //私聊富文本
 	urlGetway           = "/gateway"
 	urlGetwayWss        = "/gateway/bot"
 

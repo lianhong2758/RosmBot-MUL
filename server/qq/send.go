@@ -16,7 +16,19 @@ import (
 
 func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 	var IsGroup bool = ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" || ctx.Being.Def["type"].(string) == "C2C_MESSAGE_CREATE"
-	msgContent := makeMsgContent(ctx, IsGroup, msg...)
+	var msgContent *qqmsg.Content
+	if IsGroup {
+		msgContent = qqmsg.GroupMsgContent(ctx, msg...)
+		//图片发送改为富文本
+		if msgContent.Image != "" {
+			if r, err := UpFile(ctx, msgContent.Image, 1); err == nil {
+				msgContent.Image = ""
+				msgContent.Media = &qqmsg.Media{FileInfo: r.FileINFO}
+			}
+		}
+	} else {
+		msgContent = qqmsg.GuildMsgContent(ctx, msg...)
+	}
 	data, _ := json.Marshal(msgContent)
 	log.Debugln("[send]", tool.BytesToString(data))
 	url := ""
@@ -42,51 +54,4 @@ func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 	_ = json.Unmarshal(data, sendState)
 	log.Infoln("[send]["+sendState.MsgID+"]", tool.BytesToString(data))
 	return sendState
-}
-func makeMsgContent(ctx *rosm.CTX, IsGroup bool, msg ...message.MessageSegment) *qqmsg.Content {
-	cnt := new(qqmsg.Content)
-	for _, message := range msg {
-		var text string
-		if IsGroup {
-			cnt.Types = 0
-		}
-		if message.Data["text"] != nil {
-			text = message.Data["text"].(string)
-		}
-		switch message.Type {
-		default:
-			continue
-		case "text":
-			cnt.Text += text
-		case "mentioned_user", "mentioned_robot":
-			if IsGroup {
-				cnt.Types = 5
-			}
-			cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
-		case "atall":
-			if IsGroup {
-				cnt.Types = 5
-			}
-			cnt.Text += "@everyone"
-		case "imagewithtext":
-			if IsGroup {
-				cnt.Types = 1
-			}
-			cnt.Text += text
-			cnt.Image = message.Data["url"].(string)
-		case "image":
-			if IsGroup {
-				cnt.Types = 1
-			}
-			cnt.Image = message.Data["url"].(string)
-		case "reply":
-			cnt.Reference = &qqmsg.ReferenceS{ID: message.Data["ids"].([]string)[0], NeedError: true}
-		case "replyuser":
-			cnt.Reference = &qqmsg.ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
-		}
-	}
-	if ctx.Being.Def["id"] != nil {
-		cnt.MsgID = ctx.Being.Def["id"].(string)
-	}
-	return cnt
 }

@@ -50,6 +50,27 @@ func GetGuildUser(ctx *rosm.CTX, uid string) (User *GuildUser, err error) {
 	return
 }
 
+// 上传文件获取file_info,媒体类型：1 图片，2 视频，3 语音，4 文件（暂不开放）
+func UpFile(ctx *rosm.CTX, url string, types int) (result *UpFileResult, err error) {
+	var upurl string
+	if ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" {
+		upurl = host + fmt.Sprintf(urlUPFileGroup, ctx.Being.RoomID)
+	} else {
+		upurl = host + fmt.Sprintf(urlUPFilePrivate, ctx.Being.User.ID)
+	}
+	data, _ := json.Marshal(H{"file_type": types, "url": url, "srv_send_msg": false, "file_data": nil})
+	data, err = web.Web(clientConst, upurl, http.MethodGet, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), bytes.NewReader(data))
+	log.Debugln("[UpFile][", url, "]", string(data))
+	if err != nil {
+		log.Infoln("[UpFile]上传文件失败,type:", types, "url:", url)
+		return nil, err
+	}
+	result = new(UpFileResult)
+	err = json.Unmarshal(data, &result)
+	log.Info("[UpFile]", result.UUID)
+	return
+}
+
 type GuildUser struct {
 	User struct {
 		ID               string `json:"id"`
@@ -62,4 +83,9 @@ type GuildUser struct {
 	Nick     string    `json:"nick"`
 	Roles    []string  `json:"roles"`
 	JoinedAt time.Time `json:"joined_at"`
+}
+type UpFileResult struct {
+	UUID     string `json:"file_uuid"` //文件 ID
+	FileINFO string `json:"file_info"` //文件信息，用于发消息接口的 media 字段使用
+	TTL      string `json:"ttl"`       //有效期，表示剩余多少秒到期，到期后 file_info 失效，当等于 0 时，表示可长期使用
 }
