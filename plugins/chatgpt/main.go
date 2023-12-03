@@ -1,4 +1,4 @@
-package chatgpt
+﻿package chatgpt
 
 import (
 	"os"
@@ -17,8 +17,12 @@ type sessionKey struct {
 }
 
 var (
-	apiKey = ""
-	cache  = ttl.NewCache[sessionKey, []chatMessage](time.Minute * 15)
+	apiKey     = ""
+	cache      = ttl.NewCache[sessionKey, []chatMessage](time.Minute * 15)
+	preinstall = []chatMessage{{
+		Role:    "system",
+		Content: "", //这里写预设
+	}}
 )
 
 func init() {
@@ -52,7 +56,7 @@ func init() {
 			Role:    "user",
 			Content: args,
 		})
-		resp, err := completions(messages, apiKey)
+		resp, err := completions(append(preinstall, messages...), apiKey)
 		if err != nil {
 			ctx.Send(message.Text("请求ChatGPT失败: ", err))
 			return
