@@ -1,9 +1,9 @@
 package qqmsg
 
 import (
-
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
 func GuildMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) *Content {
@@ -22,11 +22,20 @@ func GuildMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) *Content {
 			cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
 		case "atall":
 			cnt.Text += "@everyone"
-		case "imagewithtext":
+		case "imagebyte":
 			cnt.Text += text
-			cnt.Image = message.Data["url"].(string)
+			if url, _ := web.UpImgByte(message.Data["data"].([]byte)); url != "" {
+				cnt.Image = url
+			} else {
+				cnt.Text += "\n[图片上传失败]\n"
+			}
 		case "image":
-			cnt.Image = message.Data["url"].(string)
+			cnt.Text += text
+			if url, _ := web.ImageAnalysis(message.Data["data"].(string)); url != "" {
+				cnt.Image = url
+			} else {
+				cnt.Text += "\n[图片上传失败]\n"
+			}
 		case "reply":
 			cnt.Reference = &ReferenceS{ID: message.Data["ids"].([]string)[0], NeedError: true}
 		case "replyuser":
@@ -52,21 +61,30 @@ func GroupMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) *Content {
 			continue
 		case "text":
 			cnt.Text += text
-		/*
-			case "mentioned_user", "mentioned_robot":
-					cnt.Types = 5
-					cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
-				case "atall":
-					cnt.Types = 5
-					cnt.Text += "@everyone"
-		*/
-		case "imagewithtext":
+			/*
+				case "mentioned_user", "mentioned_robot":
+						cnt.Types = 5
+						cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
+					case "atall":
+						cnt.Types = 5
+						cnt.Text += "@everyone"
+			*/
+		case "imagebyte":
 			cnt.Types = 1
 			cnt.Text += text
-			cnt.Image = message.Data["url"].(string)
+			if url, _ := web.UpImgByte(message.Data["data"].([]byte)); url != "" {
+				cnt.Image = url
+			} else {
+				cnt.Text += "\n[图片上传失败]\n"
+			}
 		case "image":
 			cnt.Types = 1
-			cnt.Image = message.Data["url"].(string)
+			cnt.Text += text
+			if url, _ := web.ImageAnalysis(message.Data["data"].(string)); url != "" {
+				cnt.Image = url
+			} else {
+				cnt.Text += "\n[图片上传失败]\n"
+			}
 		case "reply":
 			cnt.Reference = &ReferenceS{ID: message.Data["ids"].([]string)[0], NeedError: true}
 		case "replyuser":

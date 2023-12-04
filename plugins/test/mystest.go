@@ -1,15 +1,12 @@
 package test
 
 import (
-	"os"
 	"time"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
 	vila_bot "github.com/lianhong2758/RosmBot-MUL/server/mys/proto"
-	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
 func init() {
@@ -22,29 +19,29 @@ func init() {
 			"- 测试上传图片\n",
 	})
 	en.AddWord("测试").Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text("你好"), mysmsg.BoldText(" 加粗"), mysmsg.ItalicText(" 斜体"), mysmsg.DeleteText(" 删除线"), mysmsg.UnderlineText(" 下划线"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mysmsg.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
+		ctx.Send(message.Text("你好"), mys.BoldText(" 加粗"), mys.ItalicText(" 斜体"), mys.DeleteText(" 删除线"), mys.UnderlineText(" 下划线"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mys.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
 		ctx.Send(message.Text("开始测试Post:"))
-		ctx.Send(mysmsg.Post("45624940"))
+		ctx.Send(mys.Post("45624940"))
 	})
 	en.AddWord("测试组件").Handle(func(ctx *rosm.CTX) {
 		{
-			s := mysmsg.BadgeStr{
+			s := mys.BadgeStr{
 				Icon: "http://47.93.28.113/favicon.ico",
 				Text: "10248",
 				URL:  "https://dby.miyoushe.com/chat/463/10248",
 			}
-			ctx.Send(message.Text("测试下标跳转房间"), mysmsg.Badge(s))
+			ctx.Send(message.Text("测试下标跳转房间"), mys.Badge(s))
 		}
 		{
-			s := mysmsg.BadgeStr{
+			s := mys.BadgeStr{
 				Icon: "http://47.93.28.113/favicon.ico",
 				Text: "清雪官方",
 				URL:  "http://47.93.28.113",
 			}
-			ctx.Send(message.Text("测试下标"), mysmsg.Badge(s))
+			ctx.Send(message.Text("测试下标"), mys.Badge(s))
 		}
 		{
-			s := mysmsg.PreviewStr{
+			s := mys.PreviewStr{
 				Icon:       "http://47.93.28.113/favicon.ico",
 				URL:        "http://47.93.28.113",
 				ImageURL:   "http://47.93.28.113/ippic",
@@ -53,10 +50,10 @@ func init() {
 				Title:      "这是一个标题测试",
 				Content:    "我是具体内容",
 			}
-			ctx.Send(message.Text("测试预览"), mysmsg.Preview(s))
+			ctx.Send(message.Text("测试预览"), mys.Preview(s))
 		}
 		{
-			s := mysmsg.PreviewStr{
+			s := mys.PreviewStr{
 				Icon:       "http://47.93.28.113/favicon.ico",
 				URL:        "http://47.93.28.113/file?path=CSGO/1.mp4",
 				IsIntLink:  true,
@@ -64,16 +61,16 @@ func init() {
 				Title:      "测试视频",
 				Content:    "CSGO精彩击杀,完美竞技平台",
 			}
-			ss := mysmsg.BadgeStr{
+			ss := mys.BadgeStr{
 				Icon: "http://47.93.28.113/favicon.ico",
 				Text: "清雪官方",
 				URL:  "http://47.93.28.113",
 			}
-			ctx.Send(message.Text("测试视频预览+下标组合"), mysmsg.Preview(s), mysmsg.Badge(ss))
+			ctx.Send(message.Text("测试视频预览+下标组合"), mys.Preview(s), mys.Badge(ss))
 		}
 		{
-			p := mysmsg.NewPanel()
-			p.Big(false, &mysmsg.Component{
+			p := mys.NewPanel()
+			p.Big(false, &mys.Component{
 				ID:           "input6",
 				Text:         "大按钮",
 				Type:         1,
@@ -81,7 +78,7 @@ func init() {
 				InputContent: "/大按钮",
 				Extra:        "",
 			})
-			p.TextBuild(ctx, message.Text("测试图片+按钮"), message.ImageUrlWithText(web.UpImgUrl("http://47.93.28.113/favicon.ico"), 0, 0, 0, ""))
+			p.TextBuild(ctx, message.Text("测试图片+按钮"), message.Image("url://"+"http://47.93.28.113/favicon.ico"))
 			ctx.Send(message.Custom(p))
 		}
 	})
@@ -128,15 +125,6 @@ func init() {
 				ctx.Send(message.Text("这是表态结果:\n", ctx2.Message.(*vila_bot.RobotEvent).ExtendData.GetAddQuickEmoticon()))
 			}
 		}
-	})
-	en.AddWord("测试上传图片").MUL("mys").Handle(func(ctx *rosm.CTX) {
-		file, _ := os.ReadFile("data/public/测试.jpg")
-		url, err := mys.UploadFile(ctx, file)
-		if err != nil {
-			ctx.Send(message.Text("发送失败,ERROR:", err))
-			return
-		}
-		ctx.Send(message.ImageUrl(url, 0, 0, 0))
 	})
 }
 

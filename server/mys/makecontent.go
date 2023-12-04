@@ -1,9 +1,10 @@
-package mysmsg
+package mys
 
 import (
 	"unicode/utf16"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
+
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
@@ -84,40 +85,83 @@ func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo a
 			msgContent.Entities = append(msgContent.Entities, t)
 			msgContent.Text += text
 			msgContentInfo["mentionedInfo"] = MentionedInfoStr{Type: 1}
-		case "imagewithtext":
-			msgContent.Text += text
-			t := ImageStr{
-				URL:  message.Data["url"].(string),
-				Size: new(Size),
-			}
-			if w := message.Data["w"].(int); w != 0 {
-				t.Size.Width = w
-			}
-			if h := message.Data["h"].(int); h != 0 {
-				t.Size.Height = h
-			}
-			if s := message.Data["size"].(int); s != 0 {
-				t.Size.Height = s
-			}
-			msgContent.Images = append(msgContent.Images, t)
-		case "image":
-			t := ImageStr{
-				URL:  message.Data["url"].(string),
-				Size: new(Size),
-			}
-			if w := message.Data["w"].(int); w != 0 {
-				t.Size.Width = w
-			}
-			if h := message.Data["h"].(int); h != 0 {
-				t.Size.Height = h
-			}
-			if s := message.Data["size"].(int); s != 0 {
-				t.Size.Height = s
-			}
-			if msgContent.Text == "" {
-				msgContent.ImageStr = t
+			/*	case "imagewithtext":
+					msgContent.Text += text
+					t := ImageStr{
+						URL:  message.Data["url"].(string),
+						Size: new(Size),
+					}
+					if w := message.Data["w"].(int); w != 0 {
+						t.Size.Width = w
+					}
+					if h := message.Data["h"].(int); h != 0 {
+						t.Size.Height = h
+					}
+					if s := message.Data["size"].(int); s != 0 {
+						t.Size.Height = s
+					}
+					msgContent.Images = append(msgContent.Images, t)
+				case "image":
+					t := ImageStr{
+						URL:  message.Data["url"].(string),
+						Size: new(Size),
+					}
+					if w := message.Data["w"].(int); w != 0 {
+						t.Size.Width = w
+					}
+					if h := message.Data["h"].(int); h != 0 {
+						t.Size.Height = h
+					}
+					if s := message.Data["size"].(int); s != 0 {
+						t.Size.Height = s
+					}
+					if msgContent.Text == "" {
+						msgContent.ImageStr = t
+					} else {
+						msgContent.Images = append(msgContent.Images, t)
+					}*/
+		case "imagebyte":
+			if url, con := UpImgByte(ctx, message.Data["data"].([]byte)); url != "" {
+				t := ImageStr{
+					URL:      url,
+					Size:     new(Size),
+					FileSize: len(message.Data["data"].([]byte)),
+				}
+				if w := con.Width; w != 0 {
+					t.Size.Width = w
+				}
+				if h := con.Height; h != 0 {
+					t.Size.Height = h
+				}
+				if msgContent.Text == "" {
+					msgContent.ImageStr = t
+				} else {
+					msgContent.Images = append(msgContent.Images, t)
+				}
 			} else {
-				msgContent.Images = append(msgContent.Images, t)
+				msgContent.Text += "\n[图片上传失败]\n"
+			}
+		case "image":
+			if url, con := ImageAnalysis(ctx, message.Data["data"].(string)); url != "" {
+				t := ImageStr{
+					URL:  url,
+					Size: new(Size),
+				}
+				if con != nil {
+					if w := con.Width; w != 0 {
+						t.Size.Width = w
+					}
+					if h := con.Height; h != 0 {
+						t.Size.Height = h
+					}
+				}
+				if msgContent.Text == "" {
+					msgContent.ImageStr = t
+				} else {
+					msgContent.Images = append(msgContent.Images, t)
+				}
+			} else {
+				msgContent.Text += "\n[图片上传失败]\n"
 			}
 		case "reply":
 			id, time := message.Data["ids"].([]string)[0], message.Data["ids"].([]string)[1]

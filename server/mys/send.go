@@ -7,7 +7,6 @@ import (
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	log "github.com/sirupsen/logrus"
@@ -18,7 +17,7 @@ const (
 )
 
 func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
-	msgContentInfo, objectStr := mysmsg.MakeMsgContent(ctx, msg...)
+	msgContentInfo, objectStr := MakeMsgContent(ctx, msg...)
 	contentStr, _ := json.Marshal(msgContentInfo)
 	data, _ := json.Marshal(H{"room_id": tool.Int64(ctx.Being.RoomID), "object_name": objectStr, "msg_content": tool.BytesToString(contentStr)})
 	log.Debugln("[send]", tool.BytesToString(data))

@@ -1,4 +1,4 @@
-package mysmsg
+package mys 
 
 import (
 	"fmt"

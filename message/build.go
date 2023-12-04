@@ -2,7 +2,6 @@ package message
 
 import (
 	"fmt"
-	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
 type H = map[string]any
@@ -56,6 +55,7 @@ func ATAll() MessageSegment {
 	}
 }
 
+/*
 // url为图片链接,必须直链,w,h为宽高
 func ImageUrlWithText(url string, w, h, size int, text ...any) MessageSegment {
 	return MessageSegment{
@@ -82,15 +82,29 @@ func ImageUrl(url string, w, h, size int) MessageSegment {
 		},
 	}
 }
-
+*/
 // 发送普通图片
-func Image(img []byte) MessageSegment {
-	if url, con := web.UpImgByte(img); url != "" {
-		return ImageUrl(url, con.Width, con.Height, 0)
+func ImageByte(img []byte) MessageSegment {
+	return MessageSegment{
+		Type: "imagebyte",
+		Data: H{
+			"data": img,
+		},
 	}
-	return Text("图片上传失败")
 }
 
+// 发送图片
+// 支持的格式:base64://,file://,url://,consturl://
+func Image(data string) MessageSegment {
+	return MessageSegment{
+		Type: "image",
+		Data: H{
+			"data": data,
+		},
+	}
+}
+
+/*
 // 发送普通图片和文字,text必填
 func ImageWithText(img []byte, text ...any) MessageSegment {
 	if url, con := web.UpImgByte(img); url != "" {
@@ -114,7 +128,7 @@ func ImageFileWithText(path string, text ...any) MessageSegment {
 	}
 	return Text("图片上传失败")
 }
-
+*/
 // 蓝色跳转链接
 func Link(url string, haveToken bool, text ...any) MessageSegment {
 	return MessageSegment{

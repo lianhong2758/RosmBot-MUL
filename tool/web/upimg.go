@@ -2,6 +2,7 @@ package web
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"image"
@@ -25,7 +26,7 @@ const (
 )
 
 // 上传byte数据
-func UpImgByte(file []byte) (url string, con image.Config) {
+func UpImgByte(file []byte) (url string, con *image.Config) {
 	// 创建一个buffer，用于构造multipart/form-data格式的表单数据
 	t := fmt.Sprintf("%d.jpg", time.Now().Unix())
 	log.Infoln("[web](upimg)FileName: ", t)
@@ -61,12 +62,12 @@ func UpImgByte(file []byte) (url string, con image.Config) {
 		log.Errorln("[upimg]", err)
 		return
 	}
-	con, _ = BytesToConfig(file)
-	return getBodyUrl(body), con
+	c, _ := BytesToConfig(file)
+	return getBodyUrl(body), &c
 }
 
 // 上传file
-func UpImgfile(filePath string) (url string, con image.Config) {
+func UpImgfile(filePath string) (url string, con *image.Config) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Errorln("[upimg]", err)
@@ -145,11 +146,37 @@ func FileToConfig(path string) (image.Config, error) {
 	return BytesToConfig(file)
 }
 
-// 返回本地文件的config
+// 返回url的config
 func URLToConfig(url string) (image.Config, error) {
 	file, err := GetData(url, "")
 	if err != nil {
 		return image.Config{}, err
 	}
 	return BytesToConfig(file)
+}
+
+// 解析base64等data
+func ImageAnalysis(data string) (url string, con *image.Config) {
+	switch parts := strings.SplitN(data, "://", 2); parts[0] {
+	case "base64":
+		bytes, err := base64.StdEncoding.DecodeString(parts[1])
+		if err != nil {
+			log.Warnln("[mys](upimage) ERROR:", err)
+			return "", nil
+		}
+		return UpImgByte(bytes)
+	case "file":
+		return UpImgfile(parts[1])
+	case "url":
+		c, err := URLToConfig(url)
+		if err != nil {
+			log.Warnln("[mys](upimage) ERROR:", err)
+			return "", nil
+		}
+		return UpImgUrl(parts[1]), &c
+	case "consturl":
+		return parts[1], nil
+	default:
+		return "", nil
+	}
 }

@@ -1,8 +1,6 @@
-package mysmsg
+package mys
 
 import ()
-
-type H = map[string]any
 
 type Entities struct {
 	Entity H   `json:"entity,omitempty"`

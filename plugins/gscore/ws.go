@@ -2,7 +2,6 @@ package gscore
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"strconv"
 	"time"
@@ -10,7 +9,6 @@ import (
 	"github.com/RomiChan/websocket"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 )
@@ -75,7 +73,7 @@ func ReadAndSendMessage(ctxback context.Context, conn *websocket.Conn) {
 func SendMessage(RecMessage *RecMessageStr) {
 	//发送信息
 	var msg []message.MessageSegment
-	var p *mysmsg.InfoContent
+	var p *mys.InfoContent
 	for _, v := range RecMessage.Content {
 		switch v.Type {
 		case "text":
@@ -83,11 +81,7 @@ func SendMessage(RecMessage *RecMessageStr) {
 		case "image":
 			var image string
 			_ = json.Unmarshal(v.Data, &image)
-			decodedImage, err := base64.StdEncoding.DecodeString(image[9:])
-			if err != nil {
-				log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
-			}
-			msg = append(msg, message.Image(decodedImage))
+			msg = append(msg, message.Image(image))
 		case "buttons":
 			var buttons [][]GSButton
 			if v.Data[0] != v.Data[1] {
@@ -99,13 +93,13 @@ func SendMessage(RecMessage *RecMessageStr) {
 				log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
 			}
 			if RecMessage.BotId == "mys" {
-				p = mysmsg.NewPanel()
+				p = mys.NewPanel()
 				for l, buttonArry := range buttons {
 					for i, button := range buttonArry {
 						if RecMessage.BotId == "mys" {
 							switch len([]rune(button.Text)) {
 							case 1, 2:
-								p.Small(i == 0, &mysmsg.Component{
+								p.Small(i == 0, &mys.Component{
 									ID:           strconv.Itoa(l) + strconv.Itoa(i),
 									Text:         button.Text,
 									Type:         1,
@@ -114,7 +108,7 @@ func SendMessage(RecMessage *RecMessageStr) {
 									Extra:        "",
 								})
 							case 3, 4:
-								p.Mid(i == 0, &mysmsg.Component{
+								p.Mid(i == 0, &mys.Component{
 									ID:           strconv.Itoa(l) + strconv.Itoa(i),
 									Text:         button.Text,
 									Type:         1,
@@ -123,7 +117,7 @@ func SendMessage(RecMessage *RecMessageStr) {
 									Extra:        "",
 								})
 							default:
-								p.Big(i == 0, &mysmsg.Component{
+								p.Big(i == 0, &mys.Component{
 									ID:           strconv.Itoa(l) + strconv.Itoa(i),
 									Text:         button.Text,
 									Type:         1,
