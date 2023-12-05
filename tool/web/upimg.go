@@ -161,16 +161,16 @@ func ImageAnalysis(data string) (url string, con *image.Config) {
 	case "base64":
 		bytes, err := base64.StdEncoding.DecodeString(parts[1])
 		if err != nil {
-			log.Warnln("[mys](upimage) ERROR:", err)
+			log.Warnln("[web](upimage) ERROR:", err)
 			return "", nil
 		}
 		return UpImgByte(bytes)
 	case "file":
 		return UpImgfile(parts[1])
 	case "url":
-		c, err := URLToConfig(url)
+		c, err := URLToConfig(parts[1])
 		if err != nil {
-			log.Warnln("[mys](upimage) ERROR:", err)
+			log.Warnln("[web](upimage) ERROR:", err)
 			return "", nil
 		}
 		return UpImgUrl(parts[1]), &c

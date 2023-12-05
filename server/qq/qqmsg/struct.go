@@ -22,8 +22,8 @@ type Content struct {
 	Types    int        `json:"msg_type,omitempty"` //0 是文本，1 图文混排 ，2 是 md, 3 ark，4 embed，5 at @人或@all,7 media 富媒体
 	Keyboard *KeyboardS `json:"keyboard,omitempty"` //消息按钮
 	//群聊
-	Media     *Media `json:"media,omitempty"`     //富文本
-	Timestamp int64  `json:"timestamp,omitempty"` //unix 秒级时间戳
+	Media  *Media `json:"media,omitempty"`   //富文本
+	MsgSeq int    `json:"msg_seq,omitempty"` //富文本
 	//子频道
 	Embed *Embed `json:"embed,omitempty"` //一种特殊的 ark
 }

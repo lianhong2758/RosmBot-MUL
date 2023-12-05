@@ -89,7 +89,7 @@ func (db *model) InsertOther(pluginname, roomid string, o string) (err error) {
 // 查询是否开启插件
 func PluginIsOn(m *Matcher) func(ctx *CTX) bool {
 	return func(ctx *CTX) bool {
-		off, err := PluginDB.FindOff(m.PluginNode.Name, tool.String221(ctx.Being.RoomID, ctx.Being.RoomID2))
+		off, err := PluginDB.FindOff(m.PluginNode.Name, tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2))
 		log.Debugln("[db]PluginIsOn 插件:", m.PluginNode.Name, "Off: ", off, "err: ", err)
 		return (!off && err == nil) || (!m.PluginNode.DefaultOff && err == sql.ErrNullResult)
 	}

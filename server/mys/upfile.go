@@ -55,12 +55,12 @@ func ImageAnalysis(ctx *rosm.CTX, data string) (url string, con *image.Config) {
 	case "file":
 		return UpImgfile(ctx, parts[1])
 	case "url":
-		c, err := web.URLToConfig(url)
+		c, err := web.URLToConfig(parts[1])
 		if err != nil {
 			log.Warnln("[mys](upimage) ERROR:", err)
 			return "", nil
 		}
-		return UpImgUrl(ctx, parts[1]), &c
+		return web.UpImgUrl(parts[1]), &c
 	case "consturl":
 		return parts[1], nil
 	default:

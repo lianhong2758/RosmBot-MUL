@@ -140,7 +140,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 				RoomID:  strconv.Itoa(int(event.ExtendData.GetSendMessage().RoomId)),
 				User:    &rosm.UserData{Name: u.User.Name, ID: strconv.Itoa(id), PortraitURI: u.User.PortraitURI},
 				ATList:  u.MentionedInfo.UserIDList,
-				MsgID:   []string{event.ExtendData.GetSendMessage().MsgUid, tool.String(event.ExtendData.GetSendMessage().SendAt)},
+				MsgID:   []string{event.ExtendData.GetSendMessage().MsgUid, tool.Int64ToString(event.ExtendData.GetSendMessage().SendAt)},
 				Def: map[string]any{
 					"Quote": &event.ExtendData.GetSendMessage().QuoteMsg, //type  MessageForQuote
 				},

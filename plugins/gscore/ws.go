@@ -144,7 +144,7 @@ func SendMessage(RecMessage *RecMessageStr) {
 	if ctx == nil {
 		switch RecMessage.BotId {
 		case "mys":
-			room, villa := tool.String122(RecMessage.TargetId)
+			room, villa := tool.SplitPadString(RecMessage.TargetId)
 			ctx = mys.NewCTX(RecMessage.BotSelfId, room, villa)
 		}
 	}

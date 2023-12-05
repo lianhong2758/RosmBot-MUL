@@ -77,9 +77,9 @@ func Recall(ctx *rosm.CTX, msgid string, msgtime any, roomid string) (err error)
 	case int64:
 		t = tt
 	case string:
-		t = tool.Int64(tt)
+		t = tool.StringToInt64(tt)
 	}
-	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.Int64(roomid), "msg_time": t})
+	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.StringToInt64(roomid), "msg_time": t})
 	data, err = web.Web(&http.Client{}, Host+URLRecall, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[Recall]", string(data))
 	var r ApiCode
@@ -109,9 +109,9 @@ func PinMessage(ctx *rosm.CTX, msgid, sendat any, roomid string, iscancel bool) 
 	case int64:
 		t = tt
 	case string:
-		t = tool.Int64(tt)
+		t = tool.StringToInt64(tt)
 	}
-	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.Int64(roomid), "send_at": t, "is_cancel": iscancel})
+	data, _ := json.Marshal(H{"msg_uid": msgid, "room_id": tool.StringToInt64(roomid), "send_at": t, "is_cancel": iscancel})
 	data, err = web.Web(&http.Client{}, Host+URLPinMessage, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[PinMessage]", string(data))
 	var r ApiCode

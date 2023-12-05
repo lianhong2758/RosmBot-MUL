@@ -59,7 +59,7 @@ func UpFile(ctx *rosm.CTX, url string, types int) (result *UpFileResult, err err
 		upurl = host + fmt.Sprintf(urlUPFilePrivate, ctx.Being.User.ID)
 	}
 	data, _ := json.Marshal(H{"file_type": types, "url": url, "srv_send_msg": false, "file_data": nil})
-	data, err = web.Web(clientConst, upurl, http.MethodGet, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), bytes.NewReader(data))
+	data, err = web.Web(clientConst, upurl, http.MethodPost, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), bytes.NewReader(data))
 	log.Debugln("[UpFile][", url, "]", string(data))
 	if err != nil {
 		log.Infoln("[UpFile]上传文件失败,type:", types, "url:", url)
@@ -87,5 +87,5 @@ type GuildUser struct {
 type UpFileResult struct {
 	UUID     string `json:"file_uuid"` //文件 ID
 	FileINFO string `json:"file_info"` //文件信息，用于发消息接口的 media 字段使用
-	TTL      string `json:"ttl"`       //有效期，表示剩余多少秒到期，到期后 file_info 失效，当等于 0 时，表示可长期使用
+	TTL      int    `json:"ttl"`       //有效期，表示剩余多少秒到期，到期后 file_info 失效，当等于 0 时，表示可长期使用
 }

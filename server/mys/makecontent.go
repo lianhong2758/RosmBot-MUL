@@ -167,7 +167,7 @@ func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo a
 			id, time := message.Data["ids"].([]string)[0], message.Data["ids"].([]string)[1]
 			msgContentInfo["quote"] = H{"original_message_id": id, "original_message_send_time": time, "quoted_message_id": id, "quoted_message_send_time": time}
 		case "replyuser":
-			msgContentInfo["quote"] = H{"original_message_id": ctx.Being.MsgID[0], "original_message_send_time": tool.Int64(ctx.Being.MsgID[1]), "quoted_message_id": ctx.Being.MsgID[0], "quoted_message_send_time": tool.Int64(ctx.Being.MsgID[1])}
+			msgContentInfo["quote"] = H{"original_message_id": ctx.Being.MsgID[0], "original_message_send_time": tool.StringToInt64(ctx.Being.MsgID[1]), "quoted_message_id": ctx.Being.MsgID[0], "quoted_message_send_time": tool.StringToInt64(ctx.Being.MsgID[1])}
 		case "badge":
 			t := message.Data["badge"].(BadgeStr)
 			msgContent.Badge = &t

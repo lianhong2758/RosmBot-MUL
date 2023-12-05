@@ -19,7 +19,7 @@ const (
 func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 	msgContentInfo, objectStr := MakeMsgContent(ctx, msg...)
 	contentStr, _ := json.Marshal(msgContentInfo)
-	data, _ := json.Marshal(H{"room_id": tool.Int64(ctx.Being.RoomID), "object_name": objectStr, "msg_content": tool.BytesToString(contentStr)})
+	data, _ := json.Marshal(H{"room_id": tool.StringToInt64(ctx.Being.RoomID), "object_name": objectStr, "msg_content": tool.BytesToString(contentStr)})
 	log.Debugln("[send]", tool.BytesToString(data))
 	data, err := web.Web(&http.Client{}, sendMessage, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	if err != nil {
