@@ -54,7 +54,8 @@ func (c *Config) process(playload *WebsocketPayload) {
 			Being: &rosm.Being{
 				RoomID: raw.GroupID,
 				User: &rosm.UserData{
-					ID: raw.Author.ID,
+					ID:   raw.Author.ID,
+					Name: raw.Author.ID[len(raw.Author.ID)-8:],
 				},
 				MsgID: []string{raw.ID},
 				Def:   H{"type": playload.T, "id": raw.ID},
