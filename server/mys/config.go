@@ -27,8 +27,9 @@ type Token struct {
 type Config struct {
 	Protocol  string `json:"protocol"` //协议:ws/http
 	BotToken  Token  `json:"token"`
-	EventPath string `json:"eventpath,omitempty"` //路径
-	Port      string `json:"port,omitempty"`      //端口
+	TestVilla string `json:"test_villa,omitempty"` //测试别野id
+	EventPath string `json:"eventpath,omitempty"`  //路径
+	Port      string `json:"port,omitempty"`       //端口
 
 	wr     *WebsocketInfoResp //获取的WebsocketInfoResp
 	conn   *websocket.Conn    // conn 目前的 wss 连接
@@ -61,6 +62,7 @@ func NewConfig(path string) (c *Config) {
 				c.Port = "0.0.0.0:10001"
 			case 1:
 				c.Protocol = "ws"
+				c.TestVilla = "463"
 			default:
 				fmt.Println("输入错误!重新输入:")
 				continue
@@ -77,7 +79,7 @@ func NewConfig(path string) (c *Config) {
 		if err != nil {
 			log.Fatalln("[mys]创建config失败: ", err)
 		}
-		log.Infoln("创建初始化配置完成\n请填写config/mys.json文件后重新运行本程序\n字段解释:\ntoken:机器人基本信息:\neventpath:回调路径\nport:端口")
+		log.Infoln("创建初始化配置完成\n请填写config/mys.json文件后重新运行本程序\n字段解释:\ntoken:机器人基本信息:\neventpath:回调路径\nport:端口\ntest_villa:测试别野号")
 		os.Exit(0)
 	}
 	c = new(Config)

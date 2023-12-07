@@ -18,13 +18,20 @@ func (cc *Config) MessReceive() func(c *gin.Context) {
 		c.JSON(200, map[string]any{"message": "", "retcode": 0}) //确认接收
 		sign := c.GetHeader("x-rpc-bot_sign")
 		if verify(sign, tool.BytesToString(body), cc.BotToken.BotSecretConst, cc.BotToken.BotPubKey) {
-			event := new(vila_bot.RobotEvent)
-			err := json.Unmarshal(body, event)
+			eventMessage := new(InfoSTR)
+			err := json.Unmarshal(body, eventMessage)
 			if err != nil {
 				log.Errorln("[info]", err)
 				return
 			}
-			cc.process(event)
+			cc.process(&vila_bot.RobotEvent{
+				Robot:      eventMessage.Event.Robot,
+				Type:       eventMessage.Event.Type,
+				CreatedAt:  eventMessage.Event.CreatedAt,
+				Id:         eventMessage.Event.Id,
+				SendAt:     eventMessage.Event.SendAt,
+				ExtendData: makeExtendData(eventMessage.Event.ExtendData.EventData),
+			})
 		}
 	}
 }
@@ -153,4 +160,25 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 		word := strings.TrimSpace(u.Content.Text[len(event.Robot.Template.Name)+2:])
 		ctx.RunWord(word)
 	}
+}
+
+func makeExtendData(event EventData) (extendData *vila_bot.RobotEvent_ExtendData) {
+	extendData = new(vila_bot.RobotEvent_ExtendData)
+	switch {
+	case event.RobotEvent_ExtendData_SendMessage.SendMessage != nil:
+		extendData = &vila_bot.RobotEvent_ExtendData{EventData: &event.RobotEvent_ExtendData_SendMessage}
+	case event.RobotEvent_ExtendData_JoinVilla.JoinVilla != nil:
+		extendData = &vila_bot.RobotEvent_ExtendData{EventData: &event.RobotEvent_ExtendData_JoinVilla}
+	case event.RobotEvent_ExtendData_CreateRobot.CreateRobot != nil:
+		extendData = &vila_bot.RobotEvent_ExtendData{EventData: &event.RobotEvent_ExtendData_CreateRobot}
+	case event.RobotEvent_ExtendData_DeleteRobot.DeleteRobot != nil:
+		extendData = &vila_bot.RobotEvent_ExtendData{EventData: &event.RobotEvent_ExtendData_DeleteRobot}
+	case event.RobotEvent_ExtendData_AddQuickEmoticon.AddQuickEmoticon != nil:
+		extendData = &vila_bot.RobotEvent_ExtendData{EventData: &event.RobotEvent_ExtendData_AddQuickEmoticon}
+	case event.RobotEvent_ExtendData_AuditCallback.AuditCallback != nil:
+		extendData = &vila_bot.RobotEvent_ExtendData{EventData: &event.RobotEvent_ExtendData_AuditCallback}
+	case event.RobotEvent_ExtendData_ClickMsgComponent.ClickMsgComponent != nil:
+		extendData = &vila_bot.RobotEvent_ExtendData{EventData: &event.RobotEvent_ExtendData_ClickMsgComponent}
+	}
+	return
 }

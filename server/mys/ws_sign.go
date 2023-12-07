@@ -14,7 +14,7 @@ func (c *Config) Login() {
 	//准备数据结构
 	req := &vila_bot.PLogin{
 		Uid:      c.wr.Data.Uid,
-		Token:    "0" + "." + c.BotToken.BotSecret + "." + c.BotToken.BotID, //机器人 Websocket 鉴权 token，格式为 {villa_id}.{secret}.{bot_id} 。机器人未上线时，villa_id 使用测试别野，上线后可传 0
+		Token:    c.TestVilla + "." + c.BotToken.BotSecret + "." + c.BotToken.BotID, //机器人 Websocket 鉴权 token，格式为 {villa_id}.{secret}.{bot_id} 。机器人未上线时，villa_id 使用测试别野，上线后可传 0
 		Platform: c.wr.Data.Platform,
 		AppId:    c.wr.Data.AppId,
 		DeviceId: c.wr.Data.DeviceId,
@@ -51,7 +51,8 @@ func (c *Config) Login() {
 		_ = proto.Unmarshal(res.GetBody(), loginReply)
 		if loginReply.GetCode() != 0 {
 			log.Warn("[mys-sign]登录失败...,Code: ", loginReply.GetCode())
-			return
+			time.Sleep(2 * time.Second) // 等待两秒后重新连接
+			continue
 		}
 		break
 	}

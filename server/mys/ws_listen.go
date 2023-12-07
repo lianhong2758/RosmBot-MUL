@@ -19,7 +19,7 @@ func (c *Config) Listen() {
 			// 发送失败
 			c.conn = nil
 			log.Warnln("[mys-ws]", c.wr.Data.AppId, "的网关连接断开, 尝试恢复:", err)
-			time.Sleep(time.Second)
+			time.Sleep(2 * time.Second) // 等待两秒后重新连接
 			//开始重连
 			c.Resume()
 			//log.Warnln("[ws]", c.wr.Data.AppId, "的网关连接恢复失败:", err)
