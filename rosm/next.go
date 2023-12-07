@@ -1,5 +1,8 @@
 package rosm
 
+// 用于获取下一事件的结构,消息也作为一种事件
+//通过rule限制下一条消息
+
 import (
 	"time"
 

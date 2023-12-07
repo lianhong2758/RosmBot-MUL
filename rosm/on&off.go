@@ -1,3 +1,4 @@
+// 用于管理插件的启用/禁用
 package rosm
 
 import (

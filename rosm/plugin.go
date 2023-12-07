@@ -1,3 +1,4 @@
+//插件的具体结构
 package rosm
 
 import (

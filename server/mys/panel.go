@@ -1,4 +1,4 @@
-package mys 
+package mys
 
 import (
 	"encoding/json"
@@ -8,6 +8,13 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 )
 
+// 新建一个按钮消息结构
+//
+// 按钮结构使用方法:
+// -NewPanel()
+// -使用Small/Mid/Big添加具体按钮信息
+// -使用Title添加文本信息(也可以使用TextBuild添加类似Send()中的内容)
+// -使用Send(message.Custom(*InfoContent))发送按钮,此时send中不能含有其他消息组件
 func NewPanel() *InfoContent {
 	return &InfoContent{
 		Panel: &PanelStr{

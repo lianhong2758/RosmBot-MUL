@@ -1,3 +1,4 @@
+// Rule的实现,可以在这里增加更多Rule,也可以在server包增加独属于自己平台的rule
 package rosm
 
 // 判断rule

@@ -1,3 +1,18 @@
+// ########################################
+// 消息组件
+// 在Send()中进行发送,不限长度,Custom()除外
+// 部分组件可以含有多余的参数
+// 适平台要求,可以将部分参数传空
+
+// 不同的server可以有独属于自己的参数
+// 请谨慎使用
+
+// 如果有无法识别的组件信息
+// server可以选择处理或者丢弃
+
+// 本包下的所有组件server必须实现
+// 平台有限制无法实现的除外
+// ########################################
 package message
 
 import (
@@ -13,7 +28,7 @@ type MessageSegment struct {
 	Data H      `json:"data"`
 }
 
-// 消息解析
+// 普通文本
 func Text(text ...any) MessageSegment {
 	return MessageSegment{
 		Type: "text",
@@ -55,34 +70,6 @@ func ATAll() MessageSegment {
 	}
 }
 
-/*
-// url为图片链接,必须直链,w,h为宽高
-func ImageUrlWithText(url string, w, h, size int, text ...any) MessageSegment {
-	return MessageSegment{
-		Type: "imagewithtext",
-		Data: H{
-			"text": fmt.Sprint(text...),
-			"url":  url,
-			"w":    w,
-			"h":    h,
-			"size": size,
-		},
-	}
-}
-
-// url为图片链接,必须直链,w,h为宽高size大小,不需要项填0
-func ImageUrl(url string, w, h, size int) MessageSegment {
-	return MessageSegment{
-		Type: "image",
-		Data: H{
-			"url":  url,
-			"w":    w,
-			"h":    h,
-			"size": size,
-		},
-	}
-}
-*/
 // 发送普通图片
 func ImageByte(img []byte) MessageSegment {
 	return MessageSegment{
@@ -104,31 +91,6 @@ func Image(data string) MessageSegment {
 	}
 }
 
-/*
-// 发送普通图片和文字,text必填
-func ImageWithText(img []byte, text ...any) MessageSegment {
-	if url, con := web.UpImgByte(img); url != "" {
-		return ImageUrlWithText(url, con.Width, con.Height, 0, text...)
-	}
-	return Text("图片上传失败")
-}
-
-// 发送图片文件
-func ImageFile(path string) MessageSegment {
-	if url, con := web.UpImgfile(path); url != "" {
-		return ImageUrl(url, con.Width, con.Height, 0)
-	}
-	return Text("图片上传失败")
-}
-
-// 发送图片文件和文字,text必填
-func ImageFileWithText(path string, text ...any) MessageSegment {
-	if url, con := web.UpImgfile(path); url != "" {
-		return ImageUrlWithText(url, con.Width, con.Height, 0, text...)
-	}
-	return Text("图片上传失败")
-}
-*/
 // 蓝色跳转链接
 func Link(url string, haveToken bool, text ...any) MessageSegment {
 	return MessageSegment{
