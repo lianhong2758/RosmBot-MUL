@@ -14,7 +14,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const mysUpimageUrl = "/vila/api/bot/platform/getUploadImageParams"
+const (
+	UrlUpimage       = "/vila/api/bot/platform/getUploadImageParams"
+	UrltransferImage = "/vila/api/bot/platform/transferImage"
+)
 
 func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
 	log.Info("[mys]上传图片到米游社阿里云 OSS")
@@ -60,7 +63,7 @@ func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
 // mys消息的ctx,md5,扩展名
 func getParam(ctx *rosm.CTX, md5 string, ext string) (param *OssUpParam, err error) {
 	data, _ := json.Marshal(H{"md5": md5, "ext": ext})
-	data, err = web.Web(web.NewDefaultClient(), host+mysUpimageUrl, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
+	data, err = web.Web(web.NewDefaultClient(), Host+UrlUpimage, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
@@ -104,5 +107,25 @@ type OssDownloadParam struct {
 		URL       string `json:"url"`
 		SecretURL string `json:"secret_url"`
 		Object    string `json:"object"`
+	} `json:"data"`
+}
+
+// 转存
+func TransFerImage(ctx *rosm.CTX, url string) (imageUrl string, err error) {
+	data, _ := json.Marshal(H{"url": url})
+	data, err = web.Web(web.NewDefaultClient(), Host+UrltransferImage, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
+	if err != nil {
+		return "", err
+	}
+	m := new(TransFerImageParam)
+	err = json.Unmarshal(data, m)
+	log.Debug("[mys]米游社图片转存结果", tool.BytesToString(data))
+	return m.Data.URL, err
+}
+
+type TransFerImageParam struct {
+	ApiCode
+	Data struct {
+		URL string `json:"url"`
 	} `json:"data"`
 }

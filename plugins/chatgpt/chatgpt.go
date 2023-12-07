@@ -1,4 +1,4 @@
-package chatgpt
+﻿package chatgpt
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 
 const (
 	// baseURL  = "https://api.openai.com/v1/"
-	proxyURL           = "https://open.aiproxy.xyz/v1/"
+	proxyURL           = "https://gpt.a20safe.com/v1/"
 	modelGPT3Dot5Turbo = "gpt-3.5-turbo"
 )
 

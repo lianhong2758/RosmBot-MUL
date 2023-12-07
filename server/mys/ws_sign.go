@@ -10,11 +10,11 @@ import (
 )
 
 func (c *Config) Login() {
-	log.Infoln("[sign]开始尝试连接到网关:", c.wr.Data.WebsocketUrl, ",BotID:", c.BotToken.BotID)
+	log.Infoln("[mys-sign]开始尝试连接到网关:", c.wr.Data.WebsocketUrl, ",BotID:", c.BotToken.BotID)
 	//准备数据结构
 	req := &vila_bot.PLogin{
 		Uid:      c.wr.Data.Uid,
-		Token:    "c.token",
+		Token:    c.TestVilla + "." + c.BotToken.BotSecret + "." + c.BotToken.BotID, //机器人 Websocket 鉴权 token，格式为 {villa_id}.{secret}.{bot_id} 。机器人未上线时，villa_id 使用测试别野，上线后可传 0
 		Platform: c.wr.Data.Platform,
 		AppId:    c.wr.Data.AppId,
 		DeviceId: c.wr.Data.DeviceId,
@@ -48,10 +48,11 @@ func (c *Config) Login() {
 			continue
 		}
 		loginReply := new(vila_bot.PLoginReply)
-		proto.Unmarshal(res.GetBody(), loginReply)
+		_ = proto.Unmarshal(res.GetBody(), loginReply)
 		if loginReply.GetCode() != 0 {
 			log.Warn("[mys-sign]登录失败...,Code: ", loginReply.GetCode())
-			return
+			time.Sleep(2 * time.Second) // 等待两秒后重新连接
+			continue
 		}
 		break
 	}
@@ -63,12 +64,7 @@ func (c *Config) Login() {
 
 // 发送消息
 func (c *Config) sendTextMsg(bizType uint32, data []byte) error {
-	wsConn := c.conn
-	pkg, err := NewDataPack(nil).Pack(NewRequestMsg(bizType, UniqMsgID(), c.wr.Data.AppId, data))
-	if err != nil {
-		return err
-	}
-	return wsConn.WriteMessage(websocket.BinaryMessage, pkg)
+	return NewDataPack(c.conn).Pack(NewRequestMsg(bizType, UniqMsgID(), c.wr.Data.AppId, data)).Send()
 }
 
 func (c *Config) repHeart() {
@@ -84,6 +80,23 @@ func (c *Config) repHeart() {
 		time.Sleep(20 * time.Second)
 	}
 }
+
+// 重连
 func (c *Config) Resume() {
 	c.Login()
+}
+
+// 登出
+func (c *Config) LogOut() {
+	req := &vila_bot.PLogout{
+		Uid:      c.wr.Data.Uid,
+		Platform: c.wr.Data.Platform,
+		AppId:    c.wr.Data.AppId,
+		DeviceId: c.wr.Data.DeviceId,
+	}
+	data, _ := proto.Marshal(req)
+	err := c.sendTextMsg(uint32(vila_bot.Command_P_LOGOUT), data) // 发送登录请求
+	if err != nil {
+		log.Warnf("[mys-sign]尝试PLogout错误: %v", err)
+	}
 }

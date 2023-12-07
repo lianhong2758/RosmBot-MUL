@@ -8,9 +8,11 @@ import (
 	"github.com/RomiChan/websocket"
 )
 
-// DataPack 封包拆包类实例，暂时不需要成员
+// DataPack 封包拆包类实例
 type DataPack struct {
 	conn *websocket.Conn
+	pkg  []byte
+	err  error
 }
 
 // NewDataPack 封包拆包实例初始化方法
@@ -24,16 +26,28 @@ func (dp *DataPack) GetFixHeaderLen() uint32 {
 }
 
 // Pack 封包方法(压缩数据)
-func (dp *DataPack) Pack(msg *Message) ([]byte, error) {
+func (dp *DataPack) Pack(msg *Message) *DataPack {
+	dp.err = nil
 	data, err := dp.packData(msg)
 	if err != nil {
-		return nil, err
+		dp.err = err
+		return dp
 	}
 	fixHead, err := dp.packFixHeader(msg, len(data))
 	if err != nil {
-		return nil, err
+		dp.err = err
+		return dp
 	}
-	return append(fixHead, data...), nil
+	dp.pkg = append(fixHead, data...)
+	return dp
+}
+
+// 发送
+func (dp *DataPack) Send() error {
+	if dp.err != nil {
+		return dp.err
+	}
+	return dp.conn.WriteMessage(websocket.BinaryMessage, dp.pkg)
 }
 
 // 写定长头数据
@@ -81,6 +95,7 @@ func (dp *DataPack) packData(msg *Message) ([]byte, error) {
 	return out, nil
 }
 
+// 读取下一条信息并解析
 func (dp *DataPack) UnpackWs() (*Message, error) {
 	_, payload, err := dp.conn.ReadMessage()
 	if err != nil {

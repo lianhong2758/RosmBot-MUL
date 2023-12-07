@@ -8,7 +8,6 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/mys"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys/mysmsg"
 )
 
 func init() {
@@ -42,22 +41,22 @@ func init() {
 		ctx.Send(message.Text("游戏失败"))
 	})
 	en.AddWord("/开始猜拳").MUL("mys").Handle(func(ctx *rosm.CTX) {
-		p := mysmsg.NewPanel()
-		p.Small(false, &mysmsg.Component{
+		p := mys.NewPanel()
+		p.Small(false, &mys.Component{
 			ID:    "t1",
 			Text:  "剪刀",
 			Type:  1,
 			CType: 1,
 			Extra: "剪刀",
 		})
-		p.Small(false, &mysmsg.Component{
+		p.Small(false, &mys.Component{
 			ID:    "t2",
 			Text:  "石头",
 			Type:  1,
 			CType: 1,
 			Extra: "石头",
 		})
-		p.Small(false, &mysmsg.Component{
+		p.Small(false, &mys.Component{
 			ID:    "t3",
 			Text:  "布",
 			Type:  1,

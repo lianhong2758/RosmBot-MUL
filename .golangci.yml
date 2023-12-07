@@ -8,3 +8,4 @@ linters-settings:
   unused:
     funcs:
       - ".*\\.Send(Post)?": "ignore"
+      - ".*\\.RunEvent": "ignore"

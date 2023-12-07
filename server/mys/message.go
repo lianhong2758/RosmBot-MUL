@@ -1,4 +1,4 @@
-package mysmsg
+package mys 
 
 import (
 	"fmt"
@@ -67,6 +67,16 @@ func Preview(str PreviewStr) message.MessageSegment {
 		Type: "view",
 		Data: H{
 			"view": str,
+		},
+	}
+}
+
+// 帖子,只能单独使用
+func Post(postid string) message.MessageSegment {
+	return message.MessageSegment{
+		Type: "post",
+		Data: H{
+			"id": postid,
 		},
 	}
 }

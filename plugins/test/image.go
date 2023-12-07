@@ -65,6 +65,6 @@ func init() {
 				ctx.Send(message.Text("获取图片失败惹"))
 				return
 			}
-			ctx.Send(message.Reply(), message.Image(data))
+			ctx.Send(message.Reply(), message.ImageByte(data))
 		})
 }

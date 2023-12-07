@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/FloatTech/ttl"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/qq/qqmsg"
@@ -14,11 +16,33 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var seqcache = ttl.NewCache[string, int](time.Minute * 5)
+
 func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 	var IsGroup bool = ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" || ctx.Being.Def["type"].(string) == "C2C_MESSAGE_CREATE"
-	msgContent := makeMsgContent(ctx, IsGroup, msg...)
+	var msgContent *qqmsg.Content
+	if IsGroup {
+		msgContent = qqmsg.GroupMsgContent(ctx, msg...)
+		//图片发送改为富文本
+		if msgContent.Image != "" {
+			if r, err := UpFile(ctx, msgContent.Image, 1); err == nil {
+				//	c.SendMedia(ctx, r.FileINFO)
+				msgContent.Types = 7
+				msgContent.Media = &qqmsg.Media{FileInfo: r.FileINFO}
+			} else {
+				msgContent.Text += "\n[图片上传失败] ERROR:" + err.Error()
+				msgContent.Types = 0
+			}
+			msgContent.Image = ""
+		}
+	} else {
+		msgContent = qqmsg.GuildMsgContent(ctx, msg...)
+	}
+	seq := seqcache.Get(msgContent.MsgID)
+	seq++
+	seqcache.Set(msgContent.MsgID, seq)
+	msgContent.MsgSeq = seq
 	data, _ := json.Marshal(msgContent)
-	log.Debugln("[send]", tool.BytesToString(data))
 	url := ""
 	//判断私聊
 	if ctx.Being.RoomID == "" {
@@ -34,59 +58,42 @@ func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 			url = fmt.Sprintf(urlSendGuild, ctx.Being.RoomID) //频道
 		}
 	}
+	log.Infoln("[send]["+url+"]", tool.BytesToString(data))
 	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(data))
 	if err != nil {
 		log.Errorln("[send][", host+url, "]", err)
 	}
+	log.Debugln("[send-result]", tool.BytesToString(data))
 	sendState := new(qqmsg.SendState)
 	_ = json.Unmarshal(data, sendState)
-	log.Infoln("[send]["+sendState.MsgID+"]", tool.BytesToString(data))
 	return sendState
 }
-func makeMsgContent(ctx *rosm.CTX, IsGroup bool, msg ...message.MessageSegment) *qqmsg.Content {
-	cnt := new(qqmsg.Content)
-	for _, message := range msg {
-		var text string
-		if IsGroup {
-			cnt.Types = 0
-		}
-		if message.Data["text"] != nil {
-			text = message.Data["text"].(string)
-		}
-		switch message.Type {
-		default:
-			continue
-		case "text":
-			cnt.Text += text
-		case "mentioned_user", "mentioned_robot":
-			if IsGroup {
-				cnt.Types = 5
-			}
-			cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
-		case "atall":
-			if IsGroup {
-				cnt.Types = 5
-			}
-			cnt.Text += "@everyone"
-		case "imagewithtext":
-			if IsGroup {
-				cnt.Types = 1
-			}
-			cnt.Text += text
-			cnt.Image = message.Data["url"].(string)
-		case "image":
-			if IsGroup {
-				cnt.Types = 1
-			}
-			cnt.Image = message.Data["url"].(string)
-		case "reply":
-			cnt.Reference = &qqmsg.ReferenceS{ID: message.Data["ids"].([]string)[0], NeedError: true}
-		case "replyuser":
-			cnt.Reference = &qqmsg.ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
-		}
+
+/*
+func (c *Config) SendMedia(ctx *rosm.CTX, FileINFO string) {
+	var url string
+	if ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" {
+		url = fmt.Sprintf(urlSendGroup, ctx.Being.RoomID) //群聊
+	} else {
+		url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
 	}
+	msgContent := new(qqmsg.Content)
+	msgContent.Types = 7
+	msgContent.Media = &qqmsg.Media{FileInfo: FileINFO}
 	if ctx.Being.Def["id"] != nil {
-		cnt.MsgID = ctx.Being.Def["id"].(string)
+		msgContent.MsgID = ctx.Being.Def["id"].(string)
 	}
-	return cnt
+	seq := seqcache.Get(msgContent.MsgID)
+	seq++
+	seqcache.Set(msgContent.MsgID, seq)
+	msgContent.MsgSeq = seq
+	data, _ := json.Marshal(msgContent)
+	log.Infoln("[send]["+url+"]", tool.BytesToString(data))
+	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(data))
+	if err != nil {
+		log.Errorln("[send][", host+url, "]", err)
+	}
+	log.Debugln("[send-result]", tool.BytesToString(data))
+	return
 }
+*/

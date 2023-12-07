@@ -1,9 +1,10 @@
-package mysmsg
+package mys
 
 import (
 	"unicode/utf16"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
+
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
@@ -84,42 +85,89 @@ func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo a
 			msgContent.Entities = append(msgContent.Entities, t)
 			msgContent.Text += text
 			msgContentInfo["mentionedInfo"] = MentionedInfoStr{Type: 1}
-		case "imagewithtext":
-			msgContent.Text += text
-			t := ImageStr{
-				URL:  message.Data["url"].(string),
-				Size: new(Size),
+			/*	case "imagewithtext":
+					msgContent.Text += text
+					t := ImageStr{
+						URL:  message.Data["url"].(string),
+						Size: new(Size),
+					}
+					if w := message.Data["w"].(int); w != 0 {
+						t.Size.Width = w
+					}
+					if h := message.Data["h"].(int); h != 0 {
+						t.Size.Height = h
+					}
+					if s := message.Data["size"].(int); s != 0 {
+						t.Size.Height = s
+					}
+					msgContent.Images = append(msgContent.Images, t)
+				case "image":
+					t := ImageStr{
+						URL:  message.Data["url"].(string),
+						Size: new(Size),
+					}
+					if w := message.Data["w"].(int); w != 0 {
+						t.Size.Width = w
+					}
+					if h := message.Data["h"].(int); h != 0 {
+						t.Size.Height = h
+					}
+					if s := message.Data["size"].(int); s != 0 {
+						t.Size.Height = s
+					}
+					if msgContent.Text == "" {
+						msgContent.ImageStr = t
+					} else {
+						msgContent.Images = append(msgContent.Images, t)
+					}*/
+		case "imagebyte":
+			if url, con := UpImgByte(ctx, message.Data["data"].([]byte)); url != "" {
+				t := ImageStr{
+					URL:      url,
+					Size:     new(Size),
+					FileSize: len(message.Data["data"].([]byte)),
+				}
+				if w := con.Width; w != 0 {
+					t.Size.Width = w
+				}
+				if h := con.Height; h != 0 {
+					t.Size.Height = h
+				}
+				if msgContent.Text == "" {
+					msgContent.ImageStr = t
+				} else {
+					msgContent.Images = append(msgContent.Images, t)
+				}
+			} else {
+				msgContent.Text += "\n[图片上传失败]\n"
 			}
-			if w := message.Data["w"].(int); w != 0 {
-				t.Size.Width = w
-			}
-			if h := message.Data["h"].(int); h != 0 {
-				t.Size.Height = h
-			}
-			if s := message.Data["size"].(int); s != 0 {
-				t.Size.Height = s
-			}
-			msgContent.Images = append(msgContent.Images, t)
 		case "image":
-			t := ImageStr{
-				URL:  message.Data["url"].(string),
-				Size: new(Size),
+			if url, con := ImageAnalysis(ctx, message.Data["data"].(string)); url != "" {
+				t := ImageStr{
+					URL:  url,
+					Size: new(Size),
+				}
+				if con != nil {
+					if w := con.Width; w != 0 {
+						t.Size.Width = w
+					}
+					if h := con.Height; h != 0 {
+						t.Size.Height = h
+					}
+				}
+				if msgContent.Text == "" {
+					msgContent.ImageStr = t
+				} else {
+					msgContent.Images = append(msgContent.Images, t)
+				}
+			} else {
+				msgContent.Text += "\n[图片上传失败]\n"
 			}
-			if w := message.Data["w"].(int); w != 0 {
-				t.Size.Width = w
-			}
-			if h := message.Data["h"].(int); h != 0 {
-				t.Size.Height = h
-			}
-			if s := message.Data["size"].(int); s != 0 {
-				t.Size.Height = s
-			}
-			msgContent.ImageStr = t
 		case "reply":
 			id, time := message.Data["ids"].([]string)[0], message.Data["ids"].([]string)[1]
 			msgContentInfo["quote"] = H{"original_message_id": id, "original_message_send_time": time, "quoted_message_id": id, "quoted_message_send_time": time}
 		case "replyuser":
-			msgContentInfo["quote"] = H{"original_message_id": ctx.Being.MsgID[0], "original_message_send_time": tool.Int64(ctx.Being.MsgID[1]), "quoted_message_id": ctx.Being.MsgID[0], "quoted_message_send_time": tool.Int64(ctx.Being.MsgID[1])}
+			msgContentInfo["quote"] = H{"original_message_id": ctx.Being.MsgID[0], "original_message_send_time": tool.StringToInt64(ctx.Being.MsgID[1]), "quoted_message_id": ctx.Being.MsgID[0], "quoted_message_send_time": tool.StringToInt64(ctx.Being.MsgID[1])}
 		case "badge":
 			t := message.Data["badge"].(BadgeStr)
 			msgContent.Badge = &t
@@ -128,6 +176,8 @@ func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo a
 			msgContent.Preview = &t
 		case "custom":
 			return message.Data["data"], "MHY:Text"
+		case "post":
+			return H{"content": H{"post_id": message.Data["id"].(string)}}, "MHY:Post"
 		}
 	}
 	var objectStr string

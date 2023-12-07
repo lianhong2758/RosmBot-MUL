@@ -1,6 +1,8 @@
 package mys
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	log "github.com/sirupsen/logrus"
@@ -33,10 +35,13 @@ func (c *Config) RunHTTP() {
 func (c *Config) RunWS() {
 	c.mul()
 	botMap[c.BotToken.BotID] = c
-Loop:
-	if err := c.GetWebsocketUrl(); err != nil {
-		log.Error("[mys-ws]获取WebsocketUrl失败,ERROR: ", err)
-		goto Loop
+	for {
+		if err := c.GetWebsocketUrl(); err != nil || c.wr.Retcode != 0 {
+			log.Errorln("[mys-ws]获取WebsocketUrl失败,ERROR:", err, "Message:", c.wr.Message)
+			time.Sleep(time.Second * 3)
+			continue
+		}
+		break
 	}
 	c.Login()
 	c.Listen()

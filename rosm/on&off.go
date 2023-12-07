@@ -1,3 +1,4 @@
+// 用于管理插件的启用/禁用
 package rosm
 
 import (
@@ -22,7 +23,7 @@ func init() {
 			ctx.Send(message.Text("未找到插件: ", name))
 			return
 		}
-		err := PluginDB.InsertOff(name, tool.String221(ctx.Being.RoomID, ctx.Being.RoomID2), false)
+		err := PluginDB.InsertOff(name, tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2), false)
 		if err != nil {
 			ctx.Send(message.Text(name, "启用失败,ERROR: ", err))
 			return
@@ -35,7 +36,7 @@ func init() {
 			ctx.Send(message.Text("未找到插件: ", name))
 			return
 		}
-		err := PluginDB.InsertOff(name, tool.String221(ctx.Being.RoomID, ctx.Being.RoomID2), true)
+		err := PluginDB.InsertOff(name, tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2), true)
 		if err != nil {
 			ctx.Send(message.Text(name, "禁用失败,ERROR: ", err))
 			return

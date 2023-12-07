@@ -19,10 +19,11 @@ type Content struct {
 	EventID   string      `json:"event_id,omitempty"`          //前置收到的事件ID，用于发送被动消息
 	MarkDown  *MarkDownS  `json:"markdown,omitempty"`          //markDown
 	//私聊/群聊
-	Types    int        `json:"msg_type,omitempty"` //0 是文本，1 图文混排 ，2 是 md, 3 ark，4 embed，5 at @人或@all
+	Types    int        `json:"msg_type,omitempty"` //0 是文本，1 图文混排 ，2 是 md, 3 ark，4 embed，5 at @人或@all,7 media 富媒体
 	Keyboard *KeyboardS `json:"keyboard,omitempty"` //消息按钮
 	//群聊
-	Timestamp int64 `json:"timestamp,omitempty"` //unix 秒级时间戳
+	Media  *Media `json:"media,omitempty"`   //富文本
+	MsgSeq int    `json:"msg_seq,omitempty"` //富文本
 	//子频道
 	Embed *Embed `json:"embed,omitempty"` //一种特殊的 ark
 }
@@ -55,4 +56,7 @@ type ArkS struct {
 type SendState struct {
 	MsgID string `json:"id"`
 	Time  int64  `json:"timestamp"` //时间戳
+}
+type Media struct {
+	FileInfo string `json:"file_info"`
 }

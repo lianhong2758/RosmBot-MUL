@@ -1,118 +1,35 @@
 package mys
 
-import ()
+import (
+	vila_bot "github.com/lianhong2758/RosmBot-MUL/server/mys/proto"
+)
 
 type H = map[string]any
 
 // 回调的请求结构
+
 type InfoSTR struct {
 	Event struct {
-		Robot struct {
-			Template tem `json:"template"` // 机器人模板信息
-			VillaID  int `json:"villa_id"` // 事件所属的大别野 id
-		} `json:"robot"`
-		Type       int      `json:"type"`
-		ExtendData struct { // 包含事件的具体数据
+		Robot      *vila_bot.Robot               `protobuf:"bytes,1,opt,name=robot,proto3" json:"robot,omitempty"`                                   // 事件相关机器人
+		Type       vila_bot.RobotEvent_EventType `protobuf:"varint,2,opt,name=type,proto3,enum=vila_bot.RobotEvent_EventType" json:"type,omitempty"` // 事件类型
+		CreatedAt  int64                         `protobuf:"varint,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`         // 事件发生时间
+		Id         string                        `protobuf:"bytes,5,opt,name=id,proto3" json:"id,omitempty"`                                         // 事件 id
+		SendAt     int64                         `protobuf:"varint,6,opt,name=send_at,json=sendAt,proto3" json:"send_at,omitempty"`                  // 事件消息投递时间
+		ExtendData struct {                      // 包含事件的具体数据
 			EventData EventData `json:"EventData"`
-		} `json:"extend_data"`
-		CreatedAt int64  `json:"created_at"`
-		ID        string `json:"id"`
-		SendAt    int    `json:"send_at"`
-	} `json:"event"`
+		} `protobuf:"bytes,3,opt,name=extend_data,json=extendData,proto3" json:"extend_data,omitempty"` // 事件拓展信息
+	} `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
 }
 
 // 所有事件
 type EventData struct {
-	SendMessage       sendmessage       `json:"SendMessage"`
-	JoinVilla         joinVilla         `json:"JoinVilla"`
-	CreateRobot       changeRobot       `json:"CreateRobot"`
-	DeleteRobot       changeRobot       `json:"DeleteRobot"`
-	AddQuickEmoticon  addQuickEmoticon  `json:"AddQuickEmoticon"`
-	AuditCallback     auditCallback     `json:"AuditCallback"`
-	ClickMsgComponent clickMsgComponent `json:"ClickMsgComponent"`
-}
-
-// 机器人相关信息
-type tem struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Desc     string `json:"desc"`
-	Icon     string `json:"icon"`
-	Commands []struct {
-		Name string `json:"name"`
-		Desc string `json:"desc"`
-	} `json:"commands"`
-}
-
-// 用户@机器人发送消息
-type sendmessage struct {
-	Content    string          `json:"content"`
-	FromUserID int             `json:"from_user_id"` // 发送者 id
-	SendAt     int64           `json:"send_at"`      // 发送时间的时间戳
-	RoomID     int             `json:"room_id"`      // 房间 id
-	ObjectName int             `json:"object_name"`  // 目前只支持文本类型消息
-	Nickname   string          `json:"nickname"`     // 用户昵称
-	MsgUID     string          `json:"msg_uid"`      // 消息 id
-	BotMsgID   string          `json:"bot_msg_id"`   // 如果被回复的消息从属于机器人，则该字段不为空字符串
-	VillaID    int             `json:"villa_id"`     // 大别野 id
-	QuoteMsg   MessageForQuote `json:"quote_msg"`
-}
-type MessageForQuote struct { // 回调消息引用消息的基础信息
-	Content          string `json:"content"`            // 消息摘要，如果是文本消息，则返回消息的文本内容。如果是图片消息，则返回"[图片]"
-	MsgUID           string `json:"msg_uid"`            // 消息 id
-	BotMsgID         string `json:"bot_msg_id"`         // 如果消息从属于机器人，则该字段不为空字符串
-	SendAt           int    `json:"send_at"`            // 发送时间的时间戳
-	MsgType          string `json:"msg_type"`           // 消息类型，包括"文本"，"图片"，"帖子卡片"等
-	FromUserID       int    `json:"from_user_id"`       // 发送者 id（整型）
-	FromUserNickname string `json:"from_user_nickname"` // 发送者昵称
-	FromUserIDStr    string `json:"from_user_id_str"`   // 发送者 id（字符串）可携带机器人发送者的id
-}
-
-// 有新用户加入大别野
-type joinVilla struct {
-	JoinUID          int    `json:"join_uid"`
-	JoinUserNickname string `json:"join_user_nickname"`
-	JoinAt           int64  `json:"join_at"`
-}
-
-// 大别野添加机器人实例,大别野删除机器人实例
-type changeRobot struct {
-	VillaID int `json:"villa_id"`
-}
-
-// 用户使用表情回复消息表态
-type addQuickEmoticon struct {
-	VillaID    int    `json:"villa_id"`
-	RoomID     int    `json:"room_id"`
-	UID        int    `json:"uid"`
-	EmoticonID int    `json:"emoticon_id"`
-	Emoticon   string `json:"emoticon"`
-	MsgUID     string `json:"msg_uid"`
-	BotMsgID   string `json:"bot_msg_id"`
-	IsCancel   bool   `json:"is_cancel"`
-}
-
-// 审核结果回调
-type auditCallback struct {
-	AuditID     string `json:"audit_id"`
-	BotTplID    string `json:"bot_tpl_id"`
-	VillaID     int    `json:"villa_id"`
-	RoomID      int    `json:"room_id"`
-	UserID      int    `json:"user_id"`
-	PassThrough string `json:"pass_through"`
-	AuditResult int    `json:"audit_result"`
-}
-
-// 按钮回溯
-type clickMsgComponent struct {
-	VillaID     int    `json:"villa_id"`
-	RoomID      int    `json:"room_id"`
-	UID         int    `json:"uid"`
-	MsgUID      string `json:"msg_uid"`
-	BotMsgID    string `json:"bot_msg_id"`
-	ComponentID string `json:"component_id"`
-	TemplateID  string `json:"template_id"`
-	Extra       string `json:"extra"`
+	vila_bot.RobotEvent_ExtendData_JoinVilla
+	vila_bot.RobotEvent_ExtendData_SendMessage
+	vila_bot.RobotEvent_ExtendData_CreateRobot
+	vila_bot.RobotEvent_ExtendData_DeleteRobot
+	vila_bot.RobotEvent_ExtendData_AddQuickEmoticon
+	vila_bot.RobotEvent_ExtendData_AuditCallback
+	vila_bot.RobotEvent_ExtendData_ClickMsgComponent
 }
 
 // 接收的原始消息,解析

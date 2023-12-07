@@ -27,8 +27,7 @@ func init() { // 插件主体
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		con, _ := web.URLToConfig(r.Imgurl)
-		ctx.Send(message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.ImageUrlWithText(web.UpImgUrl(r.Imgurl), con.Width, con.Height, 0, "\n今天你的VTB老婆是: "+r.Name))
+		ctx.Send(message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Text("\n今天你的VTB老婆是: "+r.Name), message.Image("url://"+r.Imgurl))
 		ctx.Send(message.Text(r.Message))
 	})
 }

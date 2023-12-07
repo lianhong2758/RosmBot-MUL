@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// bot主接口
+// Boter bot主接口,由server实现,Run函数由server自己调用运行
 type Boter interface {
 	//发送消息
 	BotSend(*CTX, ...message.MessageSegment) any
@@ -21,7 +21,7 @@ type BotCard struct {
 	Master  []string `json:"master_id"`
 }
 
-// 进行一个通道注册,同于接收平台注册消息进行统计
+// 进行一个通道注册,同于接收平台注册消息进行统计,虽然不是强制性需要,但还是建议实现一下
 var MULChan = make(chan MUL)
 
 type MUL struct {
