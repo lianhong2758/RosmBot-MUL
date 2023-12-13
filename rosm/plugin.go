@@ -1,4 +1,4 @@
-//插件的具体结构
+// 插件的具体结构
 package rosm
 
 import (
@@ -111,7 +111,7 @@ func (m *Matcher) MUL(name ...string) *Matcher {
 // 注册Handle
 func (m *Matcher) Handle(h Handler) {
 	//加载默认的rule
-	m.rules = append(m.rules, m.mulPass(), PluginIsOn(m))
+	m.rules = append(m.rules, m.mulPass(), MatcherIsOn(m))
 	//执行hander
 	m.handler = h
 }

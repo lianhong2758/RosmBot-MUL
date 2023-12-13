@@ -2,6 +2,7 @@
 package rosm
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
@@ -51,12 +52,18 @@ func init() {
 			return
 		}
 		var msg strings.Builder
-		msg.WriteString("******")
+		t := strings.Repeat("*", (20-len(plugin.Name))/2)
+		msg.WriteString(t)
 		msg.WriteString(plugin.Name)
-		msg.WriteString("******\n")
+		msg.WriteString(t)
+		msg.WriteByte('\n')
+		msg.WriteString("启用状态:")
+		msg.WriteString(strconv.FormatBool(PluginIsOn(plugin)(ctx)))
+		msg.WriteByte('\n')
+		msg.WriteString("帮助信息:")
 		msg.WriteString(plugin.Help)
 		msg.WriteByte('\n')
-		msg.WriteString("********************")
+		msg.WriteString(strings.Repeat("*", 20))
 		ctx.Send(message.Text(msg.String()))
 	})
 }
