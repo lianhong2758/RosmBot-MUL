@@ -14,6 +14,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mmcdole/gofeed v1.2.1
+	github.com/robfig/cron/v3 v3.0.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/tidwall/gjson v1.14.4
 	go.uber.org/atomic v1.11.0

@@ -3,6 +3,7 @@ package tool
 import (
 	"strconv"
 	"strings"
+	"time"
 	"unsafe"
 )
 
@@ -32,7 +33,7 @@ func Int64ToString(ID int64) string {
 	return strconv.FormatInt(ID, 10)
 }
 
-// 40位以下id字符串合并,结果称为string1
+// 40位以下id字符串合并,结果称为string1,one为roomID1
 func MergePadString(one, two string) string {
 	return one + strings.Repeat(" ", 40-len(one)) + two + strings.Repeat(" ", 40-len(two))
 }
@@ -60,4 +61,9 @@ func JoinTypeAndString(types, string1 string) string {
 // 解析JoinTypeAndString结果和type的组合数据
 func SplitTypeAndString(value string) (types, string1 string) {
 	return value[:len(value)-80], value[len(value)-80:]
+}
+
+// 等待其他init加载完毕
+func WaitInit() {
+	time.Sleep(time.Second * 2)
 }

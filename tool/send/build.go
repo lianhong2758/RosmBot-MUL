@@ -7,21 +7,21 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
-// roomid为两个room的结合,请使用tool.String221的结果
-func CTXBuild(types, botid, roomid21 string) (ctx *rosm.CTX) {
+// roomid12为两个room的结合,请使用tool.MergePadString的结果
+func CTXBuild(types, botid, roomid12 string) (ctx *rosm.CTX) {
 	switch types {
 	case "mys":
-		room, villa := tool.SplitPadString(roomid21)
+		room, villa := tool.SplitPadString(roomid12)
 		if botid == "" {
-			botid = mys.GetBot().BotToken.BotID
+			botid = mys.GetRandBot().BotToken.BotID
 		}
 		ctx = mys.NewCTX(botid, room, villa)
-	case "qq":
-		id1, id2 := tool.SplitPadString(roomid21)
+	case "qq_group", "qq_guild":
+		id1, id2 := tool.SplitPadString(roomid12)
 		if botid == "" {
-			botid = qq.GetBot().BotID
+			botid = qq.GetRandBot().BotID
 		}
-		ctx = qq.NewCTX(botid, id1, id2)
+		ctx = qq.NewCTX(botid, types, id1, id2)
 	}
 	return ctx
 }
