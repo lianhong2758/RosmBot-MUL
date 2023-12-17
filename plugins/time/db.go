@@ -82,5 +82,4 @@ func (db *model) Range(f func(i int, m *mode) bool) {
 		}
 		i++
 	}
-	return
 }
