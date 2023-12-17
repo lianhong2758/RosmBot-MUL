@@ -25,7 +25,7 @@ func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
 	// 在这里获取机器人开放平台下发的 oss 参数
 	param, err := getParam(ctx, hex.EncodeToString(md5hash[:]), "jpg")
 	if err != nil {
-		log.Error("[mys]获取米游社阿里云 OSS 上传参数失败", err)
+		log.Warnln("[mys]获取米游社阿里云 OSS 上传参数失败", err)
 		return "", err
 	}
 	var requestBody bytes.Buffer

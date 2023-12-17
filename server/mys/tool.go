@@ -47,14 +47,15 @@ func NewBot(botid string) rosm.Boter {
 // 新建上下文
 func NewCTX(botid, roomid, villaid string) *rosm.CTX {
 	return &rosm.CTX{
-		Bot: botMap[botid],
+		BotType: "mys",
+		Bot:     botMap[botid],
 		Being: &rosm.Being{
 			RoomID:  roomid,
 			RoomID2: villaid,
 		},
 	}
 }
-func GetBot() *Config {
+func GetRandBot() *Config {
 	for k := range botMap {
 		return botMap[k]
 	}
