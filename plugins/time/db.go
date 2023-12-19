@@ -24,6 +24,7 @@ type mode struct {
 	Word    string `db:"Word"`    //记录的指令
 	Time    string `db:"Time"`    //定时
 	UserID  string `db:"UserID"`  //记录者ID
+	BotID   string `db:"BotID"`   //优先匹配的botid
 }
 
 // 初始化
@@ -73,7 +74,7 @@ func (db *model) Range(f func(i int, m *mode) bool) {
 	// 遍历结果
 	for rows.Next() {
 		var m mode
-		err := rows.Scan(&m.Key, &m.String1, &m.Types, &m.Word, &m.Time, &m.UserID)
+		err := rows.Scan(&m.Key, &m.String1, &m.Types, &m.Word, &m.Time, &m.UserID, &m.BotID)
 		if err != nil {
 			return
 		}
