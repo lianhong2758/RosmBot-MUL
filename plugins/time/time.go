@@ -67,6 +67,7 @@ func init() {
 			Word:    order,
 			Time:    ctx.Being.Rex[1],
 			UserID:  ctx.Being.User.ID,
+			BotID:   ctx.Bot.Card().BotID,
 		}
 		if err = TimeDB.Insert(m); err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
@@ -96,7 +97,7 @@ func cronRun(db *model) {
 	tool.WaitInit()
 	c = cron.New()
 	db.Range(func(i int, m *mode) bool {
-		timeCtx := send.CTXBuild(m.Types, "", m.String1)
+		timeCtx := send.CTXBuild(m.Types, m.BotID, m.String1)
 		timeCtx.Being.Word = m.Word
 		timeCtx.Being.User = &rosm.UserData{ID: m.UserID}
 		id, _ := c.AddFunc(m.Time, func() {
