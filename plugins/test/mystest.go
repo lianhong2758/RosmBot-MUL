@@ -127,7 +127,7 @@ func init() {
 		}
 	})
 	en.AddWord("获取图片").MUL("mys").Rule(mys.OnlyReply).Handle(func(ctx *rosm.CTX) {
-		ctx.Send(message.Text(ctx.Message.(*vila_bot.RobotEvent).GetExtendData().GetSendMessage().GetQuoteMsg().GetMsgPic()))
+		ctx.Send(message.Text(ctx.Message.(*vila_bot.RobotEvent).GetExtendData().GetSendMessage().GetQuoteMsg().GetImages()))
 	})
 }
 

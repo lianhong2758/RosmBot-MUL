@@ -18,6 +18,7 @@ func (cc *Config) MessReceive() func(c *gin.Context) {
 		c.JSON(200, map[string]any{"message": "", "retcode": 0}) //确认接收
 		sign := c.GetHeader("x-rpc-bot_sign")
 		if verify(sign, tool.BytesToString(body), cc.BotToken.BotSecretConst, cc.BotToken.BotPubKey) {
+			log.Debugln(tool.BytesToString(body))
 			eventMessage := new(InfoSTR)
 			err := json.Unmarshal(body, eventMessage)
 			if err != nil {
