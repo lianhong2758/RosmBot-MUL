@@ -36,7 +36,7 @@ func OnlyOverOwner(ctx *rosm.CTX) bool {
 
 // 触发消息是否是回复消息
 func OnlyReply(ctx *rosm.CTX) bool {
-	return ctx.Message.(*MessageContent).Quote.OriginalMessageSendTime != 0 && ctx.Message.(*MessageContent).Quote.QuotedMessageID != ""
+	return ctx.Being.Def["Content"].(*MessageContent).Quote.OriginalMessageSendTime != 0 && ctx.Being.Def["Content"].(*MessageContent).Quote.QuotedMessageID != ""
 }
 
 // 新建bot消息

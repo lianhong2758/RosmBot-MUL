@@ -149,10 +149,11 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 				ATList:  u.MentionedInfo.UserIDList,
 				MsgID:   []string{event.ExtendData.GetSendMessage().MsgUid, tool.Int64ToString(event.ExtendData.GetSendMessage().SendAt)},
 				Def: map[string]any{
-					"Quote": &event.ExtendData.GetSendMessage().QuoteMsg, //type  MessageForQuote
+					"Quote":   &event.ExtendData.GetSendMessage().QuoteMsg, //type  MessageForQuote
+					"Content": u,
 				},
 			},
-			Message: u,
+			Message: event,
 			Bot:     c,
 		}
 		ctx.Being.AtMe = true
