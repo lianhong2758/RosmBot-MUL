@@ -18,6 +18,7 @@ func (cc *Config) MessReceive() func(c *gin.Context) {
 		c.JSON(200, map[string]any{"message": "", "retcode": 0}) //确认接收
 		sign := c.GetHeader("x-rpc-bot_sign")
 		if verify(sign, tool.BytesToString(body), cc.BotToken.BotSecretConst, cc.BotToken.BotPubKey) {
+			log.Debugln(tool.BytesToString(body))
 			eventMessage := new(InfoSTR)
 			err := json.Unmarshal(body, eventMessage)
 			if err != nil {
@@ -146,13 +147,14 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 				RoomID2: strconv.Itoa(int(event.Robot.GetVillaId())),
 				RoomID:  strconv.Itoa(int(event.ExtendData.GetSendMessage().RoomId)),
 				User:    &rosm.UserData{Name: u.User.Name, ID: strconv.Itoa(id), PortraitURI: u.User.PortraitURI},
-				ATList:  u.MentionedInfo.UserIDList,
+				ATList:  u.MentionedInfo.UserIDList[1:], //排除自己
 				MsgID:   []string{event.ExtendData.GetSendMessage().MsgUid, tool.Int64ToString(event.ExtendData.GetSendMessage().SendAt)},
 				Def: map[string]any{
-					"Quote": &event.ExtendData.GetSendMessage().QuoteMsg, //type  MessageForQuote
+					"Quote":   &event.ExtendData.GetSendMessage().QuoteMsg, //type  MessageForQuote
+					"Content": u,
 				},
 			},
-			Message: u,
+			Message: event,
 			Bot:     c,
 		}
 		ctx.Being.AtMe = true

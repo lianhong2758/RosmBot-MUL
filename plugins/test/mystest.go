@@ -126,6 +126,9 @@ func init() {
 			}
 		}
 	})
+	en.AddWord("获取图片").MUL("mys").Rule(mys.OnlyReply).Handle(func(ctx *rosm.CTX) {
+		ctx.Send(message.Text(ctx.Message.(*vila_bot.RobotEvent).GetExtendData().GetSendMessage().GetQuoteMsg().GetImages()))
+	})
 }
 
 //ctx有消息的全部信息,ctx.Being有简单的消息信息获取
