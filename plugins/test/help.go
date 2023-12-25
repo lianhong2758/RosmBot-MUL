@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
+	draw "github.com/lianhong2758/RosmBot-MUL/plugins/public"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 )
 
@@ -24,6 +25,12 @@ func init() {
 			msg.WriteString("\n")
 		}
 		msg.WriteString("*****************")
-		ctx.Send(message.Text(msg.String()))
+		//ctx.Send(message.Text(msg.String()))
+		image, err := draw.StringToPic(msg.String(), draw.MaokenFontFile)
+		if err != nil {
+			ctx.Send(message.Text("ERROR: ", err))
+			return
+		}
+		ctx.Send(message.ImageByte(image))
 	})
 }
