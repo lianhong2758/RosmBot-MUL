@@ -59,14 +59,14 @@ func init() {
 			font = draw.MaokenFontFile
 		}
 		if ctx.Being.Rex[2] == "" {
-			image, err := draw.StringToPic(txt, draw.MaokenFontFile)
+			image, err := draw.StringToPic(txt, font)
 			if err != nil {
 				ctx.Send(message.Text("ERROR: ", err))
 				return
 			}
 			ctx.Send(message.ImageByte(image))
 		} else {
-			image, err := draw.StringToShake(txt, draw.MaokenFontFile)
+			image, err := draw.StringToShake(txt, font)
 			if err != nil {
 				ctx.Send(message.Text("ERROR: ", err))
 				return
