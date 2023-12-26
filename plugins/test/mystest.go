@@ -18,12 +18,12 @@ func init() {
 			"- 测试表态" +
 			"- 测试上传图片\n",
 	})
-	en.AddWord("测试").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试").Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text("你好"), mys.BoldText(" 加粗"), mys.ItalicText(" 斜体"), mys.DeleteText(" 删除线"), mys.UnderlineText(" 下划线"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Link("www.baidu.com", false, "百度一下"), mys.RoomLink(ctx.Being.RoomID2, ctx.Being.RoomID, "# 本房间"), message.Text("[爱心]"))
 		ctx.Send(message.Text("开始测试Post:"))
 		ctx.Send(mys.Post("45624940"))
 	})
-	en.AddWord("测试组件").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试组件").Handle(func(ctx *rosm.Ctx) {
 		{
 			s := mys.BadgeStr{
 				Icon: "http://47.93.28.113/favicon.ico",
@@ -82,7 +82,7 @@ func init() {
 			ctx.Send(message.Custom(p))
 		}
 	})
-	en.AddWord("测试全体next").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试全体next").Handle(func(ctx *rosm.Ctx) {
 		next, stop := ctx.GetNext(rosm.AllMessage, true)
 		defer stop()
 		ctx.Send(message.Text("测试开始"))
@@ -96,7 +96,7 @@ func init() {
 			}
 		}
 	})
-	en.AddWord("测试个人next").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试个人next").Handle(func(ctx *rosm.Ctx) {
 		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		defer stop()
 		ctx.Send(message.Text("测试开始"))
@@ -110,9 +110,9 @@ func init() {
 			}
 		}
 	})
-	en.AddWord("测试表态").MUL("mys").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("测试表态").MUL("mys").Handle(func(ctx *rosm.Ctx) {
 		result := ctx.Send(message.Text("测试开始,表态此条消息"))
-		next, stop := ctx.GetNext(rosm.Quick, true, func(ctx *rosm.CTX) bool {
+		next, stop := ctx.GetNext(rosm.Quick, true, func(ctx *rosm.Ctx) bool {
 			return result.(*mys.SendState).Data.BotMsgID == ctx.Message.(*vila_bot.RobotEvent).ExtendData.GetAddQuickEmoticon().GetBotMsgId()
 		})
 		defer stop()
@@ -126,7 +126,7 @@ func init() {
 			}
 		}
 	})
-	en.AddWord("获取图片").MUL("mys").Rule(mys.OnlyReply).Handle(func(ctx *rosm.CTX) {
+	en.AddWord("获取图片").MUL("mys").Rule(rosm.OnlyReply()).Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text(ctx.Message.(*vila_bot.RobotEvent).GetExtendData().GetSendMessage().GetQuoteMsg().GetImages()))
 	})
 }

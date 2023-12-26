@@ -8,7 +8,7 @@ import (
 )
 
 // roomid12为两个room的结合,请使用tool.MergePadString的结果
-func CTXBuild(types, botid, roomid12 string) (ctx *rosm.CTX) {
+func CTXBuild(types, botid, roomid12 string) (ctx *rosm.Ctx) {
 	switch types {
 	case "mys":
 		room, villa := tool.SplitPadString(roomid12)

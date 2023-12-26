@@ -53,8 +53,8 @@ func NewBot(botid string) rosm.Boter {
 }
 
 // 新建上下文
-func NewCTX(botid, types, roomid, roomid2 string) *rosm.CTX {
-	return &rosm.CTX{
+func NewCTX(botid, types, roomid, roomid2 string) *rosm.Ctx {
+	return &rosm.Ctx{
 		BotType: types,
 		Bot:     botMap[botid],
 		Being: &rosm.Being{

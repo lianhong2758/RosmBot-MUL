@@ -15,7 +15,7 @@ func init() { // 插件主体
 		Name: "抽vtb老婆",
 		Help: "- /抽vtb(老婆)",
 	})
-	en.AddRex(`^/抽(vtb|VTB)(老婆)?$`).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`^/抽(vtb|VTB)(老婆)?$`).Handle(func(ctx *rosm.Ctx) {
 		body, err := web.GetData(url+ctx.Being.User.ID, "")
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))

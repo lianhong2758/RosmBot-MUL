@@ -1,7 +1,7 @@
 package rosm
 
 // 上下文结构
-type CTX struct {
+type Ctx struct {
 	Bot     Boter
 	BotType string
 	Message any    //解析后的原始消息

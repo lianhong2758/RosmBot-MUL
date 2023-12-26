@@ -39,7 +39,7 @@ func init() {
 		Help:       "- /设置在* * * *的指令",
 		DataFolder: "time",
 	})
-	en.AddRex(`^/记录在(.*)的指令`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`^/记录在(.*)的指令`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		ctx.Send(message.Text("发送想要记录的指令:"))
 		var order string
@@ -75,7 +75,7 @@ func init() {
 		}
 		ctx.Send(message.Text("记录指令成功!"))
 	})
-	en.AddRex(`^/删除指令(.*)`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`^/删除指令(.*)`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		// 允许往正在执行的 cron 中添加任务
 		if id, ok := entryIDMap[ctx.Being.Rex[1]]; ok {
 			if err := TimeDB.Delete(tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2) + ctx.Being.Rex[1]); err != nil {

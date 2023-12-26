@@ -13,7 +13,7 @@ func init() {
 		Name: "帮助菜单",
 		Help: "- /help\n",
 	})
-	en.AddWord("/help", "/帮助").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("/help", "/帮助").Handle(func(ctx *rosm.Ctx) {
 		var msg strings.Builder
 		msg.WriteString("*****菜单********")
 		for _, v := range rosm.GetPlugins() {

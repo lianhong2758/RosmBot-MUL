@@ -24,7 +24,7 @@ const (
 )
 
 // 获取房间列表
-func GetRoomList(ctx *rosm.CTX) (r *RoomList, err error) {
+func GetRoomList(ctx *rosm.Ctx) (r *RoomList, err error) {
 	data, err := web.Web(&http.Client{}, Host+URLGetRoomList, http.MethodGet, makeHeard(ctx), nil)
 	log.Debugln("[GetRoomList]", string(data))
 	if err != nil {
@@ -36,7 +36,7 @@ func GetRoomList(ctx *rosm.CTX) (r *RoomList, err error) {
 }
 
 // 获取用户信息
-func GetUserData(ctx *rosm.CTX, uid string) (r *UserData, err error) {
+func GetUserData(ctx *rosm.Ctx, uid string) (r *UserData, err error) {
 	data, _ := json.Marshal(H{"uid": uid})
 	data, err = web.Web(&http.Client{}, Host+URLGetUserData, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[GetUserData]", string(data))
@@ -49,7 +49,7 @@ func GetUserData(ctx *rosm.CTX, uid string) (r *UserData, err error) {
 }
 
 // 获取用户名
-func GetUserName(ctx *rosm.CTX, uid string) string {
+func GetUserName(ctx *rosm.Ctx, uid string) string {
 	r, err := GetUserData(ctx, uid)
 	if err != nil {
 		return ""
@@ -58,7 +58,7 @@ func GetUserName(ctx *rosm.CTX, uid string) string {
 }
 
 // 踢人
-func DeleteUser(ctx *rosm.CTX, uid string) (err error) {
+func DeleteUser(ctx *rosm.Ctx, uid string) (err error) {
 	data, _ := json.Marshal(H{"uid": uid})
 	data, err = web.Web(&http.Client{}, Host+URLDeleteUser, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	log.Debugln("[DeleteUser]", string(data))
@@ -71,7 +71,7 @@ func DeleteUser(ctx *rosm.CTX, uid string) (err error) {
 }
 
 // 撤回消息,消息id,发送时间,房间id
-func Recall(ctx *rosm.CTX, msgid string, msgtime any, roomid string) (err error) {
+func Recall(ctx *rosm.Ctx, msgid string, msgtime any, roomid string) (err error) {
 	var t int64
 	switch tt := msgtime.(type) {
 	case int64:
@@ -91,7 +91,7 @@ func Recall(ctx *rosm.CTX, msgid string, msgtime any, roomid string) (err error)
 }
 
 // 获取别野信息
-func GetVillaData(ctx *rosm.CTX) (r *VillaData, err error) {
+func GetVillaData(ctx *rosm.Ctx) (r *VillaData, err error) {
 	data, err := web.Web(&http.Client{}, Host+URLGetVilla, http.MethodGet, makeHeard(ctx), nil)
 	log.Debugln("[GetVillaData]", string(data))
 	if err != nil {
@@ -103,7 +103,7 @@ func GetVillaData(ctx *rosm.CTX) (r *VillaData, err error) {
 }
 
 // 置顶消息,消息id,发送时间,房间id,是否取消置顶
-func PinMessage(ctx *rosm.CTX, msgid, sendat any, roomid string, iscancel bool) (err error) {
+func PinMessage(ctx *rosm.Ctx, msgid, sendat any, roomid string, iscancel bool) (err error) {
 	var t int64
 	switch tt := sendat.(type) {
 	case int64:

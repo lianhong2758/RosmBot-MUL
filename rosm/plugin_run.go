@@ -6,7 +6,7 @@ import (
 )
 
 // 匹配事件
-func (ctx *CTX) RunEvent(types int) (block bool) {
+func (ctx *Ctx) RunEvent(types int) (block bool) {
 	log.Debug("[Event]开始匹配事件type", types)
 	if ctx.sendNext(types) {
 		return true
@@ -22,7 +22,7 @@ func (ctx *CTX) RunEvent(types int) (block bool) {
 }
 
 // 匹配修剪好的触发词
-func (ctx *CTX) RunWord(word string) {
+func (ctx *Ctx) RunWord(word string) {
 	ctx.Being.Word = word
 	//全匹配
 	if ctx.RunEvent(AllMessage) {

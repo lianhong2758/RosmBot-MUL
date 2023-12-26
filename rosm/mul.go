@@ -8,12 +8,14 @@ import (
 // Boter bot主接口,由server实现,Run函数由server自己调用运行
 type Boter interface {
 	//发送消息
-	BotSend(*CTX, ...message.MessageSegment) any
+	BotSend(*Ctx, ...message.MessageSegment) any
 	//运行,用于开启接收消息和调用插件
 	Run()
 
 	//Bot信息查询
 	Card() *BotCard
+
+	BotRuler //rule的实现要求,如果不存在,适配器也需要设置函数返回true
 }
 type BotCard struct {
 	BotName string   `json:"bot_name"`
@@ -35,4 +37,11 @@ func Listen() {
 	for mulData := range MULChan {
 		log.Infof("[mul]新增注册,平台: %s,昵称: %s,BotID: %s", mulData.Types, mulData.Name, mulData.BotID)
 	}
+}
+
+type BotRuler interface {
+	OnlyReply(*Ctx) bool
+	OnlyMaster(*Ctx) bool
+	OnlyOverHost(*Ctx) bool
+	OnlyOverAdministrator(*Ctx) bool
 }

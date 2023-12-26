@@ -12,8 +12,8 @@ import (
 var nextList = map[EventType]map[int]*Matcher{}
 
 // 获取下一事件
-func (ctx *CTX) GetNext(types EventType, SetBlock bool, rs ...Rule) (chan *CTX, func()) {
-	next := make(chan *CTX, 1)
+func (ctx *Ctx) GetNext(types EventType, SetBlock bool, rs ...Rule) (chan *Ctx, func()) {
+	next := make(chan *Ctx, 1)
 	ids := int(0xfffffff & time.Now().Unix())
 	m := &Matcher{block: SetBlock, rules: rs, nestchan: next}
 	if nextList[types] != nil {
@@ -27,7 +27,7 @@ func (ctx *CTX) GetNext(types EventType, SetBlock bool, rs ...Rule) (chan *CTX, 
 	}
 }
 
-func (ctx *CTX) sendNext(types EventType) (block bool) {
+func (ctx *Ctx) sendNext(types EventType) (block bool) {
 	if len(nextList) == 0 || nextList[types] == nil {
 		return false
 	}

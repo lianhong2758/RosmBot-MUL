@@ -55,12 +55,14 @@ type RawGuildMessage struct {
 		Nick     string    `json:"nick"`
 		Roles    []string  `json:"roles"`
 	} `json:"member"`
-	Mentions     []Mention `json:"mentions"`
+	Mentions         []Mention `json:"mentions"`
+	MessageReference struct {
+		MessageID string `json:"message_id"`
+	} `json:"message_reference"`
 	Seq          int       `json:"seq"`
 	SeqInChannel string    `json:"seq_in_channel"`
 	Timestamp    time.Time `json:"timestamp"`
 }
-
 type Mention struct {
 	Avatar   string `json:"avatar"`
 	Bot      bool   `json:"bot"`

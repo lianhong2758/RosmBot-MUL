@@ -18,7 +18,7 @@ import (
 
 var seqcache = ttl.NewCache[string, int](time.Minute * 5)
 
-func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
+func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) any {
 	var IsGroup bool = ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" || ctx.Being.Def["type"].(string) == "C2C_MESSAGE_CREATE"
 	var msgContent *qqmsg.Content
 	if IsGroup {

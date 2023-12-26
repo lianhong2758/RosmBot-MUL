@@ -7,7 +7,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
-func MakeSendCoreMessage(ctx *rosm.CTX) []byte {
+func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 	MessageReport := MessageReceive{
 		Bot_id:      ctx.BotType,
 		Bot_self_id: ctx.Bot.Card().BotID,
