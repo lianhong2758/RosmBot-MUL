@@ -46,7 +46,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 	case 1:
 		log.Debugln("[debug] (入群事件)", event.ExtendData.GetJoinVilla().VillaId)
 		log.Infof("[info] (入群事件)[%d] %s(%d)", event.ExtendData.GetJoinVilla().VillaId, event.ExtendData.GetJoinVilla().JoinUserNickname, event.ExtendData.GetJoinVilla().JoinUid)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			BotType: "mys",
 			Being: &rosm.Being{
 				RoomID2: strconv.Itoa(int(event.Robot.GetVillaId())),
@@ -59,7 +59,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 	case 3:
 		log.Debugln("[debug] (添加bot)", event.ExtendData.GetCreateRobot().VillaId)
 		log.Infof("[info] (添加Bot事件)[%d]", event.ExtendData.GetCreateRobot().VillaId)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			BotType: "mys",
 			Being: &rosm.Being{
 				RoomID2: strconv.Itoa(int(event.Robot.GetVillaId())),
@@ -71,7 +71,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 	case 4:
 		log.Debugln("[debug] (删除bot)", event.ExtendData.GetDeleteRobot().VillaId)
 		log.Infof("[info] (删除Bot事件)[%d]", event.ExtendData.GetDeleteRobot().VillaId)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			BotType: "mys",
 			Being: &rosm.Being{
 				RoomID2: strconv.Itoa(int(event.Robot.GetVillaId())),
@@ -83,7 +83,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 	case 5:
 		log.Debugln("[debug] (接收表态)", event.ExtendData.GetAddQuickEmoticon().Emoticon)
 		log.Infof("[info] (表态事件)[%d] %d:%s", event.Robot.GetVillaId(), event.ExtendData.GetAddQuickEmoticon().Uid, event.ExtendData.GetAddQuickEmoticon().Emoticon)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			BotType: "mys",
 			Being: &rosm.Being{
 				RoomID2: strconv.Itoa(int(event.Robot.GetVillaId())),
@@ -98,7 +98,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 		//回调审核
 		log.Debugln("[debug] (接收审核回调)", event.ExtendData.GetAuditCallback().AuditResult)
 		log.Infof("[info] (审核回调)[%s] 审核结果: %d", event.ExtendData.GetAuditCallback().AuditId, event.ExtendData.GetAuditCallback().AuditResult)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			BotType: "mys",
 			Being: &rosm.Being{
 				RoomID2: strconv.Itoa(int(event.ExtendData.GetAuditCallback().VillaId)),
@@ -112,7 +112,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 	case 7:
 		log.Debugln("[debug] (接收回溯事件)", event.ExtendData.GetClickMsgComponent().Extra)
 		log.Infof("[info] (回溯事件)[%d] %d: %s", event.ExtendData.GetClickMsgComponent().VillaId, event.ExtendData.GetClickMsgComponent().Uid, event.ExtendData.GetClickMsgComponent().Extra)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			BotType: "mys",
 			Being: &rosm.Being{
 				Word:    event.ExtendData.GetClickMsgComponent().Extra,
@@ -141,7 +141,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 		}
 		log.Infof("[info] (接收消息)[%d] %s:%s", event.Robot.GetVillaId(), u.User.Name, u.Content.Text)
 		id, _ := strconv.Atoi(u.User.ID)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			BotType: "mys",
 			Being: &rosm.Being{
 				RoomID2: strconv.Itoa(int(event.Robot.GetVillaId())),

@@ -9,7 +9,7 @@ import (
 
 func init() {
 	en := rosm.Register(rosm.NewRegist("踢出别野", "- @机器人 踢出别野 @everyone", ""))
-	en.AddRex(`踢出别野(.*)`).SetBlock(true).MUL("mys").Rule(mys.OnlyOverOwner).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`踢出别野(.*)`).SetBlock(true).MUL("mys").Rule(rosm.OnlyOverHost()).Handle(func(ctx *rosm.Ctx) {
 		list := ctx.Being.ATList
 		if len(list) != 2 {
 			return

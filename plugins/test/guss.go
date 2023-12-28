@@ -16,7 +16,7 @@ func init() {
 		Name: "猜数字/猜拳",
 		Help: "- /开始猜数字/猜拳",
 	})
-	en.AddWord("/开始猜数字").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("/开始猜数字").Handle(func(ctx *rosm.Ctx) {
 		num := strconv.Itoa(rand.Intn(9) + 1)
 		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		defer stop()
@@ -40,7 +40,7 @@ func init() {
 		}
 		ctx.Send(message.Text("游戏失败"))
 	})
-	en.AddWord("/开始猜拳").MUL("mys").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("/开始猜拳").MUL("mys").Handle(func(ctx *rosm.Ctx) {
 		p := mys.NewPanel()
 		p.Small(false, &mys.Component{
 			ID:    "t1",
@@ -65,8 +65,8 @@ func init() {
 		})
 		p.Title("请双方选择出拳:")
 		ctx.Send(message.Custom(p))
-		var ctxs []*rosm.CTX
-		next, stop := ctx.GetNext(rosm.Click, false, func(ctx2 *rosm.CTX) bool {
+		var ctxs []*rosm.Ctx
+		next, stop := ctx.GetNext(rosm.Click, false, func(ctx2 *rosm.Ctx) bool {
 			return (ctx2.Being.Word == "石头" || ctx2.Being.Word == "剪刀" || ctx2.Being.Word == "布") && ctx2.Being.RoomID == ctx.Being.RoomID
 		})
 		defer stop()
@@ -91,7 +91,7 @@ func init() {
 		}
 	})
 }
-func victory(ctxs []*rosm.CTX) {
+func victory(ctxs []*rosm.Ctx) {
 	var msg = []message.MessageSegment{message.Text("出拳结果: \n"),
 		message.Text(mys.GetUserName(ctxs[0], ctxs[0].Being.User.ID), ":", ctxs[0].Being.Word, "\n"),
 		message.Text(mys.GetUserName(ctxs[1], ctxs[1].Being.User.ID), ":", ctxs[1].Being.Word, "\n"),

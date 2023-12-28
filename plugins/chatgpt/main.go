@@ -39,7 +39,7 @@ func init() {
 		}
 		apiKey = string(apikey)
 	}
-	en.AddRex(`^(?:chatgpt|//)([\s\S]*)$`).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`^(?:chatgpt|//)([\s\S]*)$`).Handle(func(ctx *rosm.Ctx) {
 		var messages []chatMessage
 		args := ctx.Being.Rex[1]
 		key := sessionKey{
@@ -68,7 +68,7 @@ func init() {
 		ctx.Send(message.Reply(), message.Text(reply.Content, "\n本次消耗token: ", resp.Usage.PromptTokens, "+", resp.Usage.CompletionTokens, "=", resp.Usage.TotalTokens))
 	})
 
-	en.AddRex(`^设置\s*OpenAI\s*apikey\s*(.*)$`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`^设置\s*OpenAI\s*apikey\s*(.*)$`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		apiKey = ctx.Being.Rex[1]
 		f, err := os.Create(apikeyfile)
 		if err != nil {

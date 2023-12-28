@@ -12,7 +12,7 @@ import (
 )
 
 // 上传byte数据
-func UpImgByte(ctx *rosm.CTX, img []byte) (url string, con *image.Config) {
+func UpImgByte(ctx *rosm.Ctx, img []byte) (url string, con *image.Config) {
 	url, err := UploadFile(ctx, img)
 	if err != nil {
 		log.Warnln("[mys](upimage)上传图片失败,ERROR: ", err)
@@ -23,7 +23,7 @@ func UpImgByte(ctx *rosm.CTX, img []byte) (url string, con *image.Config) {
 }
 
 // 上传file
-func UpImgfile(ctx *rosm.CTX, filePath string) (url string, con *image.Config) {
+func UpImgfile(ctx *rosm.Ctx, filePath string) (url string, con *image.Config) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Warnln("[mys](upimage)", err)
@@ -33,7 +33,7 @@ func UpImgfile(ctx *rosm.CTX, filePath string) (url string, con *image.Config) {
 }
 
 // 转存图片
-func UpImgUrl(ctx *rosm.CTX, imgurl string) (url string) {
+func UpImgUrl(ctx *rosm.Ctx, imgurl string) (url string) {
 	url, err := TransFerImage(ctx, imgurl)
 	if err != nil {
 		log.Errorln("[mys](upimage)", err)
@@ -43,7 +43,7 @@ func UpImgUrl(ctx *rosm.CTX, imgurl string) (url string) {
 }
 
 // 解析base64等data
-func ImageAnalysis(ctx *rosm.CTX, data string) (url string, con *image.Config) {
+func ImageAnalysis(ctx *rosm.Ctx, data string) (url string, con *image.Config) {
 	switch parts := strings.SplitN(data, "://", 2); parts[0] {
 	case "base64":
 		bytes, err := base64.StdEncoding.DecodeString(parts[1])

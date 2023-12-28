@@ -38,7 +38,7 @@ func (c *Config) GetOpenAPI(shortUrl string, body, result any) (err error) {
 }
 
 // 获取频道用户信息
-func GetGuildUser(ctx *rosm.CTX, uid string) (User *GuildUser, err error) {
+func GetGuildUser(ctx *rosm.Ctx, uid string) (User *GuildUser, err error) {
 	url := host + fmt.Sprintf(urlGuildGetUser, ctx.Being.RoomID2, uid)
 	data, err := web.Web(clientConst, url, http.MethodGet, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
 	log.Debugln("[GetGuildUser][", url, "]", string(data))
@@ -51,7 +51,7 @@ func GetGuildUser(ctx *rosm.CTX, uid string) (User *GuildUser, err error) {
 }
 
 // 上传文件获取file_info,媒体类型：1 图片，2 视频，3 语音，4 文件（暂不开放）
-func UpFile(ctx *rosm.CTX, url string, types int) (result *UpFileResult, err error) {
+func UpFile(ctx *rosm.Ctx, url string, types int) (result *UpFileResult, err error) {
 	var upurl string
 	if ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" {
 		upurl = host + fmt.Sprintf(urlUPFileGroup, ctx.Being.RoomID)

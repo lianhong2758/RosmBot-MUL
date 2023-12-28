@@ -49,7 +49,7 @@ func (i *InfoContent) Big(nextLine bool, c *Component) {
 func (i *InfoContent) Template(id int) { i.Panel.TemplateID = id }
 
 // Text
-func (i *InfoContent) TextBuild(ctx *rosm.CTX, m ...message.MessageSegment) {
+func (i *InfoContent) TextBuild(ctx *rosm.Ctx, m ...message.MessageSegment) {
 	cif, _ := MakeMsgContent(ctx, m...)
 	i.Content = (*cif.(*H))["content"].(*Content)
 }

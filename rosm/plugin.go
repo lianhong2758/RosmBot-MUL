@@ -13,9 +13,9 @@ import (
 
 type (
 	// Rule filter the event
-	Rule = func(ctx *CTX) bool
+	Rule = func(ctx *Ctx) bool
 	// Handler 事件处理函数
-	Handler = func(ctx *CTX)
+	Handler = func(ctx *Ctx)
 )
 
 type PluginData struct {
@@ -32,7 +32,7 @@ type Matcher struct {
 	handler    Handler
 	mul        []string
 	block      bool        //阻断
-	nestchan   chan *CTX   //用于上下文
+	nestchan   chan *Ctx   //用于上下文
 	PluginNode *PluginData //溯源
 }
 
@@ -128,7 +128,7 @@ func (m *Matcher) Rule(r ...Rule) *Matcher {
 }
 
 func (m *Matcher) mulPass() Rule {
-	return func(ctx *CTX) bool {
+	return func(ctx *Ctx) bool {
 		if len(m.mul) == 0 {
 			return true
 		}
@@ -143,8 +143,8 @@ func (m *Matcher) mulPass() Rule {
 
 // Limit 限速器
 // postfn 当请求被拒绝时的操作
-func (m *Matcher) Limit(limiterfn func(*CTX) *rate.Limiter, postfn ...func(*CTX)) *Matcher {
-	m.rules = append(m.rules, func(ctx *CTX) bool {
+func (m *Matcher) Limit(limiterfn func(*Ctx) *rate.Limiter, postfn ...func(*Ctx)) *Matcher {
+	m.rules = append(m.rules, func(ctx *Ctx) bool {
 		if limiterfn(ctx).Acquire() {
 			return true
 		}
@@ -159,7 +159,7 @@ func (m *Matcher) Limit(limiterfn func(*CTX) *rate.Limiter, postfn ...func(*CTX)
 }
 
 // 快捷发送消息
-func (ctx *CTX) Send(m ...message.MessageSegment) any {
+func (ctx *Ctx) Send(m ...message.MessageSegment) any {
 	return ctx.Bot.BotSend(ctx, m...)
 }
 func Display() {

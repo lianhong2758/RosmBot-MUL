@@ -16,13 +16,13 @@ func init() {
 		Name: "复读",      //中文插件名
 		Help: "- 复读...", //插件帮助
 	})
-	en.AddRex("^复读(.*)").SetBlock(true).Rule(func(ctx *rosm.CTX) bool { return true }, rosm.OnlyMaster()).Handle(func(ctx *rosm.CTX) { //正则的触发方式
+	en.AddRex("^复读(.*)").SetBlock(true).Rule(func(ctx *rosm.Ctx) bool { return true }, rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) { //正则的触发方式
 		ctx.Send(message.Text(ctx.Being.Rex[1])) //发送文字信息
 	})
-	en.AddRex("^复纯(.*)").Handle(func(ctx *rosm.CTX) {
+	en.AddRex("^复纯(.*)").Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Image("url://" + ctx.Being.Rex[1]))
 	})
-	en.AddRex(`^解析([\s\S]*)$`).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`^解析([\s\S]*)$`).Handle(func(ctx *rosm.Ctx) {
 		info := new(map[string]any)
 		err := json.Unmarshal(tool.StringToBytes(ctx.Being.Rex[1]), info)
 		if err != nil {
@@ -37,7 +37,7 @@ func init() {
 			}
 		}
 	})
-	en.AddRex(`^(用.+)?渲染(抖动)?文字([\s\S]+)$`).Handle(func(ctx *rosm.CTX) {
+	en.AddRex(`^(用.+)?渲染(抖动)?文字([\s\S]+)$`).Handle(func(ctx *rosm.Ctx) {
 		font := ctx.Being.Rex[1]
 		txt := ctx.Being.Rex[3]
 		switch font {

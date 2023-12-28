@@ -9,7 +9,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
-func MakeMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) (contentInfo any, object string) {
+func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) (contentInfo any, object string) {
 	msgContent := new(Content)
 	msgContentInfo := H{}
 	for _, message := range msg {

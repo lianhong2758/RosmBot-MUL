@@ -6,7 +6,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
-func GuildMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) *Content {
+func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 	cnt := new(Content)
 	for _, message := range msg {
 		var text string
@@ -48,7 +48,7 @@ func GuildMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) *Content {
 	return cnt
 }
 
-func GroupMsgContent(ctx *rosm.CTX, msg ...message.MessageSegment) *Content {
+func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 	cnt := new(Content)
 	cnt.Types = 0
 	for _, message := range msg {

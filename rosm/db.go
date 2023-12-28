@@ -87,8 +87,8 @@ func (db *model) InsertOther(pluginname, roomid string, o string) (err error) {
 }
 
 // 查询是否开启插件
-func MatcherIsOn(m *Matcher) func(ctx *CTX) bool {
-	return func(ctx *CTX) bool {
+func MatcherIsOn(m *Matcher) func(ctx *Ctx) bool {
+	return func(ctx *Ctx) bool {
 		off, err := PluginDB.FindOff(m.PluginNode.Name, tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2))
 		log.Debugln("[db]PluginIsOn 插件:", m.PluginNode.Name, "Off: ", off, "err: ", err)
 		return (!off && err == nil) || (!m.PluginNode.DefaultOff && err == sql.ErrNullResult)
@@ -96,8 +96,8 @@ func MatcherIsOn(m *Matcher) func(ctx *CTX) bool {
 }
 
 // 查询是否开启插件,传入Plugin
-func PluginIsOn(PluginNode *PluginData) func(ctx *CTX) bool {
-	return func(ctx *CTX) bool {
+func PluginIsOn(PluginNode *PluginData) func(ctx *Ctx) bool {
+	return func(ctx *Ctx) bool {
 		off, err := PluginDB.FindOff(PluginNode.Name, tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2))
 		log.Debugln("[db]PluginIsOn 插件:", PluginNode.Name, "Off: ", off, "err: ", err)
 		return (!off && err == nil) || (!PluginNode.DefaultOff && err == sql.ErrNullResult)

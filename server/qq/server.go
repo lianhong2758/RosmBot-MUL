@@ -19,7 +19,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 			return
 		}
 		log.Infof("[info]接收私聊消息%s:%s", raw.Author.UserOpenid, raw.Content)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_group",
 			Message: raw,
@@ -47,7 +47,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 			return
 		}
 		log.Infof("[info]接收消息[%s]%s:%s", raw.GroupID, raw.Author.ID, raw.Content)
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_group",
 			Message: raw,
@@ -82,7 +82,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 		for _, v := range raw.Mentions {
 			at = append(at, v.ID)
 		}
-		ctx := &rosm.CTX{
+		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_gulid",
 			Message: raw,

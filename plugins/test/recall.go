@@ -11,7 +11,7 @@ func init() {
 		Name: "撤回消息",
 		Help: "- {回复消息}/撤回",
 	})
-	en.AddWord("/撤回").MUL("mys").Rule(mys.OnlyReply, mys.OnlyOverOwner).Handle(func(ctx *rosm.CTX) {
+	en.AddWord("/撤回").MUL("mys").Rule(rosm.OnlyReply(), rosm.OnlyOverHost()).Handle(func(ctx *rosm.Ctx) {
 		if err := mys.Recall(ctx, ctx.Being.Def["Content"].(*mys.MessageContent).Quote.OriginalMessageID, ctx.Being.Def["Content"].(*mys.MessageContent).Quote.QuotedMessageSendTime, ctx.Being.RoomID); err != nil {
 			log.Errorln("[recall]", err)
 		} else {

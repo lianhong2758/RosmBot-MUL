@@ -19,7 +19,7 @@ const (
 	UrltransferImage = "/vila/api/bot/platform/transferImage"
 )
 
-func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
+func UploadFile(ctx *rosm.Ctx, image []byte) (imageUrl string, err error) {
 	log.Info("[mys]上传图片到米游社阿里云 OSS")
 	md5hash := md5.Sum(image)
 	// 在这里获取机器人开放平台下发的 oss 参数
@@ -61,7 +61,7 @@ func UploadFile(ctx *rosm.CTX, image []byte) (imageUrl string, err error) {
 }
 
 // mys消息的ctx,md5,扩展名
-func getParam(ctx *rosm.CTX, md5 string, ext string) (param *OssUpParam, err error) {
+func getParam(ctx *rosm.Ctx, md5 string, ext string) (param *OssUpParam, err error) {
 	data, _ := json.Marshal(H{"md5": md5, "ext": ext})
 	data, err = web.Web(web.NewDefaultClient(), Host+UrlUpimage, http.MethodGet, makeHeard(ctx), bytes.NewReader(data))
 	if err != nil {
@@ -111,7 +111,7 @@ type OssDownloadParam struct {
 }
 
 // 转存
-func TransFerImage(ctx *rosm.CTX, url string) (imageUrl string, err error) {
+func TransFerImage(ctx *rosm.Ctx, url string) (imageUrl string, err error) {
 	data, _ := json.Marshal(H{"url": url})
 	data, err = web.Web(web.NewDefaultClient(), Host+UrltransferImage, http.MethodPost, makeHeard(ctx), bytes.NewReader(data))
 	if err != nil {

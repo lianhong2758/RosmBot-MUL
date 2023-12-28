@@ -16,7 +16,7 @@ const (
 	sendMessage = "https://bbs-api.miyoushe.com/vila/api/bot/platform/sendMessage"
 )
 
-func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
+func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) any {
 	msgContentInfo, objectStr := MakeMsgContent(ctx, msg...)
 	contentStr, _ := json.Marshal(msgContentInfo)
 	data, _ := json.Marshal(H{"room_id": tool.StringToInt64(ctx.Being.RoomID), "object_name": objectStr, "msg_content": tool.BytesToString(contentStr)})
@@ -32,7 +32,7 @@ func (c *Config) BotSend(ctx *rosm.CTX, msg ...message.MessageSegment) any {
 	return sendState
 }
 
-func makeHeard(ctx *rosm.CTX) func(req *http.Request) {
+func makeHeard(ctx *rosm.Ctx) func(req *http.Request) {
 	return func(req *http.Request) {
 		req.Header.Add("x-rpc-bot_id", ctx.Bot.(*Config).BotToken.BotID)
 		req.Header.Add("x-rpc-bot_secret", ctx.Bot.(*Config).BotToken.BotSecret)

@@ -13,7 +13,7 @@ func init() {
 		Name: "房间列表",
 		Help: "- /房间列表",
 	})
-	en.AddWord("/房间列表").Handle(func(ctx *rosm.CTX) {
+	en.AddWord("/房间列表").Handle(func(ctx *rosm.Ctx) {
 		result, err := mys.GetRoomList(ctx)
 		if err != nil {
 			ctx.Send(message.Text("获取信息失败", err))
