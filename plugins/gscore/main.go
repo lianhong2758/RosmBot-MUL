@@ -13,7 +13,7 @@ import (
 var cache = ttl.NewCache[string, *rosm.Ctx](time.Minute * 3)
 
 func init() {
-	en := rosm.Register(rosm.NewRegist("gscore", "参考score帮助\nGenshinUID帮助页\nhttps://www.kdocs.cn/l/ccpc6z0bZx6u", "gscore"))
+	en := rosm.Register(rosm.NewRegist("gscore", "参考gscore帮助\nGenshinUID帮助页\nhttps://www.kdocs.cn/l/ccpc6z0bZx6u", "gscore"))
 	en.AddWord("启动gscore").Handle(func(ctx *rosm.Ctx) { //.Rule(rosm.OnlyMaster())
 		//创建ws
 		Config.NewWebSocket()

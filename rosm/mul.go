@@ -15,8 +15,21 @@ type Boter interface {
 	//Bot信息查询
 	Card() *BotCard
 
-	BotRuler //rule的实现要求,如果不存在,适配器也需要设置函数返回true
+	BotRuler
 }
+
+// BotRuler rule的实现,如果不存在,适配器需要设置函数返回false
+type BotRuler interface {
+	//判断回复消息
+	OnlyReply(*Ctx) bool
+	//判断主人
+	OnlyMaster(*Ctx) bool
+	//判断群主等
+	OnlyOverHost(*Ctx) bool
+	//判断管理员
+	OnlyOverAdministrator(*Ctx) bool
+}
+
 type BotCard struct {
 	BotName string   `json:"bot_name"`
 	BotID   string   `json:"bot_id,omitempty"`
@@ -37,11 +50,4 @@ func Listen() {
 	for mulData := range MULChan {
 		log.Infof("[mul]新增注册,平台: %s,昵称: %s,BotID: %s", mulData.Types, mulData.Name, mulData.BotID)
 	}
-}
-
-type BotRuler interface {
-	OnlyReply(*Ctx) bool
-	OnlyMaster(*Ctx) bool
-	OnlyOverHost(*Ctx) bool
-	OnlyOverAdministrator(*Ctx) bool
 }

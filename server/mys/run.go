@@ -36,8 +36,8 @@ func (c *Config) RunWS() {
 	c.mul()
 	botMap[c.BotToken.BotID] = c
 	for {
-		if err := c.GetWebsocketUrl(); err != nil || c.wr.Retcode != 0 {
-			log.Errorln("[mys-ws]获取WebsocketUrl失败,ERROR:", err, "Message:", c.wr.Message)
+		if err := c.GetWebsocketUrl(); err != nil {
+			log.Errorln("[mys-ws]获取WebsocketUrl失败,ERROR: ", err, "wr: ", c.wr)
 			time.Sleep(time.Second * 3)
 			continue
 		}
