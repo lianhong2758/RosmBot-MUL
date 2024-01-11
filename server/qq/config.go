@@ -15,7 +15,7 @@ var botMap = map[string]*Config{}
 type Token struct {
 	AppId     string `json:"AppId"`
 	AppSecret string `json:"AppSecret"`
-	Token     string `json:"Token,omitempty"`
+	Token     string `json:"Token"`
 }
 type Config struct {
 	*rosm.BotCard
@@ -32,7 +32,7 @@ type Config struct {
 	mu        sync.Mutex      // 写锁
 	conn      *websocket.Conn // conn 目前的 wss 连接
 	hbonce    sync.Once       // hbonce 保证仅执行一次 heartbeat
-	Ready     EventReady
+	ready     EventReady
 }
 
 // 下发的bot配置
@@ -57,6 +57,9 @@ type User struct {
 
 func (c *Config) Card() *rosm.BotCard {
 	return c.BotCard
+}
+func (c *Config) GetReady() EventReady {
+	return c.ready
 }
 func NewConfig(path string) (c *Config) {
 	data, err := os.ReadFile(path)

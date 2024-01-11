@@ -182,7 +182,7 @@ func (c *Config) Connect() {
 			time.Sleep(2 * time.Second) // 等待两秒后重新连接
 			continue
 		}
-		c.Ready, err = payload.GetEventReady()
+		c.ready, err = payload.GetEventReady()
 		if err != nil {
 			log.Warnln("[sign]解析 EventReady 时出现错误:", err)
 			_ = conn.Close()
@@ -192,7 +192,7 @@ func (c *Config) Connect() {
 		atomic.StoreUint32(&c.heartbeat, hb)
 		break
 	}
-	log.Infoln("[sign]连接到网关成功, 用户名:", c.Ready.User.Username)
+	log.Infoln("[sign]连接到网关成功, 用户名:", c.ready.User.Username)
 	c.hbonce.Do(func() {
 		go c.doheartbeat()
 	})
@@ -233,7 +233,7 @@ func (c *Config) doheartbeat() {
 
 // Listen 监听事件
 func (c *Config) Listen() {
-	log.Infoln("[qq-ws]开始监听", c.Ready.User.Username, "的事件")
+	log.Infoln("[qq-ws]开始监听", c.ready.User.Username, "的事件")
 	payload := WebsocketPayload{}
 	lastheartbeat := time.Now()
 	for {
@@ -243,7 +243,7 @@ func (c *Config) Listen() {
 			// 发送失败
 			c.conn = nil
 			atomic.StoreUint32(&c.heartbeat, 0)
-			log.Warnln("[ws]", c.Ready.User.Username, "的网关连接断开, 尝试恢复:", err)
+			log.Warnln("[ws]", c.ready.User.Username, "的网关连接断开, 尝试恢复:", err)
 			for {
 				time.Sleep(time.Second)
 				//开始重连
@@ -251,7 +251,7 @@ func (c *Config) Listen() {
 				if err == nil {
 					break
 				}
-				log.Warnln("[ws]", c.Ready.User.Username, "的网关连接恢复失败:", err)
+				log.Warnln("[ws]", c.ready.User.Username, "的网关连接恢复失败:", err)
 			}
 			continue
 		}
@@ -262,7 +262,7 @@ func (c *Config) Listen() {
 		case OpCodeDispatch: // Receive
 			switch payload.T {
 			case "RESUMED":
-				log.Infoln("ws", c.Ready.User.Username, "的网关连接恢复完成")
+				log.Infoln("ws", c.ready.User.Username, "的网关连接恢复完成")
 			default:
 				c.process(&payload)
 			}
@@ -274,7 +274,7 @@ func (c *Config) Listen() {
 			atomic.StoreUint32(&c.heartbeat, 0)
 			c.Connect()
 		case OpCodeInvalidSession: // Receive
-			log.Warnln("[ws]", c.Ready.User.Username, "的网关连接恢复失败: InvalidSession, 尝试重连...")
+			log.Warnln("[ws]", c.ready.User.Username, "的网关连接恢复失败: InvalidSession, 尝试重连...")
 			atomic.StoreUint32(&c.heartbeat, 0)
 			c.Connect()
 		case OpCodeHello: // Receive
@@ -325,7 +325,7 @@ func (c *Config) Resume() error {
 		T string `json:"token"`
 		S string `json:"session_id"`
 		Q uint32 `json:"seq"`
-	}{c.Authorization(), c.Ready.SessionID, c.seq})
+	}{c.Authorization(), c.ready.SessionID, c.seq})
 	return c.SendPayload(&payload)
 }
 

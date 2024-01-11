@@ -101,9 +101,9 @@ func (c *Config) process(playload *WebsocketPayload) {
 		}
 		word := raw.Content
 		//判断@
-		if strings.Contains(raw.Content, "<@!"+c.Ready.User.ID+">") {
+		if strings.Contains(raw.Content, "<@!"+c.ready.User.ID+">") {
 			ctx.Being.AtMe = true
-			word = strings.TrimSpace(strings.Replace(word, "<@!"+c.Ready.User.ID+">", "", 1))
+			word = strings.TrimSpace(strings.Replace(word, "<@!"+c.ready.User.ID+">", "", 1))
 		}
 		log.Debugf("[debug]关键词切割结果: %s", word)
 		ctx.RunWord(word)

@@ -9,13 +9,14 @@ import (
 	//Bot注册
 	//"github.com/lianhong2758/RosmBot-MUL/server/mys"
 	//_"github.com/lianhong2758/RosmBot-MUL/server/mys/init"
-	//_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
-		_ "github.com/lianhong2758/RosmBot-MUL/server/ob11/init"
+	_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
+	//_ "github.com/lianhong2758/RosmBot-MUL/server/ob11/init"
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	//插件注册
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/chatgpt"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/gscore"
+	_ "github.com/lianhong2758/RosmBot-MUL/plugins/myplugin/dreadhunger"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/test"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/time"
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

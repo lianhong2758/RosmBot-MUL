@@ -7,5 +7,5 @@ func (c *Config) Authorization() string {
 
 // AtMe 返回 "<@!"+bot.ready.User.ID+">"
 func (c *Config) AtMe() string {
-	return "<@!" + c.Ready.User.ID + ">"
+	return "<@!" + c.ready.User.ID + ">"
 }
