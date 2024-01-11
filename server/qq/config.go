@@ -32,7 +32,7 @@ type Config struct {
 	mu        sync.Mutex      // 写锁
 	conn      *websocket.Conn // conn 目前的 wss 连接
 	hbonce    sync.Once       // hbonce 保证仅执行一次 heartbeat
-	ready     EventReady
+	Ready     EventReady      `json:"-"`
 }
 
 // 下发的bot配置
@@ -59,7 +59,7 @@ func (c *Config) Card() *rosm.BotCard {
 	return c.BotCard
 }
 func (c *Config) GetReady() EventReady {
-	return c.ready
+	return c.Ready
 }
 func NewConfig(path string) (c *Config) {
 	data, err := os.ReadFile(path)
