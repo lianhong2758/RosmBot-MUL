@@ -11,7 +11,7 @@ const (
 	urlUPFilePrivate    = "/v2/users/%v/files"     //私聊富文本
 	urlGetway           = "/gateway"
 	urlGetwayWss        = "/gateway/bot"
-
+	urlDMS              = "/users/@me/dms"
 	//频道
 	urlGuildGetUser = "/guilds/%v/members/%v" //获取成员详情
 )

@@ -45,18 +45,15 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) any {
 	data, _ := json.Marshal(msgContent)
 	url := ""
 	//判断私聊
-	if ctx.Being.RoomID == "" {
-		if IsGroup {
-			url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
-		} else {
-			url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.User.ID) //频道私聊
-		}
-	} else {
-		if IsGroup {
-			url = fmt.Sprintf(urlSendGroup, ctx.Being.RoomID) //群聊
-		} else {
-			url = fmt.Sprintf(urlSendGuild, ctx.Being.RoomID) //频道
-		}
+	switch ctx.Being.Def["type"].(string) {
+	case "GROUP_AT_MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendGroup, ctx.Being.RoomID) //群聊
+	case "C2C_MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
+	case "AT_MESSAGE_CREATE", "MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendGuild, ctx.Being.RoomID) //频道
+	case "DIRECT_MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.RoomID2) //频道私聊
 	}
 	log.Infoln("[send]["+url+"]", tool.BytesToString(data))
 	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(data))
@@ -68,32 +65,3 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) any {
 	_ = json.Unmarshal(data, sendState)
 	return sendState
 }
-
-/*
-func (c *Config) SendMedia(ctx *rosm.CTX, FileINFO string) {
-	var url string
-	if ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" {
-		url = fmt.Sprintf(urlSendGroup, ctx.Being.RoomID) //群聊
-	} else {
-		url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
-	}
-	msgContent := new(qqmsg.Content)
-	msgContent.Types = 7
-	msgContent.Media = &qqmsg.Media{FileInfo: FileINFO}
-	if ctx.Being.Def["id"] != nil {
-		msgContent.MsgID = ctx.Being.Def["id"].(string)
-	}
-	seq := seqcache.Get(msgContent.MsgID)
-	seq++
-	seqcache.Set(msgContent.MsgID, seq)
-	msgContent.MsgSeq = seq
-	data, _ := json.Marshal(msgContent)
-	log.Infoln("[send]["+url+"]", tool.BytesToString(data))
-	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(data))
-	if err != nil {
-		log.Errorln("[send][", host+url, "]", err)
-	}
-	log.Debugln("[send-result]", tool.BytesToString(data))
-	return
-}
-*/
