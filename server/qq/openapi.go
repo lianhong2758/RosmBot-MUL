@@ -87,6 +87,17 @@ func NewDms(ctx *rosm.Ctx, userID, guildID string) (guild_id, channel_id string,
 
 }
 
+// 字频道撤回消息 hide需要false | false
+func DeleteMessage(ctx *rosm.Ctx, ID string, hide string) error {
+	data, err := web.Web(clientConst, host+urlDeleteMessage, http.MethodDelete, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
+	log.Debugln("[DeleteMessage][", host+urlDeleteMessage, "]", tool.BytesToString(data))
+	if err != nil {
+		log.Infoln("[DeleteMessage]ERROR: ", err)
+		return err
+	}
+	return nil
+}
+
 type GuildUser struct {
 	User struct {
 		ID               string `json:"id"`
