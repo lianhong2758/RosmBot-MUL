@@ -8,8 +8,9 @@ import (
 
 	//Bot注册
 	//"github.com/lianhong2758/RosmBot-MUL/server/mys"
-	_ "github.com/lianhong2758/RosmBot-MUL/server/mys/init"
-	//_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
+	//_"github.com/lianhong2758/RosmBot-MUL/server/mys/init"
+	_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
+	//_ "github.com/lianhong2758/RosmBot-MUL/server/ob11/init"
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	//插件注册

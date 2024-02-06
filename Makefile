@@ -1,7 +1,7 @@
 NAME=RosmBot-MUL
 EXE_NAME=${NAME}exe
 PROTOPATH=server/mys/proto
-VERSIONPATH=kanban/version
+KANBANPATH=kanban
 VERSION=1.1.0
 
 build:
@@ -9,13 +9,13 @@ build:
 	@go version
 	@go env -w GOPROXY=https://goproxy.cn,direct
 	@go mod tidy
-	@if ! command -v goversioninfo &> /dev/null; then \
-        echo "goversioninfo not found. Installing..."; \
-        go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest; \
+	@if ! command -v go-winres &> /dev/null; then \
+        echo "go-winres not found. Installing..."; \
+       go install github.com/tc-hib/go-winres@latest; \
     fi
-	@cd ${VERSIONPATH} &&  go generate
+	@cd ${KANBANPATH} &&  go-winres make
 	@go build
-	@cd ${VERSIONPATH} && rm resource.syso
+	@cd ${KANBANPATH} && rm *.syso
 	@echo "Done!"
 
 run:

@@ -1,3 +1,3 @@
 package kanban
 
-const Path = "kanban/icon/icon.jpg"
+const Path = "kanban/winres/icon.png"

@@ -6,7 +6,6 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	draw "github.com/lianhong2758/RosmBot-MUL/plugins/public"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
@@ -29,12 +28,9 @@ func init() {
 			ctx.Send(message.Text("解析失败", err))
 			return
 		}
-		r := ctx.Send(message.Custom(info))
-		switch t := r.(type) {
-		case *mys.SendState:
-			if t.ApiCode.Retcode != 0 {
-				ctx.Send(message.Text("发送失败: ", t.ApiCode.Message))
-			}
+		m := ctx.Send(message.Custom(info))
+		if m["code"] != 0 {
+			ctx.Send(message.Text("发送失败: ", m["state"]))
 		}
 	})
 	en.AddRex(`^(用.+)?渲染(抖动)?文字([\s\S]+)$`).Handle(func(ctx *rosm.Ctx) {

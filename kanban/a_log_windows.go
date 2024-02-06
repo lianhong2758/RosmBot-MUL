@@ -3,7 +3,6 @@ package kanban
 import (
 	"os"
 
-	_ "github.com/lianhong2758/RosmBot-MUL/kanban/version"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sys/windows"
 )

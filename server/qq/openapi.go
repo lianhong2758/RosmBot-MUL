@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	log "github.com/sirupsen/logrus"
 )
@@ -41,7 +42,7 @@ func (c *Config) GetOpenAPI(shortUrl string, body, result any) (err error) {
 func GetGuildUser(ctx *rosm.Ctx, uid string) (User *GuildUser, err error) {
 	url := host + fmt.Sprintf(urlGuildGetUser, ctx.Being.RoomID2, uid)
 	data, err := web.Web(clientConst, url, http.MethodGet, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
-	log.Debugln("[GetGuildUser][", url, "]", string(data))
+	log.Debugln("[GetGuildUser][", url, "]", tool.BytesToString(data))
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,7 @@ func UpFile(ctx *rosm.Ctx, url string, types int) (result *UpFileResult, err err
 	}
 	data, _ := json.Marshal(H{"file_type": types, "url": url, "srv_send_msg": false, "file_data": nil})
 	data, err = web.Web(clientConst, upurl, http.MethodPost, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), bytes.NewReader(data))
-	log.Debugln("[UpFile][", url, "]", string(data))
+	log.Debugln("[UpFile][", url, "]", tool.BytesToString(data))
 	if err != nil {
 		log.Infoln("[UpFile]上传文件失败,type:", types, "url:", url)
 		return nil, err
@@ -69,6 +70,32 @@ func UpFile(ctx *rosm.Ctx, url string, types int) (result *UpFileResult, err err
 	err = json.Unmarshal(data, &result)
 	log.Info("[UpFile]", result.UUID)
 	return
+}
+
+func NewDms(ctx *rosm.Ctx, userID, guildID string) (guild_id, channel_id string, err error) {
+	data, _ := json.Marshal(H{"recipient_id": userID, "source_guild_id": guildID})
+	data, err = web.Web(clientConst, host+urlDMS, http.MethodPost, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), bytes.NewReader(data))
+	log.Debugln("[NewDms][", urlDMS, "]", tool.BytesToString(data))
+	if err != nil {
+		log.Infoln("[NewDms]ERROR: ", err)
+		return "", "", err
+	}
+	result := H{}
+	err = json.Unmarshal(data, &result)
+	log.Info("[NewDms]", result["guild_id"], result["channel_id"])
+	return result["guild_id"].(string), result["channel_id"].(string), err
+
+}
+
+// 字频道撤回消息 hide需要false | false
+func DeleteMessage(ctx *rosm.Ctx, ID string, hide string) error {
+	data, err := web.Web(clientConst, host+urlDeleteMessage, http.MethodDelete, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
+	log.Debugln("[DeleteMessage][", host+urlDeleteMessage, "]", tool.BytesToString(data))
+	if err != nil {
+		log.Infoln("[DeleteMessage]ERROR: ", err)
+		return err
+	}
+	return nil
 }
 
 type GuildUser struct {

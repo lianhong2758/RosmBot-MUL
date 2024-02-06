@@ -11,9 +11,10 @@ const (
 	urlUPFilePrivate    = "/v2/users/%v/files"     //私聊富文本
 	urlGetway           = "/gateway"
 	urlGetwayWss        = "/gateway/bot"
-
+	urlDMS              = "/users/@me/dms"
 	//频道
-	urlGuildGetUser = "/guilds/%v/members/%v" //获取成员详情
+	urlGuildGetUser  = "/guilds/%v/members/%v"               //获取成员详情
+	urlDeleteMessage = "/channels/%v/messages/%v?hidetip=%v" //撤回消息 DELETE,参数三为隐藏灰条
 )
 
 /*
