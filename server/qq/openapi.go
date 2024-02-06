@@ -81,9 +81,9 @@ func NewDms(ctx *rosm.Ctx, userID, guildID string) (guild_id, channel_id string,
 		return "", "", err
 	}
 	result := H{}
-	_ = json.Unmarshal(data, &result)
+	err = json.Unmarshal(data, &result)
 	log.Info("[NewDms]", result["guild_id"], result["channel_id"])
-	return result["guild_id"].(string), result["channel_id"].(string), nil
+	return result["guild_id"].(string), result["channel_id"].(string), err
 
 }
 
