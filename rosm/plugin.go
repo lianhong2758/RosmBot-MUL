@@ -159,7 +159,7 @@ func (m *Matcher) Limit(limiterfn func(*Ctx) *rate.Limiter, postfn ...func(*Ctx)
 }
 
 // 快捷发送消息
-func (ctx *Ctx) Send(m ...message.MessageSegment) any {
+func (ctx *Ctx) Send(m ...message.MessageSegment) H {
 	return ctx.Bot.BotSend(ctx, m...)
 }
 func Display() {

@@ -18,7 +18,7 @@ import (
 
 var seqcache = ttl.NewCache[string, int](time.Minute * 5)
 
-func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) any {
+func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 	var IsGroup bool = ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" || ctx.Being.Def["type"].(string) == "C2C_MESSAGE_CREATE"
 	var msgContent *qqmsg.Content
 	if IsGroup {
@@ -63,5 +63,10 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) any {
 	log.Debugln("[send-result]", tool.BytesToString(data))
 	sendState := new(qqmsg.SendState)
 	_ = json.Unmarshal(data, sendState)
-	return sendState
+	return rosm.H{"state": sendState, "id": sendState.MsgID, "code": func(b bool) int {
+		if b {
+			return 1
+		}
+		return 0
+	}(err != nil)}
 }
