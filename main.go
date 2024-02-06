@@ -16,7 +16,6 @@ import (
 	//插件注册
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/chatgpt"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/gscore"
-	_ "github.com/lianhong2758/RosmBot-MUL/plugins/myplugin/dreadhunger"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/test"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/time"
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
