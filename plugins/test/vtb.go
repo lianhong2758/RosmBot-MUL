@@ -8,7 +8,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
-const url = "http://47.93.28.113/vtbwife?id="
+const url = "http://106.54.63.95/vtbwife?id="
 
 func init() { // 插件主体
 	en := rosm.Register(&rosm.PluginData{
