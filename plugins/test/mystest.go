@@ -26,7 +26,7 @@ func init() {
 	en.AddWord("测试组件").Handle(func(ctx *rosm.Ctx) {
 		{
 			s := mys.BadgeStr{
-				Icon: "http://47.93.28.113/favicon.ico",
+				Icon: "http://106.54.63.95/favicon.ico",
 				Text: "10248",
 				URL:  "https://dby.miyoushe.com/chat/463/10248",
 			}
@@ -34,17 +34,17 @@ func init() {
 		}
 		{
 			s := mys.BadgeStr{
-				Icon: "http://47.93.28.113/favicon.ico",
+				Icon: "http://106.54.63.95/favicon.ico",
 				Text: "清雪官方",
-				URL:  "http://47.93.28.113",
+				URL:  "http://106.54.63.95",
 			}
 			ctx.Send(message.Text("测试下标"), mys.Badge(s))
 		}
 		{
 			s := mys.PreviewStr{
-				Icon:       "http://47.93.28.113/favicon.ico",
-				URL:        "http://47.93.28.113",
-				ImageURL:   "http://47.93.28.113/ippic",
+				Icon:       "http://106.54.63.95/favicon.ico",
+				URL:        "http://106.54.63.95",
+				ImageURL:   "http://106.54.63.95/ippic",
 				IsIntLink:  true,
 				SourceName: "我是喵喵喵~",
 				Title:      "这是一个标题测试",
@@ -54,17 +54,17 @@ func init() {
 		}
 		{
 			s := mys.PreviewStr{
-				Icon:       "http://47.93.28.113/favicon.ico",
-				URL:        "http://47.93.28.113/file?path=CSGO/1.mp4",
+				Icon:       "http://106.54.63.95/favicon.ico",
+				URL:        "http://106.54.63.95/file?path=CSGO/1.mp4",
 				IsIntLink:  true,
 				SourceName: "清雪API",
 				Title:      "测试视频",
 				Content:    "CSGO精彩击杀,完美竞技平台",
 			}
 			ss := mys.BadgeStr{
-				Icon: "http://47.93.28.113/favicon.ico",
+				Icon: "http://106.54.63.95/favicon.ico",
 				Text: "清雪官方",
-				URL:  "http://47.93.28.113",
+				URL:  "http://106.54.63.95",
 			}
 			ctx.Send(message.Text("测试视频预览+下标组合"), mys.Preview(s), mys.Badge(ss))
 		}
@@ -78,7 +78,7 @@ func init() {
 				InputContent: "/大按钮",
 				Extra:        "",
 			})
-			p.TextBuild(ctx, message.Text("测试图片+按钮"), message.Image("url://"+"http://47.93.28.113/favicon.ico"))
+			p.TextBuild(ctx, message.Text("测试图片+按钮"), message.Image("url://"+"http://106.54.63.95/favicon.ico"))
 			ctx.Send(message.Custom(p))
 		}
 	})
