@@ -16,8 +16,6 @@ const (
 	baimao   = "https://iw233.cn/api.php?sort=yin"
 	xing     = "https://iw233.cn/api.php?sort=xing"
 	sese     = "https://api.iw233.cn/seapi.php?sort=setu"
-	biaoqing = "https://iw233.cn/api.php?sort=img"
-	cos      = "http://aikohfiosehgairl.fgimax2.fgnwctvip.com/uyfvnuvhgbuiesbrghiuudvbfkllsgdhngvbhsdfklbghdfsjksdhnvfgkhdfkslgvhhrjkdshgnverhbgkrthbklg.php/?sort=cos"
 	manghe   = "https://iw233.cn/api.php?sort=random"
 )
 
@@ -25,9 +23,9 @@ func init() {
 	en := rosm.Register(&rosm.PluginData{
 		Name: "图片",
 		Help: "- /随机壁纸" + " | " + "兽耳" + " | " + "星空" + " | " + "白毛" + " | " + "我要涩涩" + " | " + "涩涩达咩" + " | " + "白丝" + "\n" +
-			"黑丝" + " | " + "丝袜" + " | " + "随机表情包" + " | " + "cos" + " | " + "盲盒" + " | " + "开盲盒",
+			"黑丝" + " | " + "丝袜"  + " | " + "盲盒" + " | " + "开盲盒",
 	})
-	en.AddWord("/随机壁纸", "/兽耳", "/星空", "/白毛", "/我要涩涩", "/涩涩达咩", "/白丝", "/黑丝", "/丝袜", "/随机表情包", "/cos", "/盲盒", "/开盲盒").
+	en.AddWord("/随机壁纸", "/兽耳", "/星空", "/白毛", "/我要涩涩", "/涩涩达咩", "/白丝", "/黑丝", "/丝袜",  "/盲盒", "/开盲盒").
 		Handle(func(ctx *rosm.Ctx) {
 			var url string
 			switch ctx.Being.Word[1:] {
@@ -47,10 +45,6 @@ func init() {
 				url = heisi
 			case "丝袜":
 				url = siwa
-			case "随机表情包":
-				url = biaoqing
-			case "cos":
-				url = cos
 			case "盲盒", "开盲盒":
 				url = manghe
 			default:

@@ -1,6 +1,6 @@
 module github.com/lianhong2758/RosmBot-MUL
 
-go 1.20
+go 1.22
 
 require (
 	github.com/FloatTech/floatbox v0.0.0-20230331064925-9af336a84944
