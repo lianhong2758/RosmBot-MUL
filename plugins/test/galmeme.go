@@ -28,16 +28,15 @@ func init() {
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
-			list := gjson.ParseBytes(data)
-			node := list.Get("nodes.1.data")
-			id := rand.IntN(len(node.Get("2").Array()))
-			roleindex := node.Get("2").Array()[id].String()
-			roledata := node.Get(roleindex)
-			name := node.Get(roledata.Get("loli").String()).String()
-			gameName := node.Get(roledata.Get("game").String()).String()
-			url := fmt.Sprintf(imageURL, listId, id)
-			logrus.Print(name, gameName, url)
-			ctx.Send(message.Text("表情包已送达:\n角色名: "+name+"\n来源: ", gameName), message.Image("url://"+url))
 		}
+		node := gjson.ParseBytes(data).Get("nodes.1.data")
+		id := rand.IntN(len(node.Get("2").Array()))
+		roleindex := node.Get("2").Array()[id].String()
+		roledata := node.Get(roleindex)
+		name := node.Get(roledata.Get("loli").String()).String()
+		gameName := node.Get(roledata.Get("game").String()).String()
+		url := fmt.Sprintf(imageURL, listId, id)
+		logrus.Print(name, gameName, url)
+		ctx.Send(message.Text("表情包已送达:\n角色名: "+name+"\n来源: ", gameName), message.Image("url://"+url))
 	})
 }
