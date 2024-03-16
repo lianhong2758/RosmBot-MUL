@@ -264,7 +264,8 @@ func (c *Config) Listen() {
 			case "RESUMED":
 				log.Infoln("ws", c.Ready.User.Username, "的网关连接恢复完成")
 			default:
-				c.process(&payload)
+				t := payload
+				go c.process(&t)
 			}
 		case OpCodeHeartbeat: // Send/Receive
 			log.Debugln("[ws]收到服务端推送心跳, 间隔:", time.Since(lastheartbeat))
