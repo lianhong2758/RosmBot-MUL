@@ -1,9 +1,19 @@
 package ob11
 
 import (
+	"bytes"
+	"crypto/md5"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"regexp"
+
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	log "github.com/sirupsen/logrus"
 	zero "github.com/wdvxdr1123/ZeroBot"
+	"github.com/wdvxdr1123/ZeroBot/message"
+	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
 // CallAction 调用 cqhttp API
@@ -30,7 +40,7 @@ func SendGroupMessage(ctx *rosm.Ctx, groupID int64, message interface{}) int64 {
 		"message":  message,
 	}).Data.Get("message_id")
 	if rsp.Exists() {
-		log.Infof("[ob11] [↑][群消息(%v)]: %v (id=%v)", groupID, message, rsp.Int())
+		log.Infof("[ob11] [↑][群消息(%v)]: %v (id=%v)", groupID, formatMessage(message), rsp.Int())
 		return rsp.Int()
 	}
 	return 0 // 无法获取返回值
@@ -44,7 +54,7 @@ func SendPrivateMessage(ctx *rosm.Ctx, userID int64, message interface{}) int64 
 		"message": message,
 	}).Data.Get("message_id")
 	if rsp.Exists() {
-		log.Infof("[ob11] [↑][私聊消息(%v)]: %v (id=%v)", userID, message, rsp.Int())
+		log.Infof("[ob11] [↑][私聊消息(%v)]: %v (id=%v)", userID, formatMessage(message), rsp.Int())
 		return rsp.Int()
 	}
 	return 0 // 无法获取返回值
@@ -58,4 +68,35 @@ func DeleteMessage(ctx *rosm.Ctx, messageID string) {
 	CallAction(ctx, "delete_msg", zero.Params{
 		"message_id": messageID,
 	})
+}
+
+var base64Reg = regexp.MustCompile(`"type":"image","data":\{"file":"base64://[\w/\+=]+`)
+
+// formatMessage 格式化消息数组
+//
+//	仅用在 log 打印
+func formatMessage(msg interface{}) string {
+	switch m := msg.(type) {
+	case string:
+		return m
+	case message.CQCoder:
+		return m.CQCode()
+	case fmt.Stringer:
+		return m.String()
+	default:
+		s, _ := json.Marshal(msg)
+		return helper.BytesToString(base64Reg.ReplaceAllFunc(s, func(b []byte) []byte {
+			buf := bytes.NewBuffer([]byte(`"type":"image","data":{"file":"`))
+			b = b[40:]
+			b, err := base64.StdEncoding.DecodeString(helper.BytesToString(b))
+			if err != nil {
+				buf.WriteString(err.Error())
+			} else {
+				m := md5.Sum(b)
+				_, _ = hex.NewEncoder(buf).Write(m[:])
+				buf.WriteString(".image")
+			}
+			return buf.Bytes()
+		}))
+	}
 }
