@@ -11,6 +11,8 @@ type H = map[string]any
 type Boter interface {
 	//发送消息
 	BotSend(*Ctx, ...message.MessageSegment) H
+	//头像获取
+	GetPortraitURI(*Ctx )string
 	//运行,用于开启接收消息和调用插件
 	Run()
 

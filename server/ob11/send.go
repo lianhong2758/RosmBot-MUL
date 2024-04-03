@@ -68,3 +68,7 @@ func ImageAnalysis(data string) (url string) {
 	}
 	return ""
 }
+
+func (c *Config) GetPortraitURI(ctx *rosm.Ctx) string {
+	return"http://q4.qlogo.cn/g?b=qq&nk=" + ctx.Being.User.ID + "&s=640"
+}

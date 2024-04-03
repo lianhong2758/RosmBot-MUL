@@ -93,7 +93,6 @@ func (c *Config) process(playload *WebsocketPayload) {
 				User: &rosm.UserData{
 					Name:        raw.Author.Username,
 					ID:          raw.Author.ID,
-					PortraitURI: raw.Author.Avatar,
 				},
 				MsgID: []string{raw.ID},
 				Def:   H{"type": playload.T, "id": raw.ID},

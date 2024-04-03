@@ -40,3 +40,10 @@ func makeHeard(ctx *rosm.Ctx) func(req *http.Request) {
 		req.Header.Add("Content-Type", "application/json")
 	}
 }
+
+func (c *Config)GetPortraitURI(ctx *rosm.Ctx  )string{
+	if ctx.Being.Def["Content"]!=nil{
+		return ctx.Being.Def["Content"].(*MessageContent).User.PortraitURI
+	}
+	return ""
+}

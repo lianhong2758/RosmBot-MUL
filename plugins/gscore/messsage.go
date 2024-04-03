@@ -28,7 +28,7 @@ func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 			},
 		},
 		Sender: Dictionary{
-			Avater:   ctx.Being.User.PortraitURI,
+			Avater:   ctx.Bot.GetPortraitURI(ctx),
 			Nickname: ctx.Being.User.Name,
 		},
 	}

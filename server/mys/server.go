@@ -146,7 +146,7 @@ func (c *Config) process(event *vila_bot.RobotEvent) {
 			Being: &rosm.Being{
 				RoomID2: strconv.Itoa(int(event.Robot.GetVillaId())),
 				RoomID:  strconv.Itoa(int(event.ExtendData.GetSendMessage().RoomId)),
-				User:    &rosm.UserData{Name: u.User.Name, ID: strconv.Itoa(id), PortraitURI: u.User.PortraitURI},
+				User:    &rosm.UserData{Name: u.User.Name, ID: strconv.Itoa(id) },
 				ATList:  u.MentionedInfo.UserIDList[1:], //排除自己
 				MsgID:   []string{event.ExtendData.GetSendMessage().MsgUid, tool.Int64ToString(event.ExtendData.GetSendMessage().SendAt)},
 				Def: map[string]any{

@@ -26,5 +26,4 @@ type Being struct {
 type UserData struct {
 	Name        string
 	ID          string
-	PortraitURI string //如果直接回调没有可以不写
 }
