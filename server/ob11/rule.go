@@ -2,6 +2,7 @@ package ob11
 
 import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	zero "github.com/wdvxdr1123/ZeroBot"
 )
 
 // 是否是主人权限
@@ -16,7 +17,12 @@ func OnlyMaster(ctx *rosm.Ctx) bool {
 
 // 群主权限以上
 func OnlyOverHost(ctx *rosm.Ctx) bool {
-	return false
+	return OnlyMaster(ctx) || ctx.Message.(*zero.Event).Sender.Role == "owner"
+}
+
+//管理员权限以上
+func OnlyOverAdministrator(ctx *rosm.Ctx)bool{
+	return OnlyMaster(ctx) || ctx.Message.(*zero.Event).Sender.Role == "owner" ||  ctx.Message.(*zero.Event).Sender.Role == "admin"
 }
 
 // 触发消息是否是回复消息
@@ -40,5 +46,5 @@ func (c *Config) OnlyOverHost(ctx *rosm.Ctx) bool {
 
 // 管理员 未实现
 func (c *Config) OnlyOverAdministrator(ctx *rosm.Ctx) bool {
-	return false
+	return OnlyOverAdministrator(ctx)
 }
