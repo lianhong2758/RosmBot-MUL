@@ -3,7 +3,11 @@ package kanban
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"os"
+	p "path"
 
+	"github.com/FloatTech/floatbox/file"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -50,4 +54,16 @@ func (m ColorNotFormatter) Format(entry *log.Entry) ([]byte, error) {
 	//设置格式
 	fmt.Fprintf(buff, "[%s] %s %s\n", entry.Level, formatTime, entry.Message)
 	return buff.Bytes(), nil
+}
+
+func SetLogWithNewFile(path string) {
+	if dir := p.Dir(path); file.IsNotExist(dir) {
+		_ = os.MkdirAll(dir, 0755)
+	}
+	file, err := os.Create(path)
+	if err != nil {
+		log.Errorln("[log]创建log文件失败", err)
+		return
+	}
+	log.SetOutput(io.MultiWriter(file, os.Stdout))
 }

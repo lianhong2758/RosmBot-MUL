@@ -29,8 +29,8 @@ func init() {
 	//这里是匹配词------这里设置是否阻断继续匹配
 	//还有.Rule()设置指令初始化函数
     //MUL()设置插件专用的平台,一般在插件调用了对应平台的server包后填写
-	en.AddWord("").SetBlock(true).Handle(func(ctx *c.CTX) {
-		ctx.Send(c.Text(zero.MYSconfig.BotToken.BotName, "不在呢~"))
+	en.AddWord("").SetBlock(true).Rule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
+		ctx.Send(message.Text(ctx.Bot.Card().BotName, "不在呢~"))
 	})
 }
 ```
