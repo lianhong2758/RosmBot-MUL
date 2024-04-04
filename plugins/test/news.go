@@ -18,13 +18,10 @@ func init() {
 	en.AddWord("/今日早报").Handle(func(ctx *rosm.Ctx) {
 		data, err := web.GetData(api, "")
 		if err != nil {
-			return
-		}
-		picURL := gjson.Get(tool.BytesToString(data), "imageUrl").String()
-		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
+		picURL := gjson.Get(tool.BytesToString(data), "imageUrl").String()
 		ctx.Send(message.Text("今日早报送达~"), message.Image("url://"+picURL))
 	})
 }

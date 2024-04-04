@@ -70,3 +70,10 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 		return 0
 	}(err != nil)}
 }
+
+func (c *Config) GetPortraitURI(ctx *rosm.Ctx) string {
+	if r, ok := ctx.Message.(*RawGuildMessage); ok {
+		return r.Author.Avatar
+	}
+	return ""
+}

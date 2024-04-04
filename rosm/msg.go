@@ -10,7 +10,7 @@ type Ctx struct {
 
 // 常用数据
 type Being struct {
-	RoomID   string         //房间号
+	RoomID   string         //房间号,群号
 	RoomID2  string         //如果有需要,存放房间号上级号码
 	RoomName string         //房间名称,存在上级则存放上级名称
 	User     *UserData      //触发事件者信息
@@ -26,5 +26,4 @@ type Being struct {
 type UserData struct {
 	Name        string
 	ID          string
-	PortraitURI string //如果直接回调没有可以不写
 }

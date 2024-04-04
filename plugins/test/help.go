@@ -15,7 +15,7 @@ func init() {
 	})
 	en.AddWord("/help", "/帮助").Handle(func(ctx *rosm.Ctx) {
 		var msg strings.Builder
-		msg.WriteString("*****菜单********")
+		msg.WriteString("****RosmBot菜单*****")
 		for _, v := range rosm.GetPlugins() {
 			msg.WriteString("\n")
 			msg.WriteString("#")
@@ -24,7 +24,7 @@ func init() {
 			msg.WriteString(v.Help)
 			msg.WriteString("\n")
 		}
-		msg.WriteString("*****************")
+		msg.WriteString("*******************")
 		//ctx.Send(message.Text(msg.String()))
 		image, err := draw.StringToPic(msg.String(), draw.MaokenFontFile)
 		if err != nil {

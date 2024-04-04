@@ -12,8 +12,9 @@ RosmBot-MUL是一个多平台bot,未来将实现一个插件多平台接入使�
 
 ## 部署方法
 
-## [mys部署]( server/mys/README.md)
-## [qq部署]( server/qq/README.md)
+- ~~[mys部署]( server/mys/README.md)~~
+- [qq官方bot部署]( server/qq/README.md)
+- [ob11协议部署]( server/ob11/README.md)
 
 ## 插件编写教程
 
@@ -82,8 +83,12 @@ result, err := mys.GetRoomList(ctx)
 [ZeroBot](https://github.com/wdvxdr1123/ZeroBot)提供部分代码借鉴
 ## 相关地址
 
-- [大别野Bot开放平台](https://open.miyoushe.com/#/login)
+- QQ交流群 : 678586912
 
-- [大别野API文档](https://webstatic.mihoyo.com/vila/bot/doc/)
+- Github : https://github.com/lianhong2758
 
-- [SDK交流大别野](https://dby.miyoushe.com/chat/1722/23652)
+- [QQ官方Bot文档](https://bot.q.qq.com/wiki/develop/api-v2/)
+
+- [QQ开放平台](https://q.qq.com)
+
+- [NTQQ-llonebot](https://llonebot.github.io/zh-CN/)

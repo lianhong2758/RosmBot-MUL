@@ -2,11 +2,19 @@
 package rosm
 
 import (
+	"runtime/debug"
+
 	log "github.com/sirupsen/logrus"
+	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
 // 匹配事件
 func (ctx *Ctx) RunEvent(types int) (block bool) {
+	defer func() {
+		if pa := recover(); pa != nil {
+			log.Errorf("[rosm] RunEvent Err: %v\n%v", pa, helper.BytesToString(debug.Stack()))
+		}
+	}()
 	log.Debug("[Event]开始匹配事件type", types)
 	if ctx.sendNext(types) {
 		return true
@@ -23,6 +31,11 @@ func (ctx *Ctx) RunEvent(types int) (block bool) {
 
 // 匹配修剪好的触发词
 func (ctx *Ctx) RunWord(word string) {
+	defer func() {
+		if pa := recover(); pa != nil {
+			log.Errorf("[rosm] RunEvent Err: %v\n%v", pa, helper.BytesToString(debug.Stack()))
+		}
+	}()
 	ctx.Being.Word = word
 	//全匹配
 	if ctx.RunEvent(AllMessage) {

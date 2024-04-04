@@ -40,7 +40,7 @@ func Text(text ...any) MessageSegment {
 func AT(uid, name string) MessageSegment {
 	name = "@" + name + " "
 	return MessageSegment{
-		Type: "mentioned_user",
+		Type: "at",
 		Data: H{
 			"text": name,
 			"uid":  uid,

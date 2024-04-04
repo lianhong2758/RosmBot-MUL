@@ -46,7 +46,7 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) (contentInfo a
 			}
 			msgContent.Entities = append(msgContent.Entities, t)
 			msgContent.Text += text
-		case "mentioned_user":
+		case "at":
 			t := Entities{
 				Length: len(utf16.Encode([]rune(text))),
 				Offset: len(utf16.Encode([]rune(msgContent.Text))),
