@@ -15,8 +15,3 @@ func Kanban() {
 	fmt.Println(banner)
 	fmt.Println(line)
 }
-
-// kanban
-func init() {
-	Kanban()
-}
