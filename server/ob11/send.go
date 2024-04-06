@@ -16,10 +16,10 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 		return rosm.H{}
 	}
 	msg = MakeMsgContent(ctx, msg...)
-	if ctx.Being.User.ID != ctx.Being.RoomID {
+	if  ctx.Being.RoomID[0:1]=="-" {
 		return rosm.H{"state": "", "id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID), msg)), "code": 0}
 	} else {
-		return rosm.H{"state": "", "id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID), msg)), "code": 0}
+		return rosm.H{"state": "", "id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID[1:]), msg)), "code": 0}
 	}
 }
 

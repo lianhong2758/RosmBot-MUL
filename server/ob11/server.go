@@ -29,7 +29,7 @@ func (c *Config) process(e *zero.Event, caller zero.APICaller) {
 				BotType: "ob11",
 				Being: &rosm.Being{
 					RoomID2: "",
-					RoomID:  tool.Int64ToString(e.Sender.ID),
+					RoomID: "-"+ tool.Int64ToString(e.Sender.ID),
 					Word:    e.RawMessage,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
