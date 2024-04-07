@@ -2,6 +2,7 @@ package ob11
 
 import (
 	"encoding/base64"
+	"fmt"
 	"strings"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
@@ -47,7 +48,9 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 		case "replyuser":
 			msg[k].Type = "reply"
 			msg[k].Data = rosm.H{"id": ctx.Being.User.ID}
-
+		case "link":
+			msg[k].Type="text"
+			msg[k].Data=rosm.H{"text": fmt.Sprintf( "%s:\n%s",message.Data["text"].(string),message.Data["url"].(string))}
 		}
 	}
 	return msg
