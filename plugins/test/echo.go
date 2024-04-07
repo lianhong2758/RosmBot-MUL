@@ -13,7 +13,8 @@ func init() {
 	//插件注册
 	en := rosm.Register(&rosm.PluginData{ //插件英文索引
 		Name: "复读",      //中文插件名
-		Help: "- 复读...", //插件帮助
+		Help: "- 复读..."+
+		"- 用xx体渲染(抖动)文字", //插件帮助
 	})
 	en.AddRex("^复读(.*)").SetBlock(true).Rule(func(ctx *rosm.Ctx) bool { return true }, rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) { //正则的触发方式
 		ctx.Send(message.Text(ctx.Being.Rex[1])) //发送文字信息
