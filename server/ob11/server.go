@@ -29,14 +29,14 @@ func (c *Config) process(e *zero.Event, caller zero.APICaller) {
 				BotType: "ob11",
 				Being: &rosm.Being{
 					RoomID2: "",
-					RoomID: "-"+ tool.Int64ToString(e.Sender.ID),
+					RoomID:  "-" + tool.Int64ToString(e.Sender.ID),
 					Word:    e.RawMessage,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
-					MsgID: []string{fmt.Sprint(e.MessageID)},
+					MsgID: []string{helper.BytesToString(e.RawMessageID)},
 					Def: rosm.H{
 						"caller": caller,
 					},
@@ -60,7 +60,7 @@ func (c *Config) process(e *zero.Event, caller zero.APICaller) {
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
-					MsgID: []string{fmt.Sprint(e.MessageID)},
+					MsgID: []string{helper.BytesToString(e.RawMessageID)},
 					Def: rosm.H{
 						"caller": caller,
 					},
@@ -70,7 +70,7 @@ func (c *Config) process(e *zero.Event, caller zero.APICaller) {
 			}
 
 			ctx.Being.AtMe = c.EstAt(&ctx.Being.Word, e.SelfID)
-			e.IsToMe=	ctx.Being.AtMe
+			e.IsToMe = ctx.Being.AtMe
 			//log.Println(ctx.Being.Word)
 			ctx.RunWord(ctx.Being.Word)
 		case "guild":
@@ -182,7 +182,7 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 }
 
 func (c *Config) EstAt(word *string, selfid int64) bool {
-	*word=strings.TrimSpace(*word)
+	*word = strings.TrimSpace(*word)
 	if strings.HasPrefix(*word, c.Card().BotName) {
 		*word = (*word)[len(c.Card().BotName):]
 		return true

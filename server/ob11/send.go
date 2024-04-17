@@ -47,7 +47,7 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 			msg[k].Data = rosm.H{"id": message.Data["ids"].([]string)[0]}
 		case "replyuser":
 			msg[k].Type = "reply"
-			msg[k].Data = rosm.H{"id": ctx.Being.User.ID}
+			msg[k].Data = rosm.H{"id": ctx.Being.MsgID[0] }
 		case "link":
 			msg[k].Type="text"
 			msg[k].Data=rosm.H{"text": fmt.Sprintf( "%s:\n%s",message.Data["text"].(string),message.Data["url"].(string))}
