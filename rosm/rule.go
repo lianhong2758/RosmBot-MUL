@@ -21,6 +21,12 @@ func OnlyAtMe() Rule {
 	}
 }
 
+func OnlyTheRoom(roomid, roomid2 string) Rule {
+	return func(ctx *Ctx) bool {
+		return roomid == ctx.Being.RoomID && roomid2 == ctx.Being.RoomID
+	}
+}
+
 func OnlyMaster() Rule {
 	return func(ctx *Ctx) bool {
 		return ctx.Bot.OnlyMaster(ctx)
