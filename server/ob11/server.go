@@ -180,9 +180,7 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 		e.Message[0].Data["text"] = strings.TrimLeft(e.Message[0].Data["text"], " ")
 	}
 }
-
 func (c *Config) EstAt(word *string, selfid int64) bool {
-	*word = strings.TrimSpace(*word)
 	if strings.HasPrefix(*word, c.Card().BotName) {
 		*word = (*word)[len(c.Card().BotName):]
 		return true
@@ -191,5 +189,6 @@ func (c *Config) EstAt(word *string, selfid int64) bool {
 		*word = (*word)[len(fmt.Sprintf("[CQ:at,qq=%d]", selfid)):]
 		return true
 	}
+	*word = strings.TrimSpace(*word)
 	return false
 }
