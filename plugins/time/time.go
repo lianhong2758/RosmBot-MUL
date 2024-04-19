@@ -36,7 +36,7 @@ var (
 func init() {
 	en := rosm.Register(&rosm.PluginData{
 		Name:       "定时消息",
-		Help:       "- /设置在* * * *的指令",
+		Help:       "- /记录在* * * *的指令",
 		DataFolder: "time",
 	})
 	en.AddRex(`^/记录在(.*)的指令`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
