@@ -120,6 +120,16 @@ func Reply() MessageSegment {
 	}
 }
 
+// Video 短视频
+func Video(file string) MessageSegment {
+	return MessageSegment{
+		Type: "video",
+		Data: H{
+			"file": file,
+		},
+	}
+}
+
 // 自定义全量消息内容
 func Custom(messageData any) MessageSegment {
 	return MessageSegment{
