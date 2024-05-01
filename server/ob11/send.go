@@ -29,9 +29,9 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 		switch message.Type {
 		default:
 			continue
-		case "text":
+		case "text","video":
 			continue
-
+			
 		case "at":
 			msg[k].Data = rosm.H{"qq": message.Data["uid"]}
 		case "atall":
