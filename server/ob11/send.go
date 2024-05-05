@@ -8,6 +8,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
+	
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,7 +25,7 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 	}
 }
 
-func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Message {
+func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment)  message.Message {
 	for k, message := range msg {
 		switch message.Type {
 		default:
@@ -51,6 +52,8 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 		case "link":
 			msg[k].Type="text"
 			msg[k].Data=rosm.H{"text": fmt.Sprintf( "%s:\n%s",message.Data["text"].(string),message.Data["url"].(string))}
+		case "custom":
+			return ParseMessageFromString( msg[k].Data["data"].(string))
 		}
 	}
 	return msg

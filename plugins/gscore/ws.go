@@ -3,7 +3,6 @@ package gscore
 import (
 	"context"
 	"encoding/json"
-	"strconv"
 	"time"
 
 	"github.com/RomiChan/websocket"
@@ -73,7 +72,6 @@ func ReadAndSendMessage(ctxback context.Context, conn *websocket.Conn) {
 func SendMessage(RecMessage *RecMessageStr) {
 	//发送信息
 	var msg []message.MessageSegment
-	var p *mys.InfoContent
 	for _, v := range RecMessage.Content {
 		switch v.Type {
 		case "text":
@@ -83,54 +81,7 @@ func SendMessage(RecMessage *RecMessageStr) {
 			_ = json.Unmarshal(v.Data, &image)
 			msg = append(msg, message.Image(image))
 		case "buttons":
-			var buttons [][]GSButton
-			if v.Data[0] != v.Data[1] {
-				//二级目录
-				v.Data = append(append([]byte{91}, v.Data...), 93)
-			}
-			err := json.Unmarshal(v.Data, &buttons)
-			if err != nil {
-				log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
-			}
-			if RecMessage.BotId == "mys" {
-				p = mys.NewPanel()
-				for l, buttonArry := range buttons {
-					for i, button := range buttonArry {
-						if RecMessage.BotId == "mys" {
-							switch len([]rune(button.Text)) {
-							case 1, 2:
-								p.Small(i == 0, &mys.Component{
-									ID:           strconv.Itoa(l) + strconv.Itoa(i),
-									Text:         button.Text,
-									Type:         1,
-									CType:        2,
-									InputContent: button.Data,
-									Extra:        "",
-								})
-							case 3, 4:
-								p.Mid(i == 0, &mys.Component{
-									ID:           strconv.Itoa(l) + strconv.Itoa(i),
-									Text:         button.Text,
-									Type:         1,
-									CType:        2,
-									InputContent: button.Data,
-									Extra:        "",
-								})
-							default:
-								p.Big(i == 0, &mys.Component{
-									ID:           strconv.Itoa(l) + strconv.Itoa(i),
-									Text:         button.Text,
-									Type:         1,
-									CType:        2,
-									InputContent: button.Data,
-									Extra:        "",
-								})
-							}
-
-						}
-					}
-				}
-			}
+			//***
 		case "node":
 			var m []Message
 			err := json.Unmarshal(v.Data, &m)
@@ -147,13 +98,6 @@ func SendMessage(RecMessage *RecMessageStr) {
 			room, villa := tool.SplitPadString(RecMessage.TargetId)
 			ctx = mys.NewCTX(RecMessage.BotSelfId, room, villa)
 		}
-	}
-	if p != nil {
-		p.TextBuild(ctx, msg...)
-		if p.Content.Text == "" {
-			p.TextBuild(ctx, append([]message.MessageSegment{message.Text("喵~")}, msg...)...)
-		}
-		msg = []message.MessageSegment{message.Custom(p)}
 	}
 	if ctx != nil {
 		ctx.Send(msg...)
