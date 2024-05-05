@@ -32,7 +32,7 @@ func init() {
 		if err == nil {
 			resp1.Body.Close()
 			if resp1.StatusCode == http.StatusOK {
-				ctx.Send(message.Image(u1))
+				ctx.Send(message.Image("url://"+u1))
 				return
 			}
 		}
@@ -40,7 +40,7 @@ func init() {
 		if err == nil {
 			resp2.Body.Close()
 			if resp2.StatusCode == http.StatusOK {
-				ctx.Send(message.Image(u2))
+				ctx.Send(message.Image("url://"+u2))
 				return
 			}
 		}
