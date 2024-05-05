@@ -16,23 +16,36 @@ func init() {
 	rosm.Register(&rosm.PluginData{
 		Name: "emoji",
 		Help: "- [emoji][emoji]",
-	}).AddRex(`^[CQ:face,id=\d][CQ:face,id=\d]`).Handle(func(ctx *rosm.Ctx) {
-		r11, _ := strconv.Atoi(ctx.Being.Rex[1])
-		r22, _ := strconv.Atoi(ctx.Being.Rex[2])
-		r1, ok1 := qqface[r11]
-		r2, ok2 := qqface[r22]
+	}).AddRex(`^(\[CQ:face,id=(\d+)\]\[CQ:face,id=(\d+)\]|.{2})$`).Handle(func(ctx *rosm.Ctx) {
+		var r1, r2 rune
+		if ctx.Being.Rex[1] != "" {
+			r := []rune(ctx.Being.Rex[1])
+			r1, r2 = r[0], r[1]
+		} else {
+			r11, _ := strconv.Atoi(ctx.Being.Rex[2])
+			r22, _ := strconv.Atoi(ctx.Being.Rex[3])
+			var ok1, ok2 bool
+			r1, ok1 = qqface[r11]
+			r2, ok2 = qqface[r22]
+			if !(ok1 && ok2) {
+				return
+			}
+		}
+
+		r1id, ok1 := emojis[r1]
+		r2id, ok2 := emojis[r2]
 		if !(ok1 && ok2) {
 			return
 		}
-		u1 := fmt.Sprintf(bed, emojis[r1], r1, r1, r2)
-		u2 := fmt.Sprintf(bed, emojis[r2], r2, r2, r1)
+		u1 := fmt.Sprintf(bed, r1id, r1, r1, r2)
+		u2 := fmt.Sprintf(bed, r2id, r2, r2, r1)
 		logrus.Debugln("[emojimix] u1:", u1)
 		logrus.Debugln("[emojimix] u2:", u2)
 		resp1, err := http.Head(u1)
 		if err == nil {
 			resp1.Body.Close()
 			if resp1.StatusCode == http.StatusOK {
-				ctx.Send(message.Image("url://"+u1))
+				ctx.Send(message.Image("url://" + u1))
 				return
 			}
 		}
@@ -40,7 +53,7 @@ func init() {
 		if err == nil {
 			resp2.Body.Close()
 			if resp2.StatusCode == http.StatusOK {
-				ctx.Send(message.Image("url://"+u2))
+				ctx.Send(message.Image("url://" + u2))
 				return
 			}
 		}
