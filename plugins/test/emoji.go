@@ -39,8 +39,7 @@ func init() {
 		}
 		u1 := fmt.Sprintf(bed, r1id, r1, r1, r2)
 		u2 := fmt.Sprintf(bed, r2id, r2, r2, r1)
-		logrus.Debugln("[emojimix] u1:", u1)
-		logrus.Debugln("[emojimix] u2:", u2)
+		logrus.Info("[emoji]",r1id," - ",r2id )
 		resp1, err := http.Head(u1)
 		if err == nil {
 			resp1.Body.Close()
