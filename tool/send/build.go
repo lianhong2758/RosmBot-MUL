@@ -23,12 +23,12 @@ func CTXBuild(types, botid, roomid12 string) (ctx *rosm.Ctx) {
 			botid = qq.GetRandBot().BotID
 		}
 		ctx = qq.NewCTX(botid, types, id1, id2)
-	case "ob11":		
-	group, _ := tool.SplitPadString(roomid12)
-	if botid == "" {
-		botid = ob11.GetRandBot().BotID
-	}
-	ctx =ob11.NewCTX(botid,   group)
+	case "ob11":
+		group, _ := tool.SplitPadString(roomid12)
+		if botid == "" {
+			botid = ob11.GetRandBot().BotID
+		}
+		ctx = ob11.NewCTX(botid, group)
 	}
 	return ctx
 }
