@@ -17,7 +17,6 @@ import (
 )
 
 func (c *Config) process(e *zero.Event, caller zero.APICaller) {
-	log.Debug(*e)
 	log.Debug("Message: ", e.RawMessage)
 	switch e.PostType {
 	// 消息事件
