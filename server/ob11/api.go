@@ -49,13 +49,3 @@ func SendPrivateMessage(ctx *rosm.Ctx, userID int64, message interface{}) int64 
 	}
 	return 0 // 无法获取返回值
 }
-
-// DeleteMessage 撤回消息
-// https://github.com/botuniverse/onebot-11/blob/master/api/public.md#delete_msg-%E6%92%A4%E5%9B%9E%E6%B6%88%E6%81%AF
-//
-//nolint:interfacer
-func DeleteMessage(ctx *rosm.Ctx, messageID... string) {
-	CallAction(ctx, "delete_msg", zero.Params{
-		"message_id": messageID[0],
-	})
-}

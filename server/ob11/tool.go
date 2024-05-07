@@ -9,8 +9,9 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/wdvxdr1123/ZeroBot/message"
+	messagezb "github.com/wdvxdr1123/ZeroBot/message"
 	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
@@ -25,7 +26,7 @@ func NewCTX(botid, group string) *rosm.Ctx {
 		BotType: "ob11",
 		Bot:     botMap[botid],
 		Being: &rosm.Being{
-			RoomID:  group,
+			RoomID: group,
 		},
 	}
 }
@@ -54,7 +55,7 @@ func formatMessage(msg interface{}) string {
 	switch m := msg.(type) {
 	case string:
 		return m
-	case message.CQCoder:
+	case messagezb.CQCoder:
 		return m.CQCode()
 	case fmt.Stringer:
 		return m.String()
@@ -74,4 +75,68 @@ func formatMessage(msg interface{}) string {
 			return buf.Bytes()
 		}))
 	}
+}
+
+func ParseMessageFromString(raw string) (m message.Message) {
+	var seg message.MessageSegment
+	var k string
+	m = message.Message{}
+	for raw != "" {
+		i := 0
+		for i < len(raw) && !(raw[i] == '[' && i+4 < len(raw) && raw[i:i+4] == "[CQ:") {
+			i++
+		}
+
+		if i > 0 {
+			m = append(m, message.Text(messagezb.UnescapeCQText(raw[:i])))
+		}
+
+		if i+4 > len(raw) {
+			return
+		}
+
+		raw = raw[i+4:] // skip "[CQ:"
+		i = 0
+		for i < len(raw) && raw[i] != ',' && raw[i] != ']' {
+			i++
+		}
+
+		if i+1 > len(raw) {
+			return
+		}
+		seg.Type = raw[:i]
+		seg.Data = make(map[string]any)
+		raw = raw[i:]
+		i = 0
+
+		for {
+			if raw[0] == ']' {
+				m = append(m, seg)
+				raw = raw[1:]
+				break
+			}
+			raw = raw[1:]
+
+			for i < len(raw) && raw[i] != '=' {
+				i++
+			}
+			if i+1 > len(raw) {
+				return
+			}
+			k = raw[:i]
+			raw = raw[i+1:] // skip "="
+			i = 0
+			for i < len(raw) && raw[i] != ',' && raw[i] != ']' {
+				i++
+			}
+
+			if i+1 > len(raw) {
+				return
+			}
+			seg.Data[k] = messagezb.UnescapeCQCodeText(raw[:i])
+			raw = raw[i:]
+			i = 0
+		}
+	}
+	return m
 }
