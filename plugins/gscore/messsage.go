@@ -18,6 +18,8 @@ func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 		User_pm: func() int {
 			if rosm.OnlyMaster()(ctx) {
 				return 1
+			} else if rosm.OnlyOverAdministrator()(ctx) {
+				return 2
 			}
 			return 3
 		}(),
