@@ -20,6 +20,8 @@ import (
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/test"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/time"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/fhl"
+	_ "github.com/lianhong2758/RosmBot-MUL/plugins/score"
+	_ "github.com/lianhong2758/RosmBot-MUL/plugins/yujn"
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 )
 
