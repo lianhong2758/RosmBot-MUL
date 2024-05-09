@@ -12,7 +12,7 @@ func CallAction(ctx *rosm.Ctx, action string, params zero.Params) zero.APIRespon
 		Action: action,
 		Params: params,
 	}
-	rsp, err := ctx.Being.Def["caller"].(zero.APICaller).CallApi(req)
+	rsp, err := ctx.Bot.(*Config).Driver.(zero.APICaller).CallApi(req)
 	if err != nil {
 		log.Errorln("[ob11] [↑]调用", action, "时出现错误: ", err)
 	}

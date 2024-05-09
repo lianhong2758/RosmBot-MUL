@@ -16,7 +16,7 @@ import (
 	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
-func (c *Config) process(e *zero.Event, caller zero.APICaller) {
+func (c *Config) process(e *zero.Event) {
 	log.Debug("Message: ", e.RawMessage)
 	switch e.PostType {
 	// 消息事件
@@ -37,7 +37,6 @@ func (c *Config) process(e *zero.Event, caller zero.APICaller) {
 					},
 					MsgID: []string{helper.BytesToString(e.RawMessageID)},
 					Def: rosm.H{
-						"caller": caller,
 					},
 				},
 				Message: e,
@@ -61,7 +60,6 @@ func (c *Config) process(e *zero.Event, caller zero.APICaller) {
 					},
 					MsgID: []string{helper.BytesToString(e.RawMessageID)},
 					Def: rosm.H{
-						"caller": caller,
 					},
 				},
 				Message: e,
@@ -90,7 +88,6 @@ func (c *Config) process(e *zero.Event, caller zero.APICaller) {
 					// Name: e.Sender.NickName,
 				},
 				Def: rosm.H{
-					"caller": caller,
 				},
 			},
 			Message: e,
@@ -150,7 +147,7 @@ func (c *Config) processEvent() func([]byte, zero.APICaller) {
 		if event.PostType == "message" {
 			c.preprocessMessageEvent(&event)
 		}
-		go c.process(&event, caller)
+		go c.process(&event)
 	}
 }
 
