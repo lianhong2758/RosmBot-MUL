@@ -7,8 +7,8 @@ import (
 
 	"github.com/RomiChan/websocket"
 	"github.com/lianhong2758/RosmBot-MUL/message"
-	"github.com/lianhong2758/RosmBot-MUL/server/mys"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
+	"github.com/lianhong2758/RosmBot-MUL/tool/send"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -70,34 +70,36 @@ func ReadAndSendMessage(ctxback context.Context, conn *websocket.Conn) {
 	}
 }
 func SendMessage(RecMessage *RecMessageStr) {
-	//发送信息
 	var msg []message.MessageSegment
-	for _, v := range RecMessage.Content {
-		switch v.Type {
-		case "text":
-			msg = append(msg, message.Text(tool.BytesToString(v.Data)))
-		case "image":
-			var image string
-			_ = json.Unmarshal(v.Data, &image)
-			msg = append(msg, message.Image(image))
-		case "buttons":
-			//***
-		case "node":
-			var m []Message
-			err := json.Unmarshal(v.Data, &m)
-			if err != nil {
-				log.Errorf("[gscore]解析%v消息失败: %v", v.Type, tool.BytesToString(v.Data))
+	var nodeMessage []Message
+	makeMsg := func(m []Message) {
+		for _, v := range m {
+			switch v.Type {
+			case "text":
+				var s string
+				json.Unmarshal(v.Data, &s)
+				msg = append(msg, message.Text(s))
+			case "image":
+				var image string
+				_ = json.Unmarshal(v.Data, &image)
+				msg = append(msg, message.Image(image))
+			case "buttons":
+				//***
+			case "node":
+				err := json.Unmarshal(v.Data, &nodeMessage)
+				if err != nil {
+					log.Errorf("[gscore]解析%v消息失败: %s", v.Type, tool.BytesToString(v.Data))
+				}
+			default:
+				log.Warnf("[gscore]未知消息类型: %v ,data: %s", v.Type, v.Data)
 			}
-			RecMessage.Content = append(RecMessage.Content, m...)
 		}
 	}
+	makeMsg(RecMessage.Content)
+	makeMsg(nodeMessage)
 	ctx := cache.Get(RecMessage.MsgId)
 	if ctx == nil {
-		switch RecMessage.BotId {
-		case "mys":
-			room, villa := tool.SplitPadString(RecMessage.TargetId)
-			ctx = mys.NewCTX(RecMessage.BotSelfId, room, villa)
-		}
+		ctx = send.CTXBuild(RecMessage.BotId, "", RecMessage.TargetId)
 	}
 	if ctx != nil {
 		ctx.Send(msg...)

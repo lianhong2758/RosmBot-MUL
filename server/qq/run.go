@@ -14,6 +14,7 @@ func (c *Config) Run() {
 		log.Errorln("QQ-Run", err, "Name: ", c.BotName)
 	}
 	c.Connect()
+	botMap[c.BotID] = c
 	c.Listen()
 }
 func (c *Config) setInit() {

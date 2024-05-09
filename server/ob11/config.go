@@ -17,7 +17,6 @@ type Config struct {
 	Token  string      `json:"access_token"`
 	Types  string      `json:"types"`
 	Driver zero.Driver `json:"-"` // 通信驱动
-
 }
 
 func (c *Config) Card() *rosm.BotCard {
