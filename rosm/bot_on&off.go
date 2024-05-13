@@ -9,7 +9,7 @@ import (
 // 仅作为存储开关数据使用,没有Matcher
 var boten = Register(&PluginData{
 	Name: "响应管理",
-	Help: "- @bot/早安" +
+	Help: "- @bot/早安\n" +
 		"- @bot/晚安",
 	//借用插件管理的存储器
 })
