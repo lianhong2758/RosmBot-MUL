@@ -68,6 +68,6 @@ func init() {
 	})
 	//去除全局响应沉默的影响
 	for _, m := range en.Matchers {
-		m.rules = m.rules[1:]
+		m.rules = m.rules[1:len(m.rules)-1]
 	}
 }
