@@ -66,4 +66,8 @@ func init() {
 		msg.WriteString(strings.Repeat("*", 20))
 		ctx.Send(message.Text(msg.String()))
 	})
+	//去除全局响应沉默的影响
+	for _, m := range en.Matchers {
+		m.rules = m.rules[1:]
+	}
 }

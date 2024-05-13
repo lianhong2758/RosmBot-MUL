@@ -111,6 +111,8 @@ func (m *Matcher) MUL(name ...string) *Matcher {
 // 注册Handle
 func (m *Matcher) Handle(h Handler) {
 	//加载默认的rule
+	//全局bot启动＋插件单独启用
+	m.rules=append( []func(ctx *Ctx) bool{PluginIsOn(boten)},m.rules... )
 	m.rules = append(m.rules, m.mulPass(), MatcherIsOn(m))
 	//执行hander
 	m.handler = h
