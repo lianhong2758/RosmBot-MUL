@@ -6,6 +6,7 @@ type Ctx struct {
 	BotType string
 	Message any    //解析后的原始消息
 	Being   *Being //常用消息解析,需实现
+	on      bool //插件是否在本群开启
 }
 
 // 常用数据
