@@ -19,6 +19,7 @@ func (ctx *Ctx) RunEvent(types int) (block bool) {
 	if ctx.sendNext(types) {
 		return true
 	}
+	ctx.on=PluginIsOn(boten)(ctx)
 	for _, m := range caseEvent[types] {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
@@ -41,6 +42,7 @@ func (ctx *Ctx) RunWord(word string) {
 	if ctx.RunEvent(AllMessage) {
 		return
 	}
+	ctx.on=PluginIsOn(boten)(ctx)
 	//关键词触发
 	if m, ok := caseAllWord[word]; ok {
 		if m.RulePass(ctx) {
