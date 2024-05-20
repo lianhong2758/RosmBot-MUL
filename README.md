@@ -1,5 +1,16 @@
 ﻿## RosmBot_MUL(迷迭香Bot)
 RosmBot-MUL是一个多平台bot,未来将实现一个插件多平台接入使用,本项目由golang编写
+
+
+## 命令行参数
+> `[]`代表是可选参数
+```bash
+RosmBot-Mul [-d] [-lf path] [-nolf]
+```
+- **-d**: debug模式
+- **-lf data/log/test.txt**: 自定义本次的日志存储位置
+- **-nolf**: 本次不保存日志
+
 ## 使用方法
 
 直接运行
