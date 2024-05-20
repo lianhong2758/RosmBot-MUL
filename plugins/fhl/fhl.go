@@ -32,9 +32,9 @@ func init() { // 插件主体
 			"- /雾里看花[5-10]",
 	})
 	en.AddWord("/梦笔生花").Handle(casefunc("A"))
-	en.AddRex(`/走马观花\s*(\d)`).Handle(casefunc("B"))
-	en.AddRex(`/天女散花\s*(\d)`).Handle(casefunc("C"))
-	en.AddRex(`/雾里看花\s*(\d)`).Handle(casefunc("D"))
+	en.AddRex(`^/走马观花\s*(\d)`).Handle(casefunc("B"))
+	en.AddRex(`^/天女散花\s*(\d)`).Handle(casefunc("C"))
+	en.AddRex(`^/雾里看花\s*(\d)`).Handle(casefunc("D"))
 }
 
 type TopicResp struct {
