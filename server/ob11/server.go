@@ -2,7 +2,6 @@ package ob11
 
 import (
 	"encoding/json"
-	"fmt"
 	"hash/crc64"
 	"strconv"
 	"strings"
@@ -17,7 +16,8 @@ import (
 )
 
 func (c *Config) process(e *zero.Event) {
-	log.Debug("Message: ", e.RawMessage)
+	mess:=e.Message.CQString()
+	log.Debug("Message: ",mess)
 	switch e.PostType {
 	// 消息事件
 	case "message":
@@ -29,7 +29,7 @@ func (c *Config) process(e *zero.Event) {
 				Being: &rosm.Being{
 					RoomID2: "",
 					RoomID:  "-" + tool.Int64ToString(e.Sender.ID),
-					Word:    e.RawMessage,
+					Word:    mess,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
@@ -43,7 +43,6 @@ func (c *Config) process(e *zero.Event) {
 				Bot:     c,
 			}
 			ctx.Being.AtMe = true
-			_ = c.EstAt(&ctx.Being.Word, e.SelfID)
 			ctx.RunWord(ctx.Being.Word)
 		// 群聊信息
 		case "group":
@@ -52,7 +51,7 @@ func (c *Config) process(e *zero.Event) {
 				Being: &rosm.Being{
 					RoomID2: e.ChannelID,
 					RoomID:  tool.Int64ToString(e.GroupID) + e.GuildID,
-					Word:    e.RawMessage,
+					Word:    mess,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
@@ -66,7 +65,7 @@ func (c *Config) process(e *zero.Event) {
 				Bot:     c,
 			}
 
-			ctx.Being.AtMe = c.EstAt(&ctx.Being.Word, e.SelfID)
+			ctx.Being.AtMe =e.IsToMe
 			e.IsToMe = ctx.Being.AtMe
 			//log.Println(ctx.Being.Word)
 			ctx.RunWord(ctx.Being.Word)
@@ -163,11 +162,39 @@ func preprocessNoticeEvent(e *zero.Event) {
 // preprocessMessageEvent 返回信息事件
 func (c *Config) preprocessMessageEvent(e *zero.Event) {
 	e.Message = message.ParseMessage(e.NativeMessage)
+	
+	processAt := func() { // 处理是否at机器人
+		e.IsToMe = false
+		for i, m := range e.Message {
+			if m.Type == "at" {
+				qq, _ := strconv.ParseInt(m.Data["qq"], 10, 64)
+				if qq == e.SelfID {
+					e.IsToMe = true
+					e.Message = append(e.Message[:i], e.Message[i+1:]...)
+					return
+				}
+			}
+		}
+		if len(e.Message) == 0 || e.Message[0].Type != "text" {
+			return
+		}
+		first := e.Message[0]
+		first.Data["text"] = strings.TrimLeft(first.Data["text"], " ") // Trim!
+		text := first.Data["text"]
+			if strings.HasPrefix(text,c.Card().BotName) {
+				e.IsToMe = true
+				first.Data["text"] = text[len(c.Card().BotName):]
+				return
+			}
+		
+	}
 	switch {
 	case e.DetailType == "group":
 		log.Infof("[ob11] [↓][群(%v)消息][%v] : %v", e.GroupID, e.Sender.String(), e.RawMessage)
+		processAt()
 	case e.DetailType == "guild" && e.SubType == "channel":
 		log.Infof("[ob11] [↓][频道(%v)(%v-%v)消息][%v] : %v", e.GroupID, e.GuildID, e.ChannelID, e.Sender.String(), e.Message)
+		processAt()
 	default:
 		e.IsToMe = true // 私聊也判断为at
 		log.Infof("[ob11] [↓][私聊消息][%v] : %v", e.Sender.String(), e.RawMessage)
@@ -175,18 +202,4 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 	if len(e.Message) > 0 && e.Message[0].Type == "text" { // Trim Again!
 		e.Message[0].Data["text"] = strings.TrimLeft(e.Message[0].Data["text"], " ")
 	}
-}
-func (c *Config) EstAt(word *string, selfid int64) bool {
-	if strings.HasPrefix(*word, c.Card().BotName) {
-		*word = (*word)[len(c.Card().BotName):]
-		*word = strings.TrimSpace(*word)
-		return true
-	}
-	if strings.HasPrefix(*word, fmt.Sprintf("[CQ:at,qq=%d]", selfid)) {
-		*word = (*word)[len(fmt.Sprintf("[CQ:at,qq=%d]", selfid)):]
-		*word = strings.TrimSpace(*word)
-		return true
-	}
-	*word = strings.TrimSpace(*word)
-	return false
 }
