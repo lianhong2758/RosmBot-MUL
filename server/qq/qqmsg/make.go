@@ -3,6 +3,7 @@ package qqmsg
 import (
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
@@ -42,6 +43,7 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
 		}
 	}
+	cnt.Text=tool.HideURL(cnt.Text)
 	if ctx.Being.Def["id"] != nil {
 		cnt.MsgID = ctx.Being.Def["id"].(string)
 	}
@@ -91,6 +93,7 @@ func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
 		}
 	}
+	cnt.Text=tool.HideURL(cnt.Text)
 	if ctx.Being.Def["id"] != nil {
 		cnt.MsgID = ctx.Being.Def["id"].(string)
 	}

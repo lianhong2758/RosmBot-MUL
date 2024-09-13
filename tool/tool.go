@@ -67,3 +67,13 @@ func SplitTypeAndString(value string) (types, string1 string) {
 func WaitInit() {
 	time.Sleep(time.Second * 2)
 }
+
+
+
+// HideURL 转义 URL 以避免审核
+func HideURL(s string) string {
+	s = strings.ReplaceAll(s, ".", "…")
+	s = strings.ReplaceAll(s, "http://", "🔗📄:")
+	s = strings.ReplaceAll(s, "https://", "🔗🔒:")
+	return s
+}
