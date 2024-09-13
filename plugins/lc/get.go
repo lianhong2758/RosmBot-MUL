@@ -231,5 +231,5 @@ func ProcessContent(onetopic gjson.Result) string {
 			text.WriteByte('\n')
 		}
 	}
-	return strings.TrimSpace(text.String())
+	return text.String()
 }

@@ -11,8 +11,8 @@ import (
 func init() {
 	en := rosm.Register(&rosm.PluginData{
 		Name: "lc",
-		Help: "- 每日一题\n"+
-		"- rlc e/m/h",
+		Help: "- 每日一题\n" +
+			"- rlc e/m/h",
 	})
 	en.AddWord("每日一题", "/每日一题").Handle(func(ctx *rosm.Ctx) {
 		err := GetCsrftoken()
@@ -25,16 +25,19 @@ func init() {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		onetopic, err := GetOneTopic(today.Get("data.todayRecord.0.question.titleSlug").String())
+		titleSlug := today.Get("data.todayRecord.0.question.titleSlug").String()
+		onetopic, err := GetOneTopic(titleSlug)
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		ctx.Send(message.Text(fmt.Sprintf("ID:%d Title:%s 难度:%s\n题目:%s",
+		ctx.Send(message.Text(fmt.Sprintf("ID:%d Title:%s 难度:%s\n题目:%slink:%s",
 			onetopic.Get("data.question.questionFrontendId").Int(),
 			onetopic.Get("data.question.translatedTitle").String(),
 			onetopic.Get("data.question.difficulty").String(),
-			ProcessContent(onetopic))))
+			ProcessContent(onetopic),
+			"https://leetcode.cn/problems/"+titleSlug,
+		)))
 	})
 	en.AddRex(`^/?(?:rlc|随机lc)\s*([EeMmHh])?$`).Handle(func(ctx *rosm.Ctx) {
 		/*
@@ -57,13 +60,13 @@ func init() {
 			id = rand.IntN(3500)
 		case "E", "e":
 			id = rand.IntN(900)
-			difficulty ="EASY"
+			difficulty = "EASY"
 		case "M", "m":
 			id = rand.IntN(1900)
-				difficulty ="MEDIUM"
+			difficulty = "MEDIUM"
 		case "H", "h":
 			id = rand.IntN(800)
-				difficulty ="HARD"
+			difficulty = "HARD"
 		}
 		r, err := GetTopicList(id, difficulty)
 		if err != nil {
@@ -84,10 +87,12 @@ func init() {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		ctx.Send(message.Text(fmt.Sprintf("ID:%d Title:%s 难度:%s\n题目:%s",
+		ctx.Send(message.Text(fmt.Sprintf("ID:%d Title:%s 难度:%s\n题目:%slink:%s",
 			onetopic.Get("data.question.questionFrontendId").Int(),
 			onetopic.Get("data.question.translatedTitle").String(),
 			onetopic.Get("data.question.difficulty").String(),
-			ProcessContent(onetopic))))
+			ProcessContent(onetopic),
+			"https://leetcode.cn/problems/"+title,
+		)))
 	})
 }
