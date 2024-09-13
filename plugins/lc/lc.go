@@ -11,7 +11,7 @@ import (
 func init() {
 	en := rosm.Register(&rosm.PluginData{
 		Name: "lc",
-		Help: "- 每日一题"+
+		Help: "- 每日一题\n"+
 		"- rlc e/m/h",
 	})
 	en.AddWord("每日一题", "/每日一题").Handle(func(ctx *rosm.Ctx) {
