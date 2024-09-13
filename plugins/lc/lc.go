@@ -10,8 +10,9 @@ import (
 
 func init() {
 	en := rosm.Register(&rosm.PluginData{
-		Name: "每日一题",
-		Help: "- 每日一题",
+		Name: "lc",
+		Help: "- 每日一题"+
+		"- rlc e/m/h",
 	})
 	en.AddWord("每日一题", "/每日一题").Handle(func(ctx *rosm.Ctx) {
 		err := GetCsrftoken()
