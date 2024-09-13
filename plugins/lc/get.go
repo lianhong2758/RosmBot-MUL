@@ -5,16 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	"github.com/tidwall/gjson"
 )
 
 var (
 	Csrftoken     string
-	lcUrl         = "https://leetcode.cn"
-	graphqlUrl    = "/graphql"
-	gettopicparam = `query questionOfToday {
+	lcUrl         = "https://leetcode.cn/graphql"
+	gettopicparam = `
+	query questionOfToday {
       todayRecord {
         date
         userStatus
@@ -50,7 +52,8 @@ var (
         }
       }
     }`
-	getonetopicparam = `query questionData($titleSlug: String!) {
+	getonetopicparam = `
+	query questionData($titleSlug: String!) {
           question(titleSlug: $titleSlug) {
             questionId
             questionFrontendId
@@ -125,10 +128,26 @@ var (
             __typename
           }
         }`
+	gettopicListparam = `
+	query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
+  problemsetQuestionList(
+    categorySlug: $categorySlug
+    limit: $limit
+    skip: $skip
+    filters: $filters
+  ) {
+    questions {
+      acRate
+      difficulty
+      titleCn
+      titleSlug
+      }
+}
+}`
 )
 
 func GetCsrftoken() error {
-	req, err := http.Get(lcUrl + graphqlUrl)
+	req, err := http.Get(lcUrl)
 	if err != nil {
 		return err
 	}
@@ -148,13 +167,12 @@ func GetTodayTopic() (g gjson.Result, err error) {
 		"variables": map[string]any{},
 	}
 	data, _ := json.Marshal(dataJson)
-	data, err = web.Web(web.NewDefaultClient(), lcUrl+graphqlUrl, http.MethodPost, makeHeard, bytes.NewReader(data))
+	data, err = web.Web(web.NewDefaultClient(), lcUrl, http.MethodPost, makeHeard, bytes.NewReader(data))
 	g = gjson.ParseBytes(data)
 	return
 }
 
-func GetOneTopic(tg gjson.Result) (g gjson.Result, err error) {
-	title := tg.Get("data.todayRecord.0.question.titleSlug").String()
+func GetOneTopic(title string) (g gjson.Result, err error) {
 	dataJson := map[string]any{
 		"operationName": "questionData",
 		"variables": map[string]any{
@@ -163,7 +181,27 @@ func GetOneTopic(tg gjson.Result) (g gjson.Result, err error) {
 		"query": getonetopicparam,
 	}
 	data, _ := json.Marshal(dataJson)
-	data, err = web.Web(web.NewDefaultClient(), lcUrl+graphqlUrl, http.MethodPost, makeHeard, bytes.NewReader(data))
+	data, err = web.Web(web.NewDefaultClient(), lcUrl, http.MethodPost, makeHeard, bytes.NewReader(data))
+	g = gjson.ParseBytes(data)
+	return
+}
+func GetTopicList(num int, difficult string) (g gjson.Result, err error) {
+	filtersmap := map[string]any{}
+	if difficult != "" {
+		filtersmap["difficulty"] = difficult
+	}
+	dataJson := map[string]any{
+		"operationName": "problemsetQuestionList",
+		"variables": map[string]any{
+			"categorySlug": "",
+			"skip":         num,
+			"limit":        50,
+			"filters":       filtersmap,
+		},
+		"query": gettopicListparam,
+	}
+	data, _ := json.Marshal(dataJson)
+	data, err = web.Web(web.NewDefaultClient(), lcUrl, http.MethodPost, makeHeard, bytes.NewReader(data))
 	g = gjson.ParseBytes(data)
 	return
 }
@@ -176,4 +214,22 @@ func makeHeard(request *http.Request) {
 	request.Header.Set("Origin", "https://leetcode.cn")
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("X-Csrftoken", Csrftoken)
+}
+
+func ProcessContent(onetopic gjson.Result) string {
+	content := onetopic.Get("data.question.translatedContent").String()
+	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(content))
+	var text bytes.Buffer
+	doc.Contents().Each(func(i int, s *goquery.Selection) {
+		text.WriteString(s.Text())
+	})
+	sptext := strings.Split(text.String(), "\n")
+	text.Reset()
+	for _, v := range sptext {
+		if t := strings.TrimSpace(v); t != "" {
+			text.WriteString(t)
+			text.WriteByte('\n')
+		}
+	}
+	return strings.TrimSpace(text.String())
 }
