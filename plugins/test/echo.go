@@ -13,7 +13,7 @@ func init() {
 		Help: "- 复读..." +
 			"- 用xx体渲染(抖动)文字", //插件帮助
 	})
-	en.AddRex("^复读(.*)").SetBlock(true).Rule(func(ctx *rosm.Ctx) bool { return true }, rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) { //正则的触发方式
+	en.AddRex(`^复读([\s\S]*)`).SetBlock(true).Rule(func(ctx *rosm.Ctx) bool { return true }, rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) { //正则的触发方式
 		ctx.Send(message.Text(ctx.Being.Rex[1])) //发送文字信息
 	})
 	en.AddRex("^复纯(.*)").Handle(func(ctx *rosm.Ctx) {

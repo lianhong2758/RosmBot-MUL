@@ -18,7 +18,7 @@ var en = Register(&PluginData{
 })
 
 func init() {
-	en.AddRex(`/启用\s*(.*)`).Handle(func(ctx *Ctx) {
+	en.AddRex(`^/启用\s*(.*)`).Handle(func(ctx *Ctx) {
 		name := ctx.Being.Rex[1]
 		if _, ok := GetPlugins()[name]; !ok {
 			ctx.Send(message.Text("未找到插件: ", name))
@@ -31,7 +31,7 @@ func init() {
 		}
 		ctx.Send(message.Text(name, "已启用..."))
 	})
-	en.AddRex(`/禁用\s*(.*)`).Handle(func(ctx *Ctx) {
+	en.AddRex(`^/禁用\s*(.*)`).Handle(func(ctx *Ctx) {
 		name := ctx.Being.Rex[1]
 		if _, ok := GetPlugins()[name]; !ok {
 			ctx.Send(message.Text("未找到插件: ", name))
@@ -44,7 +44,7 @@ func init() {
 		}
 		ctx.Send(message.Text(name, "已禁用..."))
 	})
-	en.AddRex(`/用法\s*(.*)`).Handle(func(ctx *Ctx) {
+	en.AddRex(`^/用法\s*(.*)`).Handle(func(ctx *Ctx) {
 		name := ctx.Being.Rex[1]
 		plugin, ok := GetPlugins()[name]
 		if !ok {
