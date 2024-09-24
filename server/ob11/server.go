@@ -196,6 +196,7 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 		log.Infof("[ob11] [↓][频道(%v)(%v-%v)消息][%v] : %v", e.GroupID, e.GuildID, e.ChannelID, e.Sender.String(), e.Message)
 		processAt()
 	default:
+		processAt()
 		e.IsToMe = true // 私聊也判断为at
 		log.Infof("[ob11] [↓][私聊消息][%v] : %v", e.Sender.String(), e.RawMessage)
 	}

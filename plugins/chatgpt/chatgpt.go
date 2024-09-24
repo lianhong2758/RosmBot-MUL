@@ -13,13 +13,13 @@ import (
 const (
 	// baseURL  = "https://api.openai.com/v1/"
 	//proxyURL           = "https://gpt.a20safe.com/v1/"
-	proxyURL = "https://api.alioth.center/akasha-whisper/v1"
+	proxyURL = "https://api.alioth.center/akasha-whisper/v1/"
 )
 
-var modelList = map[string]string{
-	"chatgpt3.5t": "gpt-3.5-turbo",
-	"chatgpt4o":   "gpt-4o",
-	"chatgpt4om":"gpt-4o-mini",
+var modelList = []string{
+	"gpt-4o-mini",
+	"gpt-4o",
+	"gpt-3.5-turbo",
 }
 
 // chatGPTResponseBody 响应体
@@ -34,7 +34,7 @@ type chatGPTResponseBody struct {
 
 // chatGPTRequestBody 请求体
 type chatGPTRequestBody struct {
-	Model       string        `json:"model,omitempty"` // gpt3.5-turbo
+	Model       string        `json:"model,omitempty"`
 	Messages    []chatMessage `json:"messages,omitempty"`
 	Temperature float64       `json:"temperature,omitempty"`
 	N           int           `json:"n,omitempty"`
@@ -77,7 +77,7 @@ func completions(messages []chatMessage, apiKey string, model string) (*chatGPTR
 	}
 	// default model
 	if com.Model == "" {
-		com.Model =  model
+		com.Model = model
 	}
 
 	body, err := json.Marshal(com)

@@ -31,9 +31,10 @@ type model struct {
 }
 
 type mode struct {
-	RoomID      string `db:"RoomID"`
-	Off         bool   `db:"Off"` //false为开启插件,true为关闭插件
-	OtherString string `db:"Other"`
+	RoomID string `db:"RoomID"`
+	Off    bool   `db:"Off"`    //false为开启插件,true为关闭插件
+	String string `db:"String"` //String类型数据
+	Int    int    `db:"Int"`    //int类型数据
 }
 
 // 初始化插件表
@@ -43,11 +44,12 @@ func plugindbinit() {
 	}
 }
 func (db *model) InsertOff(pluginname, roomid string, off bool) (err error) {
-	other, _ := db.FindOther(pluginname, roomid)
+	oldm, _ := db.Find(pluginname, roomid)
 	m := mode{
-		RoomID:      roomid,
-		Off:         off,
-		OtherString: other,
+		RoomID: roomid,
+		Off:    off,
+		String: oldm.String,
+		Int:    oldm.Int,
 	}
 	return db.sql.Insert(pluginname, &m)
 }
@@ -71,21 +73,36 @@ func (db *model) Find(pluginname, roomid string) (m mode, err error) {
 	return
 }
 
-func (db *model) FindOther(pluginname, roomid string) (o string, err error) {
+func (db *model) FindString(pluginname, roomid string) (s string, err error) {
 	m, err := db.Find(pluginname, roomid)
-	return m.OtherString, err
+	return m.String, err
 }
 
-func (db *model) InsertOther(pluginname, roomid string, o string) (err error) {
-	off, _ := db.FindOff(pluginname, roomid)
+func (db *model) InsertString(pluginname, roomid string, s string) (err error) {
+	oldm, _ := db.Find(pluginname, roomid)
 	m := mode{
-		RoomID:      roomid,
-		Off:         off,
-		OtherString: o,
+		RoomID: roomid,
+		Off:    oldm.Off,
+		String: s,
+		Int:    oldm.Int,
 	}
 	return db.sql.Insert(pluginname, &m)
 }
+func (db *model) FindInt(pluginname, roomid string) (i int, err error) {
+	m, err := db.Find(pluginname, roomid)
+	return m.Int, err
+}
 
+func (db *model) InsertInt(pluginname, roomid string, i int) (err error) {
+	oldm, _ := db.Find(pluginname, roomid)
+	m := mode{
+		RoomID: roomid,
+		Off:    oldm.Off,
+		String: oldm.String,
+		Int:     i,
+	}
+	return db.sql.Insert(pluginname, &m)
+}
 // 查询是否开启插件
 func MatcherIsOn(m *Matcher) func(ctx *Ctx) bool {
 	return func(ctx *Ctx) bool {
