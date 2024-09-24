@@ -12,9 +12,15 @@ import (
 
 const (
 	// baseURL  = "https://api.openai.com/v1/"
-	proxyURL           = "https://gpt.a20safe.com/v1/"
-	modelGPT3Dot5Turbo = "gpt-3.5-turbo"
+	//proxyURL           = "https://gpt.a20safe.com/v1/"
+	proxyURL = "https://api.alioth.center/akasha-whisper/v1"
 )
+
+var modelList = map[string]string{
+	"chatgpt3.5t": "gpt-3.5-turbo",
+	"chatgpt4o":   "gpt-4o",
+	"chatgpt4om":"gpt-4o-mini",
+}
 
 // chatGPTResponseBody 响应体
 type chatGPTResponseBody struct {
@@ -65,13 +71,13 @@ var client = &http.Client{
 // -H "Content-Type: application/json"
 // -H "Authorization: Bearer YOUR_API_KEY"
 // -d '{ "model": "gpt-3.5-turbo",  "messages": [{"role": "user", "content": "Hello!"}]}'
-func completions(messages []chatMessage, apiKey string) (*chatGPTResponseBody, error) {
+func completions(messages []chatMessage, apiKey string, model string) (*chatGPTResponseBody, error) {
 	com := chatGPTRequestBody{
 		Messages: messages,
 	}
 	// default model
 	if com.Model == "" {
-		com.Model = modelGPT3Dot5Turbo
+		com.Model =  model
 	}
 
 	body, err := json.Marshal(com)
