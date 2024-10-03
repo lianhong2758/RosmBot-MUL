@@ -6,7 +6,6 @@ import (
 	"time"
 
 	sql "github.com/FloatTech/sqlite"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -37,7 +36,7 @@ func initDB(path string) {
 	}
 	err = TimeDB.sql.Create("time", &mode{})
 	if err != nil {
-		logrus.Error("[time]初始化表(time)失败: ", err)
+		log.Error("[time]初始化表(time)失败: ", err)
 		os.Exit(1)
 	}
 }
@@ -66,6 +65,7 @@ func (db *model) Range(f func(i int, m *mode) bool) {
 	// 执行查询语句
 	rows, err := db.sql.DB.Query("SELECT * FROM " + "time")
 	if err != nil {
+		log.Warnln("time Error: ", err)
 		return
 	}
 	defer rows.Close()
@@ -76,6 +76,7 @@ func (db *model) Range(f func(i int, m *mode) bool) {
 		var m mode
 		err := rows.Scan(&m.Key, &m.String1, &m.Types, &m.Word, &m.Time, &m.UserID, &m.BotID)
 		if err != nil {
+			log.Error("time Error: ", err)
 			return
 		}
 		if !f(i, &m) {
