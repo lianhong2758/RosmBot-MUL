@@ -1,6 +1,7 @@
 // ########################################
 // 消息组件
-// 在Send()中进行发送,不限长度,Custom()除外
+// 在Send()中进行发送,不限长度
+//BotSendCustom也需要实现,用于自定义一个特殊的消息发送,一般用于直接发送消息体
 // 部分组件可以含有多余的参数
 // 适平台要求,可以将部分参数传空
 
@@ -129,13 +130,3 @@ func Video(file string) MessageSegment {
 		},
 	}
 }
-
-// // 自定义全量消息内容
-// func Custom(messageData any) MessageSegment {
-// 	return MessageSegment{
-// 		Type: "custom",
-// 		Data: H{
-// 			"data": messageData,
-// 		},
-// 	}
-// }

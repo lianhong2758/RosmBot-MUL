@@ -25,6 +25,20 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 	}
 }
 
+func (c *Config) BotSendCustom(ctx *rosm.Ctx, Count any) rosm.H {
+	if Count == nil {
+		logrus.Warn("[↑]消息为空")
+		return rosm.H{}
+	}
+	if ctx.Being.RoomID[0:1] != "-" {
+		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID),
+			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
+	} else {
+		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID[1:]),
+			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
+	}
+}
+
 // 转为符合ob11的map[string]string,但需要再调用custom消息除外
 func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Message {
 	for k, message := range msg {

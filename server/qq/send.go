@@ -70,6 +70,10 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 		return "0"
 	}(err != nil)}
 }
+//未来实现
+func (c *Config) BotSendCustom(ctx *rosm.Ctx, count any) rosm.H {
+	return rosm.H{}
+}
 
 func (c *Config) GetPortraitURI(ctx *rosm.Ctx) string {
 	if r, ok := ctx.Message.(*RawGuildMessage); ok {

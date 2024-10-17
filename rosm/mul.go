@@ -5,14 +5,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type H =  message.H
+type H = message.H
 
 // Boter bot主接口,由server实现,Run函数由server自己调用运行
 type Boter interface {
 	//发送消息
 	BotSend(*Ctx, ...message.MessageSegment) H
+	//特殊的发送格式
+	BotSendCustom(*Ctx, any) H
 	//头像获取
-	GetPortraitURI(*Ctx )string
+	GetPortraitURI(*Ctx) string
 	//运行,用于开启接收消息和调用插件
 	Run()
 
