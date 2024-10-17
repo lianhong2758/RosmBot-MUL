@@ -19,12 +19,12 @@ func init() {
 	en.AddRex("^复纯(.*)").Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Image("url://" + ctx.Being.Rex[1]))
 	})
-	en.AddRex(`^解析([\s\S]*)$`).Handle(func(ctx *rosm.Ctx) {
-		m := ctx.Send(message.Custom(ctx.Being.Rex[1]))
-		if m["code"] != 0 {
-			ctx.Send(message.Text("发送失败: ", m["state"]))
-		}
-	})
+	// en.AddRex(`^解析([\s\S]*)$`).Handle(func(ctx *rosm.Ctx) {
+	// 	m := ctx.Send(message.Custom(ctx.Being.Rex[1]))
+	// 	if m["code"] != 0 {
+	// 		ctx.Send(message.Text("发送失败: ", m["state"]))
+	// 	}
+	// })
 	en.AddRex(`^(用.+)?渲染(抖动)?文字([\s\S]+)$`).Handle(func(ctx *rosm.Ctx) {
 		font := ctx.Being.Rex[1]
 		txt := ctx.Being.Rex[3]

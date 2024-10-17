@@ -63,11 +63,11 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 	log.Debugln("[send-result]", tool.BytesToString(data))
 	sendState := new(qqmsg.SendState)
 	_ = json.Unmarshal(data, sendState)
-	return rosm.H{"state": sendState, "id": sendState.MsgID, "code": func(b bool) int {
+	return rosm.H{"id": sendState.MsgID, "code": func(b bool) string {
 		if b {
-			return 1
+			return "1"
 		}
-		return 0
+		return "0"
 	}(err != nil)}
 }
 

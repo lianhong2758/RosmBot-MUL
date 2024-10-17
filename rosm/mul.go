@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type H = map[string]any
+type H =  message.H
 
 // Boter bot主接口,由server实现,Run函数由server自己调用运行
 type Boter interface {

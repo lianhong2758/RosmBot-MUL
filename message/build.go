@@ -16,12 +16,13 @@
 package message
 
 import (
+	"encoding/base64"
 	"fmt"
 )
 
-type H = map[string]any
+type H = map[string]string
 
-type Message []MessageSegment
+type Message = []MessageSegment
 
 type MessageSegment struct {
 	Type string `json:"type"`
@@ -73,9 +74,9 @@ func ATAll() MessageSegment {
 // 发送普通图片
 func ImageByte(img []byte) MessageSegment {
 	return MessageSegment{
-		Type: "imagebyte",
+		Type: "image",
 		Data: H{
-			"data": img,
+			"file": "base64://" + base64.StdEncoding.EncodeToString(img),
 		},
 	}
 }
@@ -86,34 +87,33 @@ func Image(data string) MessageSegment {
 	return MessageSegment{
 		Type: "image",
 		Data: H{
-			"data": data,
+			"file": data,
 		},
 	}
 }
 
 // 蓝色跳转链接
-func Link(url string, haveToken bool, text ...any) MessageSegment {
+func Link(url string, text ...any) MessageSegment {
 	return MessageSegment{
 		Type: "link",
 		Data: H{
-			"text":  fmt.Sprint(text...),
-			"url":   url,
-			"token": haveToken,
+			"text": fmt.Sprint(text...),
+			"url":  url,
 		},
 	}
 }
 
-// 根据平台增加参数个数,米游社参数为id,time
-func ReplyOther(some ...string) MessageSegment {
+// 回复其余人
+func ReplyOther(id string) MessageSegment {
 	return MessageSegment{
 		Type: "reply",
 		Data: H{
-			"ids": some,
+			"id": id,
 		},
 	}
 }
 
-// 根据平台增加参数个数,米游社参数为id,time
+// 回复消息
 func Reply() MessageSegment {
 	return MessageSegment{
 		Type: "replyuser",
@@ -130,12 +130,12 @@ func Video(file string) MessageSegment {
 	}
 }
 
-// 自定义全量消息内容
-func Custom(messageData any) MessageSegment {
-	return MessageSegment{
-		Type: "custom",
-		Data: H{
-			"data": messageData,
-		},
-	}
-}
+// // 自定义全量消息内容
+// func Custom(messageData any) MessageSegment {
+// 	return MessageSegment{
+// 		Type: "custom",
+// 		Data: H{
+// 			"data": messageData,
+// 		},
+// 	}
+// }
