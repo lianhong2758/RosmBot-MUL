@@ -18,7 +18,7 @@ func init() {
 		DataFolder: "pixiv",
 	})
 
-	en.AddRex(`^/搜图\s*(d+)$`).Handle(func(ctx *rosm.Ctx) {
+	en.AddRex(`^/搜图\s*(\d+)$`).Handle(func(ctx *rosm.Ctx) {
 		id, _ := strconv.ParseInt(ctx.Being.Rex[1], 10, 64)
 		ctx.Send(message.Text("雪儿正在寻找中......"))
 		// 获取P站插图信息
