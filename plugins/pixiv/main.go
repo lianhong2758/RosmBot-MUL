@@ -2,6 +2,7 @@ package pixiv
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/FloatTech/floatbox/file"
@@ -17,7 +18,9 @@ func init() {
 		Help:       "- /搜图 pid",
 		DataFolder: "pixiv",
 	})
-
+	if file.IsNotExist(en.DataFolder + "cache") {
+		_ = os.MkdirAll(en.DataFolder+"cache", 0755)
+	}
 	en.AddRex(`^/搜图\s*(\d+)$`).Handle(func(ctx *rosm.Ctx) {
 		id, _ := strconv.ParseInt(ctx.Being.Rex[1], 10, 64)
 		ctx.Send(message.Text("雪儿正在寻找中......"))
