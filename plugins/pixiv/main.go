@@ -2,15 +2,21 @@ package pixiv
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/FloatTech/floatbox/file"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/ob11"
+	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	"github.com/sirupsen/logrus"
+	zero "github.com/wdvxdr1123/ZeroBot"
 )
+
+var saucenaokey string
 
 func init() {
 	en := rosm.Register(&rosm.PluginData{
@@ -21,7 +27,7 @@ func init() {
 	if file.IsNotExist(en.DataFolder + "cache") {
 		_ = os.MkdirAll(en.DataFolder+"cache", 0755)
 	}
-	en.AddRex(`^/搜图\s*(\d+)$`).Handle(func(ctx *rosm.Ctx) {
+	en.AddRex(`^/搜图\s*(\d+)$`).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
 		id, _ := strconv.ParseInt(ctx.Being.Rex[1], 10, 64)
 		ctx.Send(message.Text("雪儿正在寻找中......"))
 		// 获取P站插图信息
@@ -30,33 +36,41 @@ func init() {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		r18 := HaveR18Pic(illust)
-		if r18 {
+		if illust.R18 {
 			ctx.Send(message.Text("含有R18图片,请自行下载"))
 		}
-		if illust.ID > 0 {
-			name := strconv.FormatInt(illust.ID, 10)
+		remessage := "直链: "
+		if illust.Pid > 0 {
+			name := strconv.FormatInt(illust.Pid, 10)
 			var imgs message.Message
-			for i, v := range illust.MetaPages {
-				f := fmt.Sprint(file.BOTPATH, "/", en.DataFolder, "cache/", name, "_p", i, ".png")
-				n := fmt.Sprint(name, "_p", i, ".png")
+			for i, v := range illust.URLs {
+				f := fmt.Sprint(file.BOTPATH, "/", en.DataFolder, "cache/", name, "-", i+1, ".png")
+				n := fmt.Sprint(name, "-", i+1, ".png")
+				remessage += fmt.Sprint("\nhttps://pixiv.re/", n)
+				//下载非R18图
 				if file.IsNotExist(f) {
 					logrus.Debugln("[pixiv]开始下载", n)
-					logrus.Debugln("[pixiv]urls:", v.ImageUrls.Original)
-					err1 := DownLoadWorks(v.ImageUrls.Original, f)
+					logrus.Debugln("[pixiv]urls:", v)
+					err1 := DownLoadWorks(v, f)
 					if err1 != nil {
 						logrus.Debugln("[pixiv]下载err:", err1)
 						continue
 					}
 				}
-				imgs = append(imgs, message.Image("file://"+f))
+				///发送非R18图
+				if !illust.R18 {
+					imgs = append(imgs, message.Image("file://"+f))
+				}
+			}
+			if len(illust.URLs) == 1 {
+				remessage = fmt.Sprint("直链: ", "https://pixiv.re/", illust.Pid, ".png")
 			}
 			txt := message.Text(
 				"标题: ", illust.Title, "\n",
-				"插画ID: ", illust.ID, "\n",
-				"画师: ", illust.User.Name, "\n",
-				"画师ID: ", illust.User.ID, "\n",
-				"直链: ", "https://pixiv.re/", illust.ID, ".jpg",
+				"插画ID: ", illust.Pid, "\n",
+				"画师: ", illust.UserName, "\n",
+				"画师ID: ", illust.UID, "\n",
+				remessage,
 			)
 			if imgs != nil {
 				ctx.Send(message.Message{ob11.FakeSenderForwardNode(ctx, txt),
@@ -69,4 +83,94 @@ func init() {
 			ctx.Send(message.Text("图片不存在呜..."))
 		}
 	})
+	en.AddWord("以图搜图", "以图识图").MUL("ob11").Handle(func(ctx *rosm.Ctx) {
+		pics := GetMustPic(ctx)
+		if len(pics) == 0 {
+			ctx.Send(message.Text("雪儿没有收到图片唔..."))
+			return
+		}
+		ctx.Send(message.Text("雪儿正在寻找中..."))
+		for _, pic := range pics {
+			//saucenao
+			if saucenaokey != "" && func() bool { saucenaokey, _ = rosm.PluginDB.FindString(en.Name, "0"); return saucenaokey != "" }() {
+				saUrl, _ := url.ParseQuery("https://saucenao.com/search.php")
+				saUrl.Add("api_key", saucenaokey)
+				saUrl.Add("db", "999")
+				saUrl.Add("output_type", "2")
+				saUrl.Add("numres", "3")
+				saUrl.Add("url", pic)
+				saUrl.Add("hide", "false")
+				data, err := web.GetData(saUrl.Encode(), web.RandUA())
+				if err != nil {
+					ctx.Send(message.Text("ERROR: ", err))
+					return
+				}
+				fmt.Println(string(data))
+			} else {
+				ctx.Send(message.Text("请私聊发送 设置 saucenao api key [apikey] 以启用 saucenao 搜图 (方括号不需要输入), key 请前往 https://saucenao.com/user.php?page=search-api 获取"))
+			}
+			// ascii2d 搜索
+			// 	result, err := ascii2d.ASCII2d(pic)
+			// 	if err != nil {
+			// 		ctx.Send(message.Text("ERROR: ", err))
+			// 		continue
+			// 	}
+			// 	msg := message.Message{ctxext.FakeSenderForwardNode(ctx, message.Text("ascii2d搜图结果"))}
+			// 	for i := 0; i < len(result) && i < 5; i++ {
+			// 		var resultMsgs message.Message
+			// 		if showPic {
+			// 			resultMsgs = append(resultMsgs, message.Image(result[i].Thumb))
+			// 		}
+			// 		resultMsgs = append(resultMsgs, message.Text(fmt.Sprintf(
+			// 			"标题: %s\n图源: %s\n画师: %s\n画师链接: %s\n图片链接: %s",
+			// 			result[i].Name,
+			// 			result[i].Type,
+			// 			result[i].AuthNm,
+			// 			result[i].Author,
+			// 			result[i].Link,
+			// 		)))
+			// 		msg = append(msg, ctxext.FakeSenderForwardNode(ctx, resultMsgs...))
+			// 	}
+			// 	if id := ctx.Send(msg).ID(); id == 0 {
+			// 		ctx.Send(message.Text("ERROR: 可能被风控了"))
+			// 	}
+		}
+	})
+}
+
+// 想办法获取一张图片,仅限ob11
+func GetMustPic(ctx *rosm.Ctx) []string {
+	var urls = GetPicFormCtx(ctx)
+	if len(urls) > 0 {
+		return urls
+	}
+	//额外请求一次图片
+	ctx.Send(message.Text("请给雪儿一张图片..."))
+	next, close := ctx.GetNext(rosm.AllMessage, false, rosm.OnlyTheUser(ctx.Being.User.ID))
+	defer close()
+	for {
+		select {
+		case <-time.After(time.Second * 120):
+			return urls
+		case newCtx := <-next:
+			if us := GetPicFormCtx(newCtx); len(us) > 0 {
+				return us
+			}
+		}
+	}
+
+}
+
+// 获取这次ctx内容的图片
+func GetPicFormCtx(ctx *rosm.Ctx) []string {
+	var urls = []string{}
+	e, _ := ctx.Message.(*zero.Event)
+	for _, elem := range e.Message {
+		if elem.Type == "image" {
+			if elem.Data["url"] != "" {
+				urls = append(urls, elem.Data["url"])
+			}
+		}
+	}
+	return urls
 }

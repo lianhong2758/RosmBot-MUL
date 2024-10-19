@@ -14,7 +14,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/gorm v1.9.16
-	github.com/lianhong2758/PhigrosAPI v0.1.2-0.20241012090559-067de67fd575
+	github.com/lianhong2758/PhigrosAPI v0.1.2-0.20241018053339-299eb9e74cbc
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/robfig/cron/v3 v3.0.0

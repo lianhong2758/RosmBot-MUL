@@ -3,6 +3,7 @@ package ob11
 import (
 	"fmt"
 	"strings"
+	"unsafe"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
@@ -68,7 +69,7 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 }
 
 func RosmToZeroMessage(r message.Message) (z zms.Message) {
-	return any(r).(zms.Message)
+	return *(*zms.Message)(unsafe.Pointer(&r))
 }
 
 // 解析base64等data
