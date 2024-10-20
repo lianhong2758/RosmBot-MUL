@@ -14,6 +14,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/gorm v1.9.16
+	github.com/jozsefsallai/gophersauce v1.0.1
 	github.com/lianhong2758/PhigrosAPI v0.1.2-0.20241018053339-299eb9e74cbc
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
@@ -37,6 +38,7 @@ require (
 	github.com/fumiama/gofastTEA v0.0.10 // indirect
 	github.com/fumiama/imgsz v0.0.2 // indirect
 	github.com/fumiama/jieba v0.0.0-20221203025406-36c17a10b565 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

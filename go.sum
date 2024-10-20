@@ -51,6 +51,9 @@ github.com/fumiama/jieba v0.0.0-20221203025406-36c17a10b565 h1:sQuR2+N5HurnvsZhi
 github.com/fumiama/jieba v0.0.0-20221203025406-36c17a10b565/go.mod h1:UUEvyLTJ7yoOA/viKG4wEis4ERydM7+Ny6gZUWgkS80=
 github.com/fumiama/sqlite3 v1.20.0-with-win386 h1:ZR1AXGBEtkfq9GAXehOVcwn+aaCG8itrkgEsz4ggx5k=
 github.com/fumiama/sqlite3 v1.20.0-with-win386/go.mod h1:Os58MHwYCcYZCy2PGChBrQtBAw5/LS1ZZOkfc+C/I7s=
+github.com/gabriel-vasile/mimetype v1.0.4/go.mod h1:6CDPel/o/3/s4+bp6kIbsWATq8pmgOisOPG40CJa6To=
+github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
+github.com/gabriel-vasile/mimetype v1.4.3/go.mod h1:d8uq/6HKRL6CGdk+aubisF/M5GcPfT7nKyLpA0lbSSk=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe h1:lXe2qZdvpiX5WZkZR4hgp4KJVfY3nMkvmwbVkpv1rVY=
@@ -66,6 +69,8 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.0.1 h1:HjfetcXq097iXP0uoPCdnM4Efp5/9MsM0/M+XOTeR3M=
 github.com/jinzhu/now v1.0.1/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
+github.com/jozsefsallai/gophersauce v1.0.1 h1:BA3ovtQRrAb1qYU9JoRLbDHpxnDunlNcEkEfhCvDDCM=
+github.com/jozsefsallai/gophersauce v1.0.1/go.mod h1:YVEI7djliMTmZ1Vh01YPF8bUHi+oKhe3yXgKf1T49vg=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/lianhong2758/PhigrosAPI v0.1.2-0.20241018053339-299eb9e74cbc h1:1NSL5/wxRqVynrPsVXYwOk/nGZAtWo2gL+UoFu0dnXw=

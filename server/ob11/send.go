@@ -31,6 +31,9 @@ func (c *Config) BotSendCustom(ctx *rosm.Ctx, Count any) rosm.H {
 		logrus.Warn("[↑]消息为空")
 		return rosm.H{}
 	}
+	if c, ok := Count.(string); ok {
+		Count = zms.UnescapeCQCodeText(c)
+	}
 	if ctx.Being.RoomID[0:1] != "-" {
 		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID),
 			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}

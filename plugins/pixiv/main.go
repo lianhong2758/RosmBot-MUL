@@ -2,12 +2,13 @@ package pixiv
 
 import (
 	"fmt"
-	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/FloatTech/floatbox/file"
+	"github.com/jozsefsallai/gophersauce"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/ob11"
@@ -16,17 +17,22 @@ import (
 	zero "github.com/wdvxdr1123/ZeroBot"
 )
 
-var saucenaokey string
+var (
+	saucenaocli *gophersauce.Client
+)
 
 func init() {
 	en := rosm.Register(&rosm.PluginData{
-		Name:       "pixiv",
-		Help:       "- /搜图 pid",
+		Name: "pixiv",
+		Help: "- /搜图 pid\n" +
+			"- /以图搜图\n" +
+			"- 设置 saucenao api key [apikey]",
 		DataFolder: "pixiv",
 	})
 	if file.IsNotExist(en.DataFolder + "cache") {
 		_ = os.MkdirAll(en.DataFolder+"cache", 0755)
 	}
+
 	en.AddRex(`^/搜图\s*(\d+)$`).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
 		id, _ := strconv.ParseInt(ctx.Being.Rex[1], 10, 64)
 		ctx.Send(message.Text("雪儿正在寻找中......"))
@@ -83,7 +89,7 @@ func init() {
 			ctx.Send(message.Text("图片不存在呜..."))
 		}
 	})
-	en.AddWord("以图搜图", "以图识图").MUL("ob11").Handle(func(ctx *rosm.Ctx) {
+	en.AddWord("/以图搜图", "/以图识图").MUL("ob11").Handle(func(ctx *rosm.Ctx) {
 		pics := GetMustPic(ctx)
 		if len(pics) == 0 {
 			ctx.Send(message.Text("雪儿没有收到图片唔..."))
@@ -92,49 +98,56 @@ func init() {
 		ctx.Send(message.Text("雪儿正在寻找中..."))
 		for _, pic := range pics {
 			//saucenao
-			if saucenaokey != "" && func() bool { saucenaokey, _ = rosm.PluginDB.FindString(en.Name, "0"); return saucenaokey != "" }() {
-				saUrl, _ := url.ParseQuery("https://saucenao.com/search.php")
-				saUrl.Add("api_key", saucenaokey)
-				saUrl.Add("db", "999")
-				saUrl.Add("output_type", "2")
-				saUrl.Add("numres", "3")
-				saUrl.Add("url", pic)
-				saUrl.Add("hide", "false")
-				data, err := web.GetData(saUrl.Encode(), web.RandUA())
-				if err != nil {
-					ctx.Send(message.Text("ERROR: ", err))
-					return
+			//	find := false
+			if saucenaocli != nil || func() bool {
+				saucenaokey, _ := rosm.PluginDB.FindString(en.Name, "0")
+				if saucenaokey != "" {
+					saucenaocli, _ = gophersauce.NewClient(&gophersauce.Settings{
+						MaxResults: 1,
+						APIKey:     saucenaokey,
+					})
+					return true
 				}
-				fmt.Println(string(data))
+				return false
+			}() {
+				resp, err := saucenaocli.FromURL(pic)
+				if err == nil && resp.Count() > 0 {
+					result := resp.First()
+					s, err := strconv.ParseFloat(result.Header.Similarity, 64)
+					if err == nil {
+						//	find = s > 80.0
+						images, err := web.GetData(result.Header.Thumbnail, web.RandUA())
+						if err != nil {
+							logrus.Info("[pixiv]下载预览图失败,ERROR: ", err)
+						}
+						ctx.Send(message.Message{ob11.FakeSenderForwardNode(ctx,
+							message.Text("saucenao搜图结果: ", "\n匹配度: ", s, "%", "\n图源: ",
+								result.Header.IndexName, "\n",
+								result.Data.Source, "\n",
+								strings.Join(result.Data.ExternalURLs, "\n"))),
+							ob11.FakeSenderForwardNode(ctx, message.ImageByte(images))}...)
+					}
+				}
+
 			} else {
 				ctx.Send(message.Text("请私聊发送 设置 saucenao api key [apikey] 以启用 saucenao 搜图 (方括号不需要输入), key 请前往 https://saucenao.com/user.php?page=search-api 获取"))
 			}
-			// ascii2d 搜索
-			// 	result, err := ascii2d.ASCII2d(pic)
-			// 	if err != nil {
-			// 		ctx.Send(message.Text("ERROR: ", err))
-			// 		continue
-			// 	}
-			// 	msg := message.Message{ctxext.FakeSenderForwardNode(ctx, message.Text("ascii2d搜图结果"))}
-			// 	for i := 0; i < len(result) && i < 5; i++ {
-			// 		var resultMsgs message.Message
-			// 		if showPic {
-			// 			resultMsgs = append(resultMsgs, message.Image(result[i].Thumb))
-			// 		}
-			// 		resultMsgs = append(resultMsgs, message.Text(fmt.Sprintf(
-			// 			"标题: %s\n图源: %s\n画师: %s\n画师链接: %s\n图片链接: %s",
-			// 			result[i].Name,
-			// 			result[i].Type,
-			// 			result[i].AuthNm,
-			// 			result[i].Author,
-			// 			result[i].Link,
-			// 		)))
-			// 		msg = append(msg, ctxext.FakeSenderForwardNode(ctx, resultMsgs...))
-			// 	}
-			// 	if id := ctx.Send(msg).ID(); id == 0 {
-			// 		ctx.Send(message.Text("ERROR: 可能被风控了"))
-			// 	}
+			//未找到时再调用ascii2d 搜索
+			// if !find{}
 		}
+	})
+	en.AddRex(`^\/设置\s?saucenao\s?api\s?key\s?([0-9a-f]{40})$`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
+		var err error
+		saucenaocli, err = gophersauce.NewClient(&gophersauce.Settings{
+			MaxResults: 1,
+			APIKey:     ctx.Being.Rex[1],
+		})
+		if err != nil {
+			ctx.Send(message.Text("ERROR: ", err))
+			return
+		}
+		rosm.PluginDB.InsertString(en.Name, "0", ctx.Being.Rex[1])
+		ctx.Send(message.Text("设置成功!"))
 	})
 }
 
