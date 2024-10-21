@@ -21,6 +21,7 @@ func (config *Config) Run() {
 		switch v := value.(type) {
 		case *driver.WSClient:
 			if v.Url == config.URL {
+				config.BotID = strconv.FormatInt(key, 10)
 				botMap[strconv.FormatInt(key, 10)] = config
 				return false
 			}
