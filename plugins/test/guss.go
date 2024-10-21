@@ -20,7 +20,7 @@ func init() {
 		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		defer stop()
 		ctx.Send(message.Reply(), message.Text("开始猜数字,大小为1-10,你有3次机会"))
-		for i := 0; i < 3; i++ {
+		for range 3 {
 			select {
 			case <-time.After(time.Second * 180):
 				ctx.Send(message.Text("时间太久了"))
@@ -38,4 +38,5 @@ func init() {
 			}
 		}
 		ctx.Send(message.Text("游戏失败"))
-})}
+	})
+}
