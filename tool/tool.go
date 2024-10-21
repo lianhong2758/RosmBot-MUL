@@ -1,6 +1,8 @@
 package tool
 
 import (
+	"hash/crc64"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -68,12 +70,19 @@ func WaitInit() {
 	time.Sleep(time.Second * 2)
 }
 
-
-
 // HideURL 转义 URL 以避免审核
 func HideURL(s string) string {
 	s = strings.ReplaceAll(s, ".", "…")
 	s = strings.ReplaceAll(s, "http://", "🔗📄:")
 	s = strings.ReplaceAll(s, "https://", "🔗🔒:")
 	return s
+}
+
+// RandSenderPerDayN 每个用户每天随机数  github.com/FloatTech/floatbox/ctxext
+func RandSenderPerDayN(uid int64, n int) int {
+	sum := crc64.New(crc64.MakeTable(crc64.ISO))
+	sum.Write(StringToBytes(time.Now().Format("20060102")))
+	sum.Write((*[8]byte)(unsafe.Pointer(&uid))[:])
+	r := rand.New(rand.NewSource(int64(sum.Sum64())))
+	return r.Intn(n)
 }

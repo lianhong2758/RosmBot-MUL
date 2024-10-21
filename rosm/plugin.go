@@ -55,7 +55,7 @@ func Register(p *PluginData) *PluginData {
 	pluginName := p.Name
 	log.Debugln("插件注册:", pluginName)
 	plugins[pluginName] = p
-	if p.DataFolder != "" && file.IsNotExist(p.DataFolder) {
+	if p.DataFolder != "" && file.IsNotExist("data/"+p.DataFolder) {
 		_ = os.MkdirAll("data/"+p.DataFolder, 0755)
 	}
 	plugins[pluginName].DataFolder = "data/" + p.DataFolder + "/"

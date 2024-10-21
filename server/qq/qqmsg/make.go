@@ -11,8 +11,8 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 	cnt := new(Content)
 	for _, message := range msg {
 		var text string
-		if message.Data["text"] != nil {
-			text = message.Data["text"].(string)
+		if message.Data["text"] != ""{
+			text = message.Data["text"]
 		}
 		switch message.Type {
 		default:
@@ -20,25 +20,19 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 		case "text":
 			cnt.Text += text
 		case "at", "mentioned_robot":
-			cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
+			cnt.Text += `<@!` + message.Data["uid"] + `>`
 		case "atall":
 			cnt.Text += "@everyone"
-		case "imagebyte":
-			cnt.Text += text
-			if url, _ := web.UpImgByte(message.Data["data"].([]byte)); url != "" {
-				cnt.Image = url
-			} else {
-				cnt.Text += "\n[图片上传失败]\n"
-			}
+ 
 		case "image":
 			cnt.Text += text
-			if url, _ := web.ImageAnalysis(message.Data["data"].(string)); url != "" {
+			if url, _ := web.ImageAnalysis(message.Data["file"]); url != "" {
 				cnt.Image = url
 			} else {
 				cnt.Text += "\n[图片上传失败]\n"
 			}
 		case "reply":
-			cnt.Reference = &ReferenceS{ID: message.Data["ids"].([]string)[0], NeedError: true}
+			cnt.Reference = &ReferenceS{ID: message.Data["id"], NeedError: true}
 		case "replyuser":
 			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
 		}
@@ -55,8 +49,8 @@ func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 	cnt.Types = 0
 	for _, message := range msg {
 		var text string
-		if message.Data["text"] != nil {
-			text = message.Data["text"].(string)
+		if message.Data["text"] != "" {
+			text = message.Data["text"]
 		}
 		switch message.Type {
 		default:
@@ -71,24 +65,16 @@ func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 						cnt.Types = 5
 						cnt.Text += "@everyone"
 			*/
-		case "imagebyte":
-			cnt.Types = 1
-			cnt.Text += text
-			if url, _ := web.UpImgByte(message.Data["data"].([]byte)); url != "" {
-				cnt.Image = url
-			} else {
-				cnt.Text += "\n[图片上传失败]\n"
-			}
 		case "image":
 			cnt.Types = 1
 			cnt.Text += text
-			if url, _ := web.ImageAnalysis(message.Data["data"].(string)); url != "" {
+			if url, _ := web.ImageAnalysis(message.Data["file"]); url != "" {
 				cnt.Image = url
 			} else {
 				cnt.Text += "\n[图片上传失败]\n"
 			}
 		case "reply":
-			cnt.Reference = &ReferenceS{ID: message.Data["ids"].([]string)[0], NeedError: true}
+			cnt.Reference = &ReferenceS{ID: message.Data["id"], NeedError: true}
 		case "replyuser":
 			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
 		}

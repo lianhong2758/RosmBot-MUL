@@ -50,7 +50,7 @@ func init() { // 主函数
 		}
 		defer conn.Close()
 		msg.WriteString(fmt.Sprintf("开始Ping %s[%s] 具有%d字节的数据:\n", dstIp, conn.RemoteAddr(), size))
-		for i := 0; i < count; i++ {
+		for i := range count {
 			msg.WriteString(fmt.Sprintf("回复%d:", i+1))
 			sendCount++
 			icmp := &iCmp{

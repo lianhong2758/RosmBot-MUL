@@ -34,8 +34,8 @@ func StringToShake(txt string, font string) (pic []byte, err error) {
 		}
 	}
 	w, h := testcov.MeasureString(txt)
-	for i := 0; i < 10; i++ {
-		cov := gg.NewContext(int(w+float64(len([]rune(txt)))*nilx)+40, int(h+nily)*len(strlist)+30)
+	for range 10{
+		cov := gg.NewContext(int(w+float64(len([]rune(txt)))*nilx)+40, int((h+nily)*float64(len(strlist)))+30)
 		cov.SetRGB(1, 1, 1)
 		cov.Clear()
 		if err = cov.ParseFontFace(data, 30); err != nil {
@@ -74,7 +74,7 @@ func StringToPic(txt string, font string) (pic []byte, err error) {
 		}
 	}
 	w, h := testcov.MeasureString(txt)
-	cov := gg.NewContext(int(w+float64(len([]rune(txt)))*nilx)+40, int(h+nily)*len(strlist)+30)
+	cov := gg.NewContext(int(w+float64(len([]rune(txt)))*nilx)+40, int((h+nily)*float64(len(strlist)))+30)
 	cov.SetRGB(1, 1, 1)
 	cov.Clear()
 	if err = cov.ParseFontFace(data, 30); err != nil {
