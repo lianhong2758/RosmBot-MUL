@@ -47,7 +47,6 @@ func (g *Gua) Divination(id int) {
 		time.Sleep(time.Nanosecond * time.Duration(rand.IntN(20))) //随机暂停时间用来避免干扰性
 	}
 	g.Inward[6-1-id] = x
-	return
 }
 
 // 变卦

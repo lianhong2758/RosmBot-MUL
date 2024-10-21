@@ -45,7 +45,6 @@ func init() {
 		}
 		imgpath := file.BOTPATH + "/" + en.DataFolder + card.ImgURL
 		ctx.Send(message.Reply(), message.Text(reasons[rand.Intn(len(reasons))], position[p], "的『", name, "』\n其释义为: ", description), message.Image("file://"+imgpath))
-		return
 	})
 }
 
