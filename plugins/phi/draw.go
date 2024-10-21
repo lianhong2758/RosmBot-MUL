@@ -76,9 +76,11 @@ func DrawB19(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, Sess
 	canvas.DrawStringAnchored("RankingScore查询", (50+290+50)*accuracy, (166+396*2/3)*accuracy, 0, 0.5)
 
 	_ = canvas.ParseFontFace(fontsd, 54*accuracy)
-	canvas.DrawStringAnchored("Player: "+j.PlayerInfo.Name, float64(w)-920*accuracy, (192+338/4)*accuracy, 0, 0.5)
-	canvas.DrawStringAnchored("RankingScore: "+allrks, float64(w)-920*accuracy, (192+338*2/4)*accuracy, 0, 0.5)
-	canvas.DrawStringAnchored("ChallengeMode: ", float64(w)-920*accuracy, (192+338*3/4)*accuracy, 0, 0.5)
+	canvas.DrawStringAnchored("Player: "+j.PlayerInfo.Name, float64(w)-920*accuracy, (192+338/5)*accuracy, 0, 0.5)
+	canvas.DrawStringAnchored("RankingScore: "+allrks, float64(w)-920*accuracy, (192+338*2/5)*accuracy, 0, 0.5)
+	canvas.DrawStringAnchored("ChallengeMode: ", float64(w)-920*accuracy, (192+338*3/5)*accuracy, 0, 0.5)
+	canvas.DrawStringAnchored("CreateAt: "+j.PlayerInfo.CreatedAt.Format("2006-01-02"),
+	float64(w)-920*accuracy, (192+338*4/5)*accuracy, 0, 0.5)
 	if chal != "" && chal != "white" {
 		chall, err := gg.LoadPNG(Challengemode + chal + ".png")
 		if err != nil {
@@ -86,9 +88,9 @@ func DrawB19(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, Sess
 		}
 		challengemodew, _ := canvas.MeasureString("ChallengeMode: ")
 		chall = resize.Resize(uint(208*accuracy), uint(100*accuracy), chall, resize.Bilinear)
-		canvas.DrawImageAnchored(chall, w+int(-920*accuracy+challengemodew), int((192+338*3/4)*accuracy), 0, 0.5)
+		canvas.DrawImageAnchored(chall, w+int(-920*accuracy+challengemodew), int((192+338*3/5)*accuracy), 0, 0.5)
 
-		canvas.DrawStringAnchored(chalnum, float64(w)-920*accuracy+challengemodew+(208/2)*accuracy, (192+338*3/4)*accuracy, 0.5, 0.5)
+		canvas.DrawStringAnchored(chalnum, float64(w)-920*accuracy+challengemodew+(208/2)*accuracy, (192+338*3/5)*accuracy, 0.5, 0.5)
 	}
 	wg.Add(len(j.ScoreAcc) + 1)
 	//头图
