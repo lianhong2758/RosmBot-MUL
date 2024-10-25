@@ -12,9 +12,15 @@ import (
 
 const (
 	// baseURL  = "https://api.openai.com/v1/"
-	proxyURL           = "https://gpt.a20safe.com/v1/"
-	modelGPT3Dot5Turbo = "gpt-3.5-turbo"
+	//proxyURL           = "https://gpt.a20safe.com/v1/"
+	proxyURL = "https://api.alioth.center/akasha-whisper/v1/"
 )
+
+var modelList = []string{
+	"gpt-4o-mini",
+	"gpt-4o",
+	"gpt-3.5-turbo",
+}
 
 // chatGPTResponseBody 响应体
 type chatGPTResponseBody struct {
@@ -28,7 +34,7 @@ type chatGPTResponseBody struct {
 
 // chatGPTRequestBody 请求体
 type chatGPTRequestBody struct {
-	Model       string        `json:"model,omitempty"` // gpt3.5-turbo
+	Model       string        `json:"model,omitempty"`
 	Messages    []chatMessage `json:"messages,omitempty"`
 	Temperature float64       `json:"temperature,omitempty"`
 	N           int           `json:"n,omitempty"`
@@ -65,13 +71,13 @@ var client = &http.Client{
 // -H "Content-Type: application/json"
 // -H "Authorization: Bearer YOUR_API_KEY"
 // -d '{ "model": "gpt-3.5-turbo",  "messages": [{"role": "user", "content": "Hello!"}]}'
-func completions(messages []chatMessage, apiKey string) (*chatGPTResponseBody, error) {
+func completions(messages []chatMessage, apiKey string, model string) (*chatGPTResponseBody, error) {
 	com := chatGPTRequestBody{
 		Messages: messages,
 	}
 	// default model
 	if com.Model == "" {
-		com.Model = modelGPT3Dot5Turbo
+		com.Model = model
 	}
 
 	body, err := json.Marshal(com)

@@ -1,14 +1,14 @@
 package ob11
 
 import (
-	"encoding/base64"
 	"fmt"
 	"strings"
+	"unsafe"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
-	messagezb "github.com/wdvxdr1123/ZeroBot/message"
+	zms "github.com/wdvxdr1123/ZeroBot/message"
 
 	"github.com/sirupsen/logrus"
 )
@@ -18,46 +18,61 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 		logrus.Warn("[↑]消息为空")
 		return rosm.H{}
 	}
-	t:= MakeMsgContent(ctx, msg...)
+	t := MakeMsgContent(ctx, msg...)
 	if ctx.Being.RoomID[0:1] != "-" {
-		return rosm.H{"state": "", "id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID), t)), "code": 0}
+		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID), t)), "code": "0"}
 	} else {
-		return rosm.H{"state": "", "id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID[1:]), t)), "code": 0}
+		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID[1:]), t)), "code": "0"}
 	}
 }
 
-func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) any{
+func (c *Config) BotSendCustom(ctx *rosm.Ctx, Count any) rosm.H {
+	if Count == nil {
+		logrus.Warn("[↑]消息为空")
+		return rosm.H{}
+	}
+	if c, ok := Count.(string); ok {
+		Count = zms.UnescapeCQCodeText(c)
+	}
+	if ctx.Being.RoomID[0:1] != "-" {
+		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID),
+			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
+	} else {
+		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID[1:]),
+			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
+	}
+}
+
+// 转为符合ob11的map[string]string,但需要再调用custom消息除外
+func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Message {
 	for k, message := range msg {
 		switch message.Type {
 		default:
 			continue
-		case "text", "video":
+		case "text", "video", "node", "reply":
 			continue
-
 		case "at":
 			msg[k].Data = rosm.H{"qq": message.Data["uid"]}
 		case "atall":
 			msg[k].Type = "at"
 			msg[k].Data = rosm.H{"qq": "all"}
-		case "imagebyte":
-			msg[k].Type = "image"
-			msg[k].Data = rosm.H{"file": "base64://" + base64.StdEncoding.EncodeToString(message.Data["data"].([]byte))}
 		case "image":
-			msg[k].Data = rosm.H{"file": ImageAnalysis(message.Data["data"].(string))}
-		case "reply":
-			msg[k].Type = "reply"
-			msg[k].Data = rosm.H{"id": message.Data["ids"].([]string)[0]}
+			msg[k].Data = rosm.H{"file": ImageAnalysis(message.Data["file"])}
 		case "replyuser":
 			msg[k].Type = "reply"
 			msg[k].Data = rosm.H{"id": ctx.Being.MsgID[0]}
 		case "link":
 			msg[k].Type = "text"
-			msg[k].Data = rosm.H{"text": fmt.Sprintf("%s:\n%s", message.Data["text"].(string), message.Data["url"].(string))}
-		case "custom":
-			return  messagezb.UnescapeCQCodeText(msg[k].Data["data"].(string))
+			msg[k].Data = rosm.H{"text": fmt.Sprintf("%s:\n%s", message.Data["text"], message.Data["url"])}
+			// case "custom":
+			// 	return zms.UnescapeCQCodeText(msg[k].Data["data"])
 		}
 	}
 	return msg
+}
+
+func RosmToZeroMessage(r message.Message) (z zms.Message) {
+	return *(*zms.Message)(unsafe.Pointer(&r))
 }
 
 // 解析base64等data

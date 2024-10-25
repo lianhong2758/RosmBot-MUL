@@ -20,8 +20,8 @@ func init() {
 		ctx.Send(message.Image("url://" + ctx.Being.Rex[1]))
 	})
 	en.AddRex(`^解析([\s\S]*)$`).Handle(func(ctx *rosm.Ctx) {
-		m := ctx.Send(message.Custom(ctx.Being.Rex[1]))
-		if m["code"] != 0 {
+		m := ctx.Bot.BotSendCustom(ctx, ctx.Being.Rex[1])
+		if m["code"] != "0" {
 			ctx.Send(message.Text("发送失败: ", m["state"]))
 		}
 	})

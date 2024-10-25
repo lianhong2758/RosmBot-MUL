@@ -105,7 +105,7 @@ func ParseMessageFromString(raw string) (m message.Message) {
 			return
 		}
 		seg.Type = raw[:i]
-		seg.Data = make(map[string]any)
+		seg.Data = make(map[string]string)
 		raw = raw[i:]
 		i = 0
 

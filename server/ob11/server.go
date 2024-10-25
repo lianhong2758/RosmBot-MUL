@@ -12,12 +12,11 @@ import (
 	"github.com/tidwall/gjson"
 	zero "github.com/wdvxdr1123/ZeroBot"
 	"github.com/wdvxdr1123/ZeroBot/message"
-	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
 func (c *Config) process(e *zero.Event) {
-	mess:=e.Message.CQString()
-	log.Debug("Message: ",mess)
+	mess := e.Message.CQString()
+	log.Debug("Message: ", mess)
 	switch e.PostType {
 	// 消息事件
 	case "message":
@@ -35,9 +34,8 @@ func (c *Config) process(e *zero.Event) {
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
-					MsgID: []string{helper.BytesToString(e.RawMessageID)},
-					Def: rosm.H{
-					},
+					MsgID: []string{tool.BytesToString(e.RawMessageID)},
+					Def:   map[string]any{},
 				},
 				Message: e,
 				Bot:     c,
@@ -57,15 +55,14 @@ func (c *Config) process(e *zero.Event) {
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
-					MsgID: []string{helper.BytesToString(e.RawMessageID)},
-					Def: rosm.H{
-					},
+					MsgID: []string{tool.BytesToString(e.RawMessageID)},
+					Def:   map[string]any{},
 				},
 				Message: e,
 				Bot:     c,
 			}
 
-			ctx.Being.AtMe =e.IsToMe
+			ctx.Being.AtMe = e.IsToMe
 			e.IsToMe = ctx.Being.AtMe
 			//log.Println(ctx.Being.Word)
 			ctx.RunWord(ctx.Being.Word)
@@ -86,8 +83,7 @@ func (c *Config) process(e *zero.Event) {
 					// ID: tool.Int64ToString(e.Sender.ID),
 					// Name: e.Sender.NickName,
 				},
-				Def: rosm.H{
-				},
+				Def: map[string]any{},
 			},
 			Message: e,
 			Bot:     c,
@@ -102,20 +98,20 @@ func (c *Config) processEvent() func([]byte, zero.APICaller) {
 	return func(response []byte, caller zero.APICaller) {
 		var event zero.Event
 		_ = json.Unmarshal(response, &event)
-		event.RawEvent = gjson.Parse(helper.BytesToString(response))
+		event.RawEvent = gjson.Parse(tool.BytesToString(response))
 		//var msgid message.MessageID
-		messageID, err := strconv.ParseInt(helper.BytesToString(event.RawMessageID), 10, 64)
+		messageID, err := strconv.ParseInt(tool.BytesToString(event.RawMessageID), 10, 64)
 		if err == nil {
 			event.MessageID = messageID
 			//	msgid = message.NewMessageIDFromInteger(messageID)
 		} else if event.MessageType == "guild" {
 			// 是 guild 消息，进行如下转换以适配非 guild 插件
 			// MessageID 填为 string
-			event.MessageID, _ = strconv.Unquote(helper.BytesToString(event.RawMessageID))
+			event.MessageID, _ = strconv.Unquote(tool.BytesToString(event.RawMessageID))
 			// 伪造 GroupID
 			crc := crc64.New(crc64.MakeTable(crc64.ISO))
-			crc.Write(helper.StringToBytes(event.GuildID))
-			crc.Write(helper.StringToBytes(event.ChannelID))
+			crc.Write(tool.StringToBytes(event.GuildID))
+			crc.Write(tool.StringToBytes(event.ChannelID))
 			r := int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
 			if r <= 0xffff_ffff {
 				r |= 0x1_0000_0000 // 确保不与正常号码重叠
@@ -123,7 +119,7 @@ func (c *Config) processEvent() func([]byte, zero.APICaller) {
 			event.GroupID = r
 			// 伪造 UserID
 			crc.Reset()
-			crc.Write(helper.StringToBytes(event.TinyID))
+			crc.Write(tool.StringToBytes(event.TinyID))
 			r = int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
 			if r <= 0xffff_ffff {
 				r |= 0x1_0000_0000 // 确保不与正常号码重叠
@@ -162,7 +158,7 @@ func preprocessNoticeEvent(e *zero.Event) {
 // preprocessMessageEvent 返回信息事件
 func (c *Config) preprocessMessageEvent(e *zero.Event) {
 	e.Message = message.ParseMessage(e.NativeMessage)
-	
+
 	processAt := func() { // 处理是否at机器人
 		e.IsToMe = false
 		for i, m := range e.Message {
@@ -181,12 +177,12 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 		first := e.Message[0]
 		first.Data["text"] = strings.TrimLeft(first.Data["text"], " ") // Trim!
 		text := first.Data["text"]
-			if strings.HasPrefix(text,c.Card().BotName) {
-				e.IsToMe = true
-				first.Data["text"] = text[len(c.Card().BotName):]
-				return
-			}
-		
+		if strings.HasPrefix(text, c.Card().BotName) {
+			e.IsToMe = true
+			first.Data["text"] = text[len(c.Card().BotName):]
+			return
+		}
+
 	}
 	switch {
 	case e.DetailType == "group":
@@ -196,6 +192,7 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 		log.Infof("[ob11] [↓][频道(%v)(%v-%v)消息][%v] : %v", e.GroupID, e.GuildID, e.ChannelID, e.Sender.String(), e.Message)
 		processAt()
 	default:
+		processAt()
 		e.IsToMe = true // 私聊也判断为at
 		log.Infof("[ob11] [↓][私聊消息][%v] : %v", e.Sender.String(), e.RawMessage)
 	}
