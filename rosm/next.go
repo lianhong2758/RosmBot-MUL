@@ -15,7 +15,7 @@ var nextList = map[EventType]map[int]*Matcher{}
 func (ctx *Ctx) GetNext(types EventType, SetBlock bool, rs ...Rule) (chan *Ctx, func()) {
 	next := make(chan *Ctx, 1)
 	ids := int(0xfffffff & time.Now().Unix())
-	m := &Matcher{block: SetBlock, rules: rs, nestchan: next}
+	m := &Matcher{block: SetBlock, rules: rs, nextchan: next}
 	if nextList[types] != nil {
 		nextList[types][ids] = m
 	} else {
@@ -34,7 +34,7 @@ func (ctx *Ctx) sendNext(types EventType) (block bool) {
 	logrus.Debug("[next]匹配事件type", types)
 	for _, v := range nextList[types] {
 		if v.RulePass(ctx) {
-			v.nestchan <- ctx
+			v.nextchan <- ctx
 			if v.block {
 				return true
 			}

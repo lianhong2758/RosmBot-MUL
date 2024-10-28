@@ -4,6 +4,7 @@ package rosm
 import (
 	"os"
 	"regexp"
+	"sort"
 
 	"github.com/FloatTech/floatbox/file"
 	"github.com/lianhong2758/RosmBot-MUL/message"
@@ -20,6 +21,7 @@ type (
 
 type PluginData struct {
 	DefaultOff bool //是否默认禁用
+	Priority   int  //优先级控制,仅对Rex有效,用于插件的匹配顺序,范围0-9,默认5,数字越小优先级越高
 	Help       string
 	Name       string
 	DataFolder string //"data/xxx/"+
@@ -27,27 +29,27 @@ type PluginData struct {
 }
 type Matcher struct {
 	Word       []string
-	Rex        []*regexp.Regexp
+	Rex        *regexp.Regexp
 	rules      []Rule
 	handler    Handler
 	mul        []string
 	block      bool        //阻断
-	nestchan   chan *Ctx   //用于上下文
+	nextchan   chan *Ctx   //用于上下文
 	PluginNode *PluginData //溯源
 }
 
 // 插件注册
 var (
-	plugins = map[string]*PluginData{}
+	plugins = map[string]*PluginData{} //所有的插件集合
 
 	// 全匹配字典
-	caseAllWord = map[string]*Matcher{}
+	WordMatch = map[string]*Matcher{} //Word
 
 	// 正则字典
-	caseRegexp = map[*regexp.Regexp]*Matcher{}
+	RegexpMatch = []*Matcher{} //Rex
 
 	//事件触发
-	caseEvent = map[int][]*Matcher{}
+	EventMatch = map[int][]*Matcher{} //事件触发
 )
 
 // 注册插件
@@ -73,7 +75,7 @@ func (p *PluginData) AddWord(word ...string) *Matcher {
 	m.block = true
 	m.Word = append(m.Word, word...)
 	for _, v := range word {
-		caseAllWord[v] = m
+		WordMatch[v] = m
 	}
 	p.Matchers = append(p.Matchers, m)
 	m.PluginNode = p
@@ -84,22 +86,24 @@ func (p *PluginData) AddWord(word ...string) *Matcher {
 func (p *PluginData) AddRex(rex string) *Matcher {
 	m := new(Matcher)
 	m.block = true
-	r := regexp.MustCompile(rex)
-	m.Rex = append(m.Rex, r)
-	caseRegexp[r] = m
+	m.Rex = regexp.MustCompile(rex)
+	RegexpMatch = append(RegexpMatch, m)
 	p.Matchers = append(p.Matchers, m)
 	m.PluginNode = p
 	return m
 }
 
 // 其他事件匹配器
-func (p *PluginData) AddOther(types int) *Matcher {
+func (p *PluginData) AddEvent(types int) *Matcher {
 	m := new(Matcher)
 	m.block = false
-	caseEvent[types] = append(caseEvent[types], m)
+	EventMatch[types] = append(EventMatch[types], m)
 	p.Matchers = append(p.Matchers, m)
 	m.PluginNode = p
 	return m
+}
+func (p *PluginData) GetFolder() string {
+	return p.DataFolder
 }
 
 // 平台限制
@@ -165,15 +169,22 @@ func (ctx *Ctx) Send(m ...message.MessageSegment) H {
 	return ctx.Bot.BotSend(ctx, m...)
 }
 func Display() {
-	log.Println(caseAllWord)
-	log.Println(caseRegexp)
+	log.Println(WordMatch)
+	log.Println(RegexpMatch)
 }
 func GetPlugins() map[string]*PluginData {
 	return plugins
 }
 
-func GetBotIsOnInThis()func (*Ctx)bool{
-	return func (ctx *Ctx)bool{
+func GetBotIsOnInThis() func(*Ctx) bool {
+	return func(ctx *Ctx) bool {
 		return ctx.on
 	}
+}
+
+// Rosm RegexpMatch排序
+func RosmInit() {
+	sort.Slice(RegexpMatch, func(i, j int) bool {
+		return RegexpMatch[i].PluginNode.Priority < RegexpMatch[j].PluginNode.Priority
+	})
 }

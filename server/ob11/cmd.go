@@ -9,7 +9,6 @@ import (
 	"github.com/tidwall/gjson"
 	zero "github.com/wdvxdr1123/ZeroBot"
 	"github.com/wdvxdr1123/ZeroBot/message"
-	"github.com/wdvxdr1123/ZeroBot/utils/helper"
 )
 
 // DeleteMessage 撤回消息
@@ -31,12 +30,12 @@ func GetMessage(ctx *rosm.Ctx, messageID ...string) zero.Message {
 		"message_id": messageID[0],
 	}).Data
 	m := zero.Message{
-		Elements:    message.ParseMessage(helper.StringToBytes(rsp.Get("message").Raw)),
+		Elements:    message.ParseMessage(tool.StringToBytes(rsp.Get("message").Raw)),
 		MessageId:   message.NewMessageIDFromInteger(rsp.Get("message_id").Int()),
 		MessageType: rsp.Get("message_type").String(),
 		Sender:      &zero.User{},
 	}
-	err := json.Unmarshal(helper.StringToBytes(rsp.Get("sender").Raw), m.Sender)
+	err := json.Unmarshal(tool.StringToBytes(rsp.Get("sender").Raw), m.Sender)
 	if err != nil {
 		return zero.Message{}
 	}
@@ -517,4 +516,19 @@ func UploadGroupFile(ctx *rosm.Ctx, groupID int64, file, name, folder string) ze
 //	msg: FILE_NOT_FOUND FILE_SYSTEM_UPLOAD_API_ERROR ...
 func UploadThisGroupFile(ctx *rosm.Ctx, file, name, folder string) zero.APIResponse {
 	return UploadGroupFile(ctx, tool.StringToInt64(ctx.Being.RoomID), file, name, folder)
+} // SetMyAvatar 设置我的头像
+// https://llonebot.github.io/zh-CN/develop/extends_api
+func SetMyAvatar(ctx *rosm.Ctx, file string) zero.APIResponse {
+	return CallAction(ctx, "set_qq_avatar", zero.Params{
+		"file": file,
+	})
+}
+
+// GetFile 下载收到的群文件或私聊文件
+//
+// https://llonebot.github.io/zh-CN/develop/extends_api
+func GetFile(ctx *rosm.Ctx, fileID string) gjson.Result {
+	return CallAction(ctx, "get_file", zero.Params{
+		"file_id": fileID,
+	}).Data
 }

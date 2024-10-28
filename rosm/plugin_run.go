@@ -19,8 +19,8 @@ func (ctx *Ctx) RunEvent(types int) (block bool) {
 	if ctx.sendNext(types) {
 		return true
 	}
-	ctx.on=PluginIsOn(boten)(ctx)
-	for _, m := range caseEvent[types] {
+	ctx.on = PluginIsOn(boten)(ctx)
+	for _, m := range EventMatch[types] {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
 			log.Debugf("调用插件: %s - 类型: %d", m.PluginNode.Name, types)
@@ -42,9 +42,9 @@ func (ctx *Ctx) RunWord(word string) {
 	if ctx.RunEvent(AllMessage) {
 		return
 	}
-	ctx.on=PluginIsOn(boten)(ctx)
+	ctx.on = PluginIsOn(boten)(ctx)
 	//关键词触发
-	if m, ok := caseAllWord[word]; ok {
+	if m, ok := WordMatch[word]; ok {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
 			log.Debugf("调用插件: %s - 匹配关键词: %s", m.PluginNode.Name, word)
@@ -52,7 +52,8 @@ func (ctx *Ctx) RunWord(word string) {
 		return
 	}
 	//正则匹配
-	for regex, m := range caseRegexp {
+	for _, m := range RegexpMatch {
+		regex := m.Rex
 		if match := regex.FindStringSubmatch(word); len(match) > 0 {
 			if m.RulePass(ctx) {
 				ctx.Being.Rex = match

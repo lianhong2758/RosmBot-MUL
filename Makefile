@@ -9,12 +9,9 @@ build:
 	@go version
 	@go env -w GOPROXY=https://goproxy.cn,direct
 	@go mod tidy
-	@if ! command -v go-winres &> /dev/null; then \
-        echo "go-winres not found. Installing..."; \
-       go install github.com/tc-hib/go-winres@latest; \
-    fi
+	@go install github.com/tc-hib/go-winres@latest
 	@cd ${KANBANPATH} &&  go-winres make
-	@go build
+	@go build -ldflags=-checklinkname=0
 	@cd ${KANBANPATH} && rm *.syso
 	@echo "Done!"
 
@@ -23,14 +20,14 @@ run:
 	@go version
 	@go env -w GOPROXY=https://goproxy.cn,direct
 	@go mod tidy
-	@go run main.go
+	@go run main.go -ldflags=-checklinkname=0
 
 debug:
 	@echo "debug"
 	@go version
 	@go env -w GOPROXY=https://goproxy.cn,direct
 	@go mod tidy
-	@go run main.go -d
+	@go run main.go -d -ldflags=-checklinkname=0
 	
 build_proto:
 	@echo "build_proto!"

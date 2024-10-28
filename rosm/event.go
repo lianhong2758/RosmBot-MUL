@@ -14,10 +14,5 @@ const (
 	SurplusMessage                  //无其他插件匹配
 	Join                            //入群
 	Out                             //退群
-	Create                          //添加Bot-mys
-	Delete                          //删除Bot-mys
-	Quick                           //表态-mys
-	Audit                           //审核mys
-	Click                           //点击事件mys
 	UpFile                          //上传文件-ob11
 )
