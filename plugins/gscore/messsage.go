@@ -11,7 +11,7 @@ func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 	MessageReport := MessageReceive{
 		Bot_id:      ctx.BotType,
 		Bot_self_id: ctx.Bot.Card().BotID,
-		Msg_id:      ctx.Being.MsgID[0],
+		Msg_id:      ctx.Being.MsgID,
 		User_type:   "group",
 		Group_id:    tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2),
 		User_id:     ctx.Being.User.ID,
@@ -34,7 +34,7 @@ func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 			Nickname: ctx.Being.User.Name,
 		},
 	}
-	cache.Set(ctx.Being.MsgID[0], ctx)
+	cache.Set(ctx.Being.MsgID, ctx)
 	marshal, err := json.Marshal(MessageReport)
 	if err != nil {
 		return nil

@@ -23,6 +23,7 @@ var fontsd []byte
 func init() {
 	//	en := rosm.Register(rosm.NewRegist("phi", "- /bind you_Session\n- /b19", "phi"))
 	en := rosm.Register(&rosm.PluginData{
+		Priority: 3,
 		Name: "phi",
 		Help: "- /bind you_Session\n" +
 			"- /b19\n" +
@@ -52,7 +53,11 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	en.AddRex(`^/b19$`).Handle(func(ctx *rosm.Ctx) {
+	en.AddRex(`^/b(\d+)$`).Handle(func(ctx *rosm.Ctx) {
+		blen, _ := strconv.Atoi(ctx.Being.Rex[1])
+		if blen <= 0 {
+			return
+		}
 		Session := FindSessionFID(en.DataFolder + "sessions/" + ctx.Being.User.ID + ".b19")
 		if Session == "" {
 			ctx.Send(message.Text("未绑定账号,请先输入`/bind you_Session`进行绑定."))
@@ -77,7 +82,12 @@ func init() {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		j.ScoreAcc = phigros.BN(ScoreAcc, 21)
+		//截取b数目
+		if blen == 19 {
+			j.ScoreAcc = phigros.BN(ScoreAcc, 21)
+		} else {
+			j.ScoreAcc = phigros.BN(ScoreAcc, blen)
+		}
 		j.Summary = phigros.ProcessSummary(gs.Results[0].Summary)
 		data, err = web.GetData(j.PlayerInfo.Avatar, "")
 		if err != nil {

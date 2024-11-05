@@ -15,10 +15,10 @@ func (c *Config) process(playload *WebsocketPayload) {
 		raw := new(RawPrivateMessage)
 		err := json.Unmarshal(playload.D, raw)
 		if err != nil {
-			log.Errorln("[info]", err)
+			log.Errorln("[qq-err]", err)
 			return
 		}
-		log.Infof("[info]接收私聊消息%s:%s", raw.Author.UserOpenid, raw.Content)
+		log.Infof("[qq] [↓]私聊消息%s:%s", raw.Author.UserOpenid, raw.Content)
 		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_group",
@@ -28,7 +28,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 				User: &rosm.UserData{
 					ID: raw.Author.UserOpenid,
 				},
-				MsgID: []string{raw.ID},
+				MsgID: raw.ID,
 				Def:   H{"type": playload.T, "id": raw.ID},
 			},
 		}
@@ -43,10 +43,10 @@ func (c *Config) process(playload *WebsocketPayload) {
 		raw := new(RawGroupMessage)
 		err := json.Unmarshal(playload.D, raw)
 		if err != nil {
-			log.Errorln("[info]", err)
+			log.Errorln("[qq-err]", err)
 			return
 		}
-		log.Infof("[info]接收消息[%s]%s:%s", raw.GroupID, raw.Author.ID, raw.Content)
+		log.Infof("[qq] [↓]群聊消息[%s]%s:%s", raw.GroupID, raw.Author.ID, raw.Content)
 		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_group",
@@ -57,7 +57,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 					ID:   raw.Author.ID,
 					Name: raw.Author.ID[len(raw.Author.ID)-8:],
 				},
-				MsgID: []string{raw.ID},
+				MsgID: raw.ID,
 				Def:   H{"type": playload.T, "id": raw.ID},
 			},
 		}
@@ -77,7 +77,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 			log.Errorln("[info]", err)
 			return
 		}
-		log.Infof("[info]接收消息[%s]%s:%s", raw.GuildID, raw.Author.Username, raw.Content)
+		log.Infof("[qq] [↓]频道消息[%s]%s:%s", raw.GuildID, raw.Author.Username, raw.Content)
 		at := []string{}
 		for _, v := range raw.Mentions {
 			at = append(at, v.ID)
@@ -91,10 +91,10 @@ func (c *Config) process(playload *WebsocketPayload) {
 				RoomID2: raw.GuildID,
 				ATList:  at,
 				User: &rosm.UserData{
-					Name:        raw.Author.Username,
-					ID:          raw.Author.ID,
+					Name: raw.Author.Username,
+					ID:   raw.Author.ID,
 				},
-				MsgID: []string{raw.ID},
+				MsgID: raw.ID,
 				Def:   H{"type": playload.T, "id": raw.ID},
 			},
 		}

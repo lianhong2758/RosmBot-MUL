@@ -30,7 +30,7 @@ func init() {
 		Config.cancel()
 		ctx.Send(message.Text("gscore已关闭"))
 	})
-	en.AddOther(rosm.AllMessage).Rule(func(ctx *rosm.Ctx) bool { return Config.on }).Handle(func(ctx *rosm.Ctx) {
+	en.AddEvent(rosm.AllMessage).Rule(func(ctx *rosm.Ctx) bool { return Config.on }).Handle(func(ctx *rosm.Ctx) {
 		for {
 			SendErr := SendWsMessage(MakeSendCoreMessage(ctx), Config.conn)
 			if SendErr != nil {

@@ -17,7 +17,7 @@ import (
 
 func DrawB19(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, Session string) (err error) {
 	var (
-		w, h = int(2360 * accuracy), int(4780 * accuracy)
+		w, h = int(2360 * accuracy), int(float64(960+len(j.ScoreAcc)*160) * accuracy)
 		//斜角阿尔法
 		a = 75.0
 		//基准定位
@@ -53,23 +53,9 @@ func DrawB19(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, Sess
 	canvas.SetRGBA255(255, 255, 255, 255)
 	canvas.Fill()
 	//底边
-	tw, th := drawParallelogram(canvas, a, 534*accuracy, 4342*accuracy, 1312*accuracy, 342*accuracy)
-	canvas.SetRGBA255(0, 0, 0, 160)
-	canvas.Fill()
-
-	drawParallelogram(canvas, a, 530*accuracy, 4340*accuracy, 6*accuracy, 346*accuracy)
-	canvas.SetRGBA255(255, 255, 255, 255)
-	canvas.Fill()
-
-	drawParallelogram(canvas, a, 1842*accuracy, 4340*accuracy, 6*accuracy, 346*accuracy)
-	canvas.SetRGBA255(255, 255, 255, 255)
-	canvas.Fill()
-	//version
 	_ = canvas.ParseFontFace(fontsd, 60*accuracy)
-	canvas.DrawStringAnchored("Create By RosmBot-Mul & phi", float64(w)/2-tw/2, 4342*accuracy+th/4, 0.5, 0.5)
-	canvas.DrawStringAnchored("UI Designer: eastown", float64(w)/2-tw/2, 4342*accuracy+th*2/4, 0.5, 0.5)
-	canvas.DrawStringAnchored("*Phigros B19 Picture*", float64(w)/2-tw/2, 4342*accuracy+th*3/4, 0.5, 0.5)
-
+	canvas.DrawStringAnchored("Phigros B19 & Create By RosmBot-Mul & Designer By eastown",
+		float64(w/2), (float64(h) - 120*accuracy), 0.5, 0.5)
 	//头图文字
 	_ = canvas.ParseFontFace(fontsd, 90*accuracy)
 	canvas.DrawStringAnchored("Phigros", (50+290+50)*accuracy, (166+396/3)*accuracy, 0, 0.5)
@@ -79,7 +65,7 @@ func DrawB19(accuracy float64, j phigros.UserRecord, allrks, chal, chalnum, Sess
 	canvas.DrawStringAnchored("Player: "+j.PlayerInfo.Name, float64(w)-920*accuracy, (192+338/5)*accuracy, 0, 0.5)
 	canvas.DrawStringAnchored("RankingScore: "+allrks, float64(w)-920*accuracy, (192+338*2/5)*accuracy, 0, 0.5)
 	canvas.DrawStringAnchored("ChallengeMode: ", float64(w)-920*accuracy, (192+338*3/5)*accuracy, 0, 0.5)
-	canvas.DrawStringAnchored("CreateAt: "+j.PlayerInfo.CreatedAt.Format("2006-01-02"),
+	canvas.DrawStringAnchored("UpdatedAt: "+j.PlayerInfo.UpdatedAt.Format("2006-01-02"),
 		float64(w)-920*accuracy, (192+338*4/5)*accuracy, 0, 0.5)
 	if chal != "" {
 		challengemodew, _ := canvas.MeasureString("ChallengeMode: ")

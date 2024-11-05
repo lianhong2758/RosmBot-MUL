@@ -55,7 +55,7 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 	case "DIRECT_MESSAGE_CREATE":
 		url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.RoomID2) //频道私聊
 	}
-	log.Infoln("[send]["+url+"]", tool.BytesToString(data))
+	log.Infoln("[↑]["+url+"]", tool.BytesToString(data))
 	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(data))
 	if err != nil {
 		log.Errorln("[send][", host+url, "]", err)
@@ -70,9 +70,34 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 		return "0"
 	}(err != nil)}
 }
-//未来实现
+
 func (c *Config) BotSendCustom(ctx *rosm.Ctx, count any) rosm.H {
-	return rosm.H{}
+	url := ""
+	//判断私聊
+	switch ctx.Being.Def["type"].(string) {
+	case "GROUP_AT_MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendGroup, ctx.Being.RoomID) //群聊
+	case "C2C_MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
+	case "AT_MESSAGE_CREATE", "MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendGuild, ctx.Being.RoomID) //频道
+	case "DIRECT_MESSAGE_CREATE":
+		url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.RoomID2) //频道私聊
+	}
+	log.Infoln("[qq] [↑]["+url+"]",count.(string))
+	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(tool.StringToBytes(count.(string))))
+	if err != nil {
+		log.Errorln("[send][", host+url, "]", err)
+	}
+	log.Debugln("[send-result]", tool.BytesToString(data))
+	sendState := new(qqmsg.SendState)
+	_ = json.Unmarshal(data, sendState)
+	return rosm.H{"id": sendState.MsgID, "code": func(b bool) string {
+		if b {
+			return "1"
+		}
+		return "0"
+	}(err != nil)}
 }
 
 func (c *Config) GetPortraitURI(ctx *rosm.Ctx) string {

@@ -25,9 +25,12 @@ func (config *Config) Run() {
 				botMap[strconv.FormatInt(key, 10)] = config
 				return false
 			}
-		//反向	case *driver.WSServer:
+		case *driver.WSSCaller:
+			config.BotID = strconv.FormatInt(key, 10)
+			botMap[strconv.FormatInt(key, 10)] = config
+			return false
 		default:
-			logrus.Warn("RunError:未适配的WSS")
+			logrus.Warn("RunError:未适配的APICaller")
 			return true
 		}
 		return true

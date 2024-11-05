@@ -31,6 +31,7 @@ import (
 )
 
 func main() {
+	rosm.RosmInit()
 	//下面两行用于同平台多bot构建,不需要可以忽略
 	// var runner rosm.Boter = ob11.NewConfig("config/ob11.json")
 	// go runner.Run()

@@ -3,7 +3,9 @@ package test
 import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/server/ob11"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/sirupsen/logrus"
+	zero "github.com/wdvxdr1123/ZeroBot"
 )
 
 func init() {
@@ -13,7 +15,18 @@ func init() {
 	})
 	en.AddRex(`^\[CQ:reply,id=(-?[0-9]+)\].*`).MUL("ob11").Rule(rosm.OnlyMaster(), rosm.KeyWords("撤回")).Handle(func(ctx *rosm.Ctx) {
 		ob11.DeleteMessage(ctx, ctx.Being.Rex[1])
-		ob11.DeleteMessage(ctx, ctx.Being.MsgID[0])
-		logrus.Info("[delete]撤回消息",ctx.Being.Rex[1]," - ",ctx.Being.MsgID[0])
+		ob11.DeleteMessage(ctx, ctx.Being.MsgID)
+		logrus.Info("[delete]撤回消息", ctx.Being.Rex[1], " - ", ctx.Being.MsgID[0])
+	})
+	//跟随撤回
+	en.AddEvent(rosm.FriendRecall, rosm.GroupRecall).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
+		if id, ok := ctx.Message.(*zero.Event).MessageID.(int64); ok {
+			if sids := rosm.GetMessageIDFormMapCache(tool.Int64ToString(id)); len(sids) > 0 {
+				for _, sid := range sids {
+					tool.WaitWhile()
+					ob11.DeleteMessage(ctx, sid)
+				}
+			}
+		}
 	})
 }
