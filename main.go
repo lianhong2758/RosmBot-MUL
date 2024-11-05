@@ -25,7 +25,7 @@ import (
 //	_ "github.com/lianhong2758/RosmBot-MUL/plugins/tarot"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/test"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/time"
-	_ "github.com/lianhong2758/RosmBot-MUL/plugins/wife"
+	//_ "github.com/lianhong2758/RosmBot-MUL/plugins/wife"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/yujn"
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 )
