@@ -34,7 +34,7 @@ func (c *Config) process(e *zero.Event) {
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
-					MsgID: []string{tool.BytesToString(e.RawMessageID)},
+					MsgID: tool.BytesToString(e.RawMessageID),
 					Def:   map[string]any{},
 				},
 				Message: e,
@@ -55,7 +55,7 @@ func (c *Config) process(e *zero.Event) {
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
-					MsgID: []string{tool.BytesToString(e.RawMessageID)},
+					MsgID: tool.BytesToString(e.RawMessageID),
 					Def:   map[string]any{},
 				},
 				Message: e,
@@ -74,14 +74,14 @@ func (c *Config) process(e *zero.Event) {
 
 		// 通知事件
 	case "notice":
+		//https://github.com/botuniverse/onebot-11/blob/master/event/notice.md
 		ctx := &rosm.Ctx{
 			BotType: "ob11",
 			Being: &rosm.Being{
 				RoomID2: e.ChannelID,
 				RoomID:  tool.Int64ToString(e.GroupID) + e.GuildID,
-				User:    &rosm.UserData{
-					// ID: tool.Int64ToString(e.Sender.ID),
-					// Name: e.Sender.NickName,
+				User: &rosm.UserData{
+					ID: tool.Int64ToString(e.UserID),
 				},
 				Def: map[string]any{},
 			},
@@ -89,7 +89,8 @@ func (c *Config) process(e *zero.Event) {
 			Bot:     c,
 		}
 		log.Debug(ctx)
-		//ctx.RunEvent()
+		ctx.RunEvent(rosm.EventType(ctx.Message.(*zero.Event).NoticeType))
+	case "request": //好有请求
 	default:
 	}
 }

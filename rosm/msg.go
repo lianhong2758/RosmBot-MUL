@@ -6,7 +6,7 @@ type Ctx struct {
 	BotType string
 	Message any    //解析后的原始消息
 	Being   *Being //常用消息解析,需实现
-	on      bool //插件是否在本群开启
+	on      bool   //插件是否在本群开启
 }
 
 // 常用数据
@@ -16,7 +16,7 @@ type Being struct {
 	RoomName string         //房间名称,存在上级则存放上级名称
 	User     *UserData      //触发事件者信息
 	ATList   []string       //at的id列表
-	MsgID    []string       //用于reply,存放消息id,reply的其他需要参数写在第二位
+	MsgID    string         //用于reply,存放消息id
 	AtMe     bool           //是否是at机器人触发的事件
 	Word     string         //接收的用户发送的信息,进行了首位的空格切割
 	Rex      []string       //如果有正则匹配,这里存放匹配结果
@@ -25,6 +25,6 @@ type Being struct {
 
 // 触发者信息
 type UserData struct {
-	Name        string
-	ID          string
+	Name string
+	ID   string
 }

@@ -5,11 +5,20 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"sync"
+	"time"
 
 	"github.com/FloatTech/floatbox/file"
+	"github.com/FloatTech/ttl"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/tool/rate"
 	log "github.com/sirupsen/logrus"
+)
+
+var (
+	//用于映射发送的消息id到触发id
+	MessagesMapCache = ttl.NewCache[string, []string](time.Minute * 5)
+	MessagesMu       = sync.Mutex{}
 )
 
 type (
@@ -49,7 +58,7 @@ var (
 	RegexpMatch = []*Matcher{} //Rex
 
 	//事件触发
-	EventMatch = map[int][]*Matcher{} //事件触发
+	EventMatch = map[EventType][]*Matcher{} //事件触发
 )
 
 // 注册插件
@@ -94,10 +103,12 @@ func (p *PluginData) AddRex(rex string) *Matcher {
 }
 
 // 其他事件匹配器
-func (p *PluginData) AddEvent(types int) *Matcher {
+func (p *PluginData) AddEvent(types ...EventType) *Matcher {
 	m := new(Matcher)
 	m.block = false
-	EventMatch[types] = append(EventMatch[types], m)
+	for _, v := range types {
+		EventMatch[v] = append(EventMatch[v], m)
+	}
 	p.Matchers = append(p.Matchers, m)
 	m.PluginNode = p
 	return m
@@ -166,8 +177,22 @@ func (m *Matcher) Limit(limiterfn func(*Ctx) *rate.Limiter, postfn ...func(*Ctx)
 
 // 快捷发送消息
 func (ctx *Ctx) Send(m ...message.MessageSegment) H {
-	return ctx.Bot.BotSend(ctx, m...)
+	MessagesMu.Lock()
+	defer MessagesMu.Unlock()
+	h := ctx.Bot.BotSend(ctx, m...)
+	if h["id"] != "" {
+		MessagesMapCache.Set(ctx.Being.MsgID, append([]string{h["id"]}, MessagesMapCache.Get(ctx.Being.MsgID)...))
+	}
+	return h
 }
+
+// 通过记录的回复id查找触发id
+func GetMessageIDFormMapCache(id string) []string {
+	MessagesMu.Lock()
+	defer MessagesMu.Unlock()
+	return MessagesMapCache.Get(id)
+}
+
 func Display() {
 	log.Println(WordMatch)
 	log.Println(RegexpMatch)

@@ -66,7 +66,7 @@ func SplitTypeAndString(value string) (types, string1 string) {
 }
 
 // 等待其他init加载完毕
-func WaitInit() {
+func WaitWhile() {
 	time.Sleep(time.Second * 2)
 }
 

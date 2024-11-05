@@ -35,9 +35,9 @@ var (
 // 表示每隔多长时间时，你还可以使用预定义的 @every <duration> 如每隔十分钟就可以表示为 @every 10m
 func init() {
 	en := rosm.Register(&rosm.PluginData{
-		Name:       "定时消息",
-		Help:       "- /记录在* * * *的指令\n"+
-		"- /删除指令xxx",
+		Name: "定时消息",
+		Help: "- /记录在* * * *的指令\n" +
+			"- /删除指令xxx",
 		DataFolder: "time",
 	})
 	en.AddRex(`^/记录在(.*)的指令`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
@@ -95,7 +95,7 @@ func init() {
 }
 
 func cronRun(db *model) {
-	tool.WaitInit()
+	tool.WaitWhile()
 	c = cron.New()
 	db.Range(func(i int, m *mode) bool {
 		timeCtx := send.CTXBuild(m.Types, m.BotID, m.String1)

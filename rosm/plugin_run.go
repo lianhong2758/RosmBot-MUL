@@ -9,7 +9,7 @@ import (
 )
 
 // 匹配事件
-func (ctx *Ctx) RunEvent(types int) (block bool) {
+func (ctx *Ctx) RunEvent(types EventType) (block bool) {
 	defer func() {
 		if pa := recover(); pa != nil {
 			log.Errorf("[rosm] RunEvent Err: %v\n%v", pa, tool.BytesToString(debug.Stack()))
@@ -23,7 +23,7 @@ func (ctx *Ctx) RunEvent(types int) (block bool) {
 	for _, m := range EventMatch[types] {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
-			log.Debugf("调用插件: %s - 类型: %d", m.PluginNode.Name, types)
+			log.Debugf("调用插件: %s - 类型: %s", m.PluginNode.Name, types)
 			return m.block
 		}
 	}

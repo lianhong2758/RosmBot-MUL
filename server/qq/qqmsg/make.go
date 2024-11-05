@@ -34,7 +34,7 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 		case "reply":
 			cnt.Reference = &ReferenceS{ID: message.Data["id"], NeedError: true}
 		case "replyuser":
-			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
+			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID, NeedError: true}
 		}
 	}
 	cnt.Text=tool.HideURL(cnt.Text)
@@ -76,7 +76,7 @@ func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 		case "reply":
 			cnt.Reference = &ReferenceS{ID: message.Data["id"], NeedError: true}
 		case "replyuser":
-			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID[0], NeedError: true}
+			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID, NeedError: true}
 		}
 	}
 	cnt.Text=tool.HideURL(cnt.Text)

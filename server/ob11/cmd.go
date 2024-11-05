@@ -15,9 +15,9 @@ import (
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#delete_msg-%E6%92%A4%E5%9B%9E%E6%B6%88%E6%81%AF
 //
 //nolint:interfacer
-func DeleteMessage(ctx *rosm.Ctx, messageID ...string) {
+func DeleteMessage(ctx *rosm.Ctx, messageID string) {
 	CallAction(ctx, "delete_msg", zero.Params{
-		"message_id": messageID[0],
+		"message_id": messageID,
 	})
 }
 
@@ -25,9 +25,9 @@ func DeleteMessage(ctx *rosm.Ctx, messageID ...string) {
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#get_msg-%E8%8E%B7%E5%8F%96%E6%B6%88%E6%81%AF
 //
 //nolint:interfacer
-func GetMessage(ctx *rosm.Ctx, messageID ...string) zero.Message {
+func GetMessage(ctx *rosm.Ctx, messageID string) zero.Message {
 	rsp := CallAction(ctx, "get_msg", zero.Params{
-		"message_id": messageID[0],
+		"message_id": messageID,
 	}).Data
 	m := zero.Message{
 		Elements:    message.ParseMessage(tool.StringToBytes(rsp.Get("message").Raw)),

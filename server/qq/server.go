@@ -28,7 +28,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 				User: &rosm.UserData{
 					ID: raw.Author.UserOpenid,
 				},
-				MsgID: []string{raw.ID},
+				MsgID: raw.ID,
 				Def:   H{"type": playload.T, "id": raw.ID},
 			},
 		}
@@ -57,7 +57,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 					ID:   raw.Author.ID,
 					Name: raw.Author.ID[len(raw.Author.ID)-8:],
 				},
-				MsgID: []string{raw.ID},
+				MsgID: raw.ID,
 				Def:   H{"type": playload.T, "id": raw.ID},
 			},
 		}
@@ -91,10 +91,10 @@ func (c *Config) process(playload *WebsocketPayload) {
 				RoomID2: raw.GuildID,
 				ATList:  at,
 				User: &rosm.UserData{
-					Name:        raw.Author.Username,
-					ID:          raw.Author.ID,
+					Name: raw.Author.Username,
+					ID:   raw.Author.ID,
 				},
-				MsgID: []string{raw.ID},
+				MsgID: raw.ID,
 				Def:   H{"type": playload.T, "id": raw.ID},
 			},
 		}
