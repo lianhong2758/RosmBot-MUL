@@ -88,8 +88,8 @@ func NewDms(ctx *rosm.Ctx, userID, guildID string) (guild_id, channel_id string,
 }
 
 // 子频道撤回消息 hide需要false | true
-func DeleteMessage(ctx *rosm.Ctx, ID string, hide string) error {
-	urlDeleteMessage := fmt.Sprintf(urlDeleteMessage, ctx.Being.RoomID, ID, hide)
+func ChannelsDeleteMessage(ctx *rosm.Ctx, MessageID string, hide string) error {
+	urlDeleteMessage := fmt.Sprintf(urlDeleteMessage, ctx.Being.RoomID, MessageID, hide)
 	data, err := web.Web(clientConst, host+urlDeleteMessage, http.MethodDelete, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
 	log.Debugln("[DeleteMessage][", host+urlDeleteMessage, "]", tool.BytesToString(data))
 	if err != nil {
@@ -106,6 +106,30 @@ func DmsDeleteMessage(ctx *rosm.Ctx, GuildID, MessageID string, hide string) err
 	log.Debugln("[DMSDeleteMessage][", host+urlDeleteMessage, "]", tool.BytesToString(data))
 	if err != nil {
 		log.Infoln("[DMSDeleteMessage]ERROR: ", err)
+		return err
+	}
+	return nil
+}
+
+// 单聊
+func UserDeleteMessage(ctx *rosm.Ctx, MessageID, openid string) error {
+	urlDeleteMessage := fmt.Sprintf(urlDeleteUserMessage, openid, MessageID)
+	data, err := web.Web(clientConst, host+urlDeleteMessage, http.MethodDelete, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
+	log.Debugln("[UserDeleteMessage][", host+urlDeleteMessage, "]", tool.BytesToString(data))
+	if err != nil {
+		log.Infoln("[UserDeleteMessage]ERROR: ", err)
+		return err
+	}
+	return nil
+}
+
+// 群聊
+func GroupDeleteMessage(ctx *rosm.Ctx, MessageID, group_openid string) error {
+	urlDeleteMessage := fmt.Sprintf(urlDeleteGroupMessage, group_openid, MessageID)
+	data, err := web.Web(clientConst, host+urlDeleteMessage, http.MethodDelete, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
+	log.Debugln("[GroupDeleteMessage][", host+urlDeleteMessage, "]", tool.BytesToString(data))
+	if err != nil {
+		log.Infoln("[GroupDeleteMessage]ERROR: ", err)
 		return err
 	}
 	return nil

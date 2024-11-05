@@ -16,6 +16,8 @@ const (
 	urlGuildGetUser     = "/guilds/%v/members/%v"               //获取成员详情
 	urlDeleteMessage    = "/channels/%v/messages/%v?hidetip=%v" //撤回消息 DELETE,参数三为隐藏灰条
 	urlDmsDeleteMessage = "/dms/%v/messages/%v?hidetip=%v"      //撤回频道私信信息,参数同上
+	urlDeleteUserMessage="/v2/users/%s/messages/%s"//单聊撤回
+	urlDeleteGroupMessage="/v2/groups/%s/messages/%s"//群聊撤回
 )
 
 /*

@@ -5,7 +5,7 @@ type H = map[string]any
 // 键值对data结构
 type KV = struct {
 	Key   string `json:"key"`
-	Value any    `json:"values"`
+	Value []string    `json:"values"`
 }
 
 // 消息模板,content, embed, ark, image/file_image, markdown 至少需要有一个字段，否则无法下发消息

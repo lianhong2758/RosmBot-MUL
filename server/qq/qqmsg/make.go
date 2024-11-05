@@ -11,7 +11,7 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 	cnt := new(Content)
 	for _, message := range msg {
 		var text string
-		if message.Data["text"] != ""{
+		if message.Data["text"] != "" {
 			text = message.Data["text"]
 		}
 		switch message.Type {
@@ -23,7 +23,7 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			cnt.Text += `<@!` + message.Data["uid"] + `>`
 		case "atall":
 			cnt.Text += "@everyone"
- 
+
 		case "image":
 			cnt.Text += text
 			if url, _ := web.ImageAnalysis(message.Data["file"]); url != "" {
@@ -37,7 +37,7 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID, NeedError: true}
 		}
 	}
-	cnt.Text=tool.HideURL(cnt.Text)
+	cnt.Text = tool.HideURL(cnt.Text)
 	if ctx.Being.Def["id"] != nil {
 		cnt.MsgID = ctx.Being.Def["id"].(string)
 	}
@@ -57,14 +57,6 @@ func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			continue
 		case "text":
 			cnt.Text += text
-			/*
-				case "mentioned_user", "mentioned_robot":
-						cnt.Types = 5
-						cnt.Text += `<@!` + message.Data["uid"].(string) + `>`
-					case "atall":
-						cnt.Types = 5
-						cnt.Text += "@everyone"
-			*/
 		case "image":
 			cnt.Types = 1
 			cnt.Text += text
@@ -77,9 +69,15 @@ func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			cnt.Reference = &ReferenceS{ID: message.Data["id"], NeedError: true}
 		case "replyuser":
 			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID, NeedError: true}
+		case "markdown":
+			var parm []KV = nil
+			if t, ok := ctx.Being.Def["kv"]; ok {
+				parm = t.([]KV)
+			}
+			cnt.MarkDown = &MarkDownS{Content: message.Data["content"], ID: message.Data["id"], Params: parm}
 		}
 	}
-	cnt.Text=tool.HideURL(cnt.Text)
+	cnt.Text = tool.HideURL(cnt.Text)
 	if ctx.Being.Def["id"] != nil {
 		cnt.MsgID = ctx.Being.Def["id"].(string)
 	}
