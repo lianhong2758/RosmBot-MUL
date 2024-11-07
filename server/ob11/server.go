@@ -170,6 +170,12 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 					e.Message = append(e.Message[:i], e.Message[i+1:]...)
 					return
 				}
+				if qq != 0 {
+					e.Message = append(append(e.Message[:i], message.MessageSegment{Type: "at", Data: map[string]string{
+						"qq": m.Data["qq"],
+					}}), e.Message[i+1:]...)
+					continue
+				}
 			}
 		}
 		if len(e.Message) == 0 || e.Message[0].Type != "text" {
