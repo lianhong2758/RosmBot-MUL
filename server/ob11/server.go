@@ -162,13 +162,16 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 
 	processAt := func() { // 处理是否at机器人
 		e.IsToMe = false
+		deleteFirstAtMe := func() {}
 		for i, m := range e.Message {
 			if m.Type == "at" {
 				qq, _ := strconv.ParseInt(m.Data["qq"], 10, 64)
-				if qq == e.SelfID {
+				if qq == e.SelfID && !e.IsToMe {
 					e.IsToMe = true
-					e.Message = append(e.Message[:i], e.Message[i+1:]...)
-					return
+					deleteFirstAtMe = func() {
+						e.Message = append(e.Message[:i], e.Message[i+1:]...)
+					}
+					continue
 				}
 				if qq != 0 {
 					e.Message = append(append(e.Message[:i], message.MessageSegment{Type: "at", Data: map[string]string{
@@ -178,6 +181,7 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 				}
 			}
 		}
+		deleteFirstAtMe()
 		if len(e.Message) == 0 || e.Message[0].Type != "text" {
 			return
 		}
