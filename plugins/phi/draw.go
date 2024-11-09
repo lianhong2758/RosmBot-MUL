@@ -171,7 +171,7 @@ func drawcardback(accuracy float64, i, w int, a float64, list phigros.ScoreAcc) 
 	drawParallelogram(canvas, a, (70+iw)*accuracy, 0, 348*accuracy, 238*accuracy)
 	canvas.Clip()
 
-	_, err = os.Stat(Illustration + list.SongId + ".0.png")
+	_, err = os.Stat(Illustration + list.SongId + ".png")
 	if list.SongId != "" && (err == nil || os.IsExist(err)) {
 		var imgs image.Image
 		imgs, err = gg.LoadImage(Illustration + list.SongId + ".png")
