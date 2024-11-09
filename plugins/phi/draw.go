@@ -174,7 +174,7 @@ func drawcardback(accuracy float64, i, w int, a float64, list phigros.ScoreAcc) 
 	_, err = os.Stat(Illustration + list.SongId + ".0.png")
 	if list.SongId != "" && (err == nil || os.IsExist(err)) {
 		var imgs image.Image
-		imgs, err = gg.LoadImage(Illustration + list.SongId + ".0.png")
+		imgs, err = gg.LoadImage(Illustration + list.SongId + ".png")
 		if err != nil {
 			return
 		}
