@@ -31,7 +31,7 @@ func init() { // 插件主体
 			"- /天女散花[13]\n" +
 			"- /雾里看花[5-10]",
 	})
-	en.OnWord("/梦笔生花").Handle(casefunc("A"))
+	en.OnWord("梦笔生花").Handle(casefunc("A"))
 	en.OnRex(`^/走马观花\s*(\d)`).Handle(casefunc("B"))
 	en.OnRex(`^/天女散花\s*(\d)`).Handle(casefunc("C"))
 	en.OnRex(`^/雾里看花\s*(\d)`).Handle(casefunc("D"))

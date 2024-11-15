@@ -67,7 +67,7 @@ func init() {
 		msg.WriteString(strings.Repeat("*", 20))
 		ctx.Send(message.Text(msg.String()))
 	})
-	en.OnWord(`/早安`).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
+	en.OnWord(`早安`).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
 		on := rosm.PluginIsOn(rosm.GetBoten())(ctx)
 		if !on {
 			err := rosm.PluginDB.InsertOff(rosm.GetBoten().Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID), false)
@@ -81,7 +81,7 @@ func init() {
 			ctx.Send(message.Text("早安,", ctx.Bot.Card().BotName, "已经在认真工作了喵~"))
 		}
 	})
-	en.OnWord(`/晚安`).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
+	en.OnWord(`晚安`).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
 		on := rosm.PluginIsOn(rosm.GetBoten())(ctx)
 		if on {
 			err := rosm.PluginDB.InsertOff(rosm.GetBoten().Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID), true)

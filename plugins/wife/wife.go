@@ -26,7 +26,7 @@ func init() {
 		_ = json.Unmarshal(data, &cards)
 		log.Infoln("[wife]加载", len(cards), "位wife...")
 	}
-	en.OnWord("/抽wife").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("抽wife").Handle(func(ctx *rosm.Ctx) {
 		id, err := strconv.Atoi(ctx.Being.User.ID)
 		if err != nil {
 			var lastThree string = ctx.Being.User.ID

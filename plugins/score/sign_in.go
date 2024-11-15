@@ -147,7 +147,7 @@ func init() {
 		ctx.Send(message.Reply(), message.Image("file://"+file.BOTPATH+"/"+drawedFile))
 	})
 
-	en.OnWord("/获得签到背景").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("获得签到背景").Handle(func(ctx *rosm.Ctx) {
 		picFile := cachePath + ctx.Being.User.ID + time.Now().Format("20060102") + ".png"
 		if file.IsNotExist(picFile) {
 			ctx.Send(message.Reply(), message.Text("请先签到！"))

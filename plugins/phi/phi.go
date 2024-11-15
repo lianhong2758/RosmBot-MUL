@@ -179,7 +179,7 @@ func init() {
 		SaveSession(en.DataFolder+"sessions/"+ctx.Being.User.ID+".b19", k.SessionToken)
 		ctx.Send(message.Text("绑定成功,发送`/b19`查询战绩"))
 	})
-	en.OnWord("/phi帮助").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("phi帮助").Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text("Session获取:\n用mt文件管理器打开`.userdata`文件\n打开后找到`sessionToken:xxx`\nxxx即为所需\n.userdata文件的相对路径: “./Android/data/com.PigeonGames.Phigros/files/.userdata"))
 	})
 }

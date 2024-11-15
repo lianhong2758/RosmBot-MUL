@@ -15,7 +15,7 @@ func init() {
 		Name: "猜数字",
 		Help: "- /开始猜数字",
 	})
-	en.OnWord("/开始猜数字").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("开始猜数字").Handle(func(ctx *rosm.Ctx) {
 		num := strconv.Itoa(rand.IntN(9) + 1)
 		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		defer stop()

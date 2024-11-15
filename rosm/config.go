@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/FloatTech/floatbox/file"
+	"github.com/lianhong2758/RosmBot-MUL/kanban"
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,7 +13,7 @@ import (
 func LoadConfig(path string, v any) error {
 	if file.IsNotExist(path) {
 		//new
-		data, err := json.Marshal(v)
+		data, err := json.MarshalIndent(v, "", "  ") //json.Marshal(v)
 		if err != nil {
 			return err
 		}
@@ -32,7 +33,7 @@ func CreateConfig(path string, v any) error {
 		return err
 	}
 	defer f.Close()
-	data, err := json.Marshal(v)
+	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -44,7 +45,7 @@ func CreateConfig(path string, v any) error {
 func LoadBotConfig(name string, v any) error {
 	if file.IsNotExist("config/" + name) {
 		//new
-		data, err := json.Marshal(v)
+		data, err := json.MarshalIndent(v, "", "  ")
 		if err != nil {
 			return err
 		}
@@ -76,6 +77,12 @@ var config = &RosmConfig{
 
 func init() {
 	LoadBotConfig("rosm.json", config)
+	if kanban.GetArgIsDebug() {
+		logrus.SetLevel(logrus.DebugLevel)
+		logrus.Debug("IN DEBUG MODE")
+	} else {
+		logrus.SetLevel(config.LogLevel)
+	}
 }
 
 type RosmConfig struct {

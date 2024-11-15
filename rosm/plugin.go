@@ -130,7 +130,9 @@ func (p *PluginData) OnWord(words ...string) *Matcher {
 	//这里用map跳表匹配,所以不用添加匹配的Rule
 	m := p.OnMessage() //p.OnMessage().SetRule(WordRule(words...))
 	for _, word := range words {
-		WordMatch[word] = m
+		for _, prefix := range config.CmdStar {
+			WordMatch[prefix+word] = m
+		}
 	}
 	return m
 }

@@ -7,6 +7,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var isDebug bool
+
 func init() {
 	//log_file
 	path := flag.String("lf", "data/log/"+time.Now().Format("2006_01_02_15_04_05")+".log", "log file path")
@@ -17,10 +19,12 @@ func init() {
 	if !*notSaveLogs {
 		SetLogWithNewFile(*path)
 	}
-	if *d {
-		log.SetLevel(log.DebugLevel)
-	}
+	isDebug = *d
 	log.Debug("IN DEBUG MODE")
 	//kanban
 	Kanban()
+}
+
+func GetArgIsDebug() bool {
+	return isDebug
 }
