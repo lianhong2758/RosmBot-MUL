@@ -101,7 +101,7 @@ func (c *Config) BotSendCustom(ctx *rosm.Ctx, count any) rosm.H {
 }
 
 func (c *Config) GetPortraitURI(ctx *rosm.Ctx) string {
-	if r, ok := ctx.Message.(*RawGuildMessage); ok {
+	if r, ok := ctx.State["event"].(*RawGuildMessage); ok {
 		return r.Author.Avatar
 	}
 	return ""

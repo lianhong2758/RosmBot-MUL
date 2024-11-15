@@ -1,13 +1,15 @@
 package rosm
 
+import "github.com/lianhong2758/RosmBot-MUL/message"
+
 // 上下文结构
 type Ctx struct {
 	Bot     Boter
 	BotType string
-	Message any            //解析后的原始消息
-	Being   *Being         //常用消息解析,需实现
-	State   map[string]any //框架中途产生的内容,不固定,即时有效
-	on      bool           //插件是否在本群开启
+	Message message.Message //Message
+	Being   *Being          //常用消息解析,需实现
+	State   map[string]any  //框架中途产生的内容,不固定,即时有效
+	on      bool            //插件是否在本群开启
 }
 
 // 常用数据

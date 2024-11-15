@@ -36,7 +36,8 @@ func (c *Config) process(e *Event) {
 					},
 					MsgID: tool.BytesToString(e.RawMessageID),
 				},
-				Message: e,
+				State: map[string]any{"event":e},
+				Message: e.Message,
 				Bot:     c,
 			}
 			ctx.Being.IsAtMe = true
@@ -57,7 +58,8 @@ func (c *Config) process(e *Event) {
 					},
 					MsgID: tool.BytesToString(e.RawMessageID),
 				},
-				Message: e,
+				State: map[string]any{"event":e},
+				Message: e.Message,
 				Bot:     c,
 			}
 
@@ -83,7 +85,8 @@ func (c *Config) process(e *Event) {
 					ID: tool.Int64ToString(e.UserID),
 				},
 			},
-			Message: e,
+			State: map[string]any{"event":e},
+			Message: e.Message,
 			Bot:     c,
 		}
 		log.Debug(ctx)
@@ -96,7 +99,8 @@ func (c *Config) process(e *Event) {
 					ID: tool.Int64ToString(e.UserID),
 				},
 			},
-			Message: e,
+			State: map[string]any{"event":e},
+			Message: e.Message,
 			Bot:     c,
 		}
 		log.Debug(ctx)

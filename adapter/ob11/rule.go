@@ -16,12 +16,13 @@ func OnlyMaster(ctx *rosm.Ctx) bool {
 
 // 群主权限以上
 func OnlyOverHost(ctx *rosm.Ctx) bool {
-	return OnlyMaster(ctx) || ctx.Message.(*Event).Sender.Role == "owner"
+	return OnlyMaster(ctx) || ctx.State["event"].(*Event).Sender.Role == "owner"
 }
 
 // 管理员权限以上
 func OnlyOverAdministrator(ctx *rosm.Ctx) bool {
-	return OnlyMaster(ctx) || ctx.Message.(*Event).Sender.Role == "owner" || ctx.Message.(*Event).Sender.Role == "admin"
+	return OnlyMaster(ctx) || ctx.State["event"].(*Event).Sender.Role == "owner" || 
+	ctx.State["event"].(*Event).Sender.Role == "admin"
 }
 
 // 触发消息是否是回复消息

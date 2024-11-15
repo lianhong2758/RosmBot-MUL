@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	log "github.com/sirupsen/logrus"
 )
@@ -22,7 +23,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_group",
-			Message: raw,
+			Message: message.Message{},
 			Being: &rosm.Being{
 				GroupID: raw.Author.UserOpenid,
 				User: &rosm.UserData{
@@ -30,7 +31,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 				},
 				MsgID: raw.ID,
 			},
-			State: H{"type": playload.T, "id": raw.ID},
+			State: H{"type": playload.T, "id": raw.ID, "event": raw},
 		}
 		word := raw.Content
 		//判断@
@@ -50,7 +51,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_group",
-			Message: raw,
+			Message: message.Message{},
 			Being: &rosm.Being{
 				GroupID: raw.GroupID,
 				User: &rosm.UserData{
@@ -59,7 +60,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 				},
 				MsgID: raw.ID,
 			},
-			State: H{"type": playload.T, "id": raw.ID},
+			State: H{"type": playload.T, "id": raw.ID, "event": raw},
 		}
 		word := raw.Content
 		//判断@
@@ -85,7 +86,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 		ctx := &rosm.Ctx{
 			Bot:     c,
 			BotType: "qq_gulid",
-			Message: raw,
+			Message: message.Message{},
 			Being: &rosm.Being{
 				GroupID: raw.ChannelID,
 				GuildID: raw.GuildID,
@@ -96,7 +97,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 				},
 				MsgID: raw.ID,
 			},
-			State: H{"type": playload.T, "id": raw.ID},
+			State: H{"type": playload.T, "id": raw.ID, "event": raw},
 		}
 		word := raw.Content
 		//判断@

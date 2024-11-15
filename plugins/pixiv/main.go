@@ -176,7 +176,7 @@ func GetMustPic(ctx *rosm.Ctx) []string {
 // 获取这次ctx内容的图片
 func GetPicFormCtx(ctx *rosm.Ctx) []string {
 	var urls = []string{}
-	e, _ := ctx.Message.(*ob11.Event)
+	e, _ := ctx.State["event"].(*ob11.Event)
 	for _, elem := range e.Message {
 		if elem.Type == "image" {
 			if elem.Data["url"] != "" {

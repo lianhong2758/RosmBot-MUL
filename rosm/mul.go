@@ -9,19 +9,13 @@ type H = message.H
 
 // Boter bot主接口,由server实现,Run函数由server自己调用运行
 type Boter interface {
-	//发送消息
-	BotSend(*Ctx, ...message.MessageSegment) H
-	//特殊的发送格式
-	BotSendCustom(*Ctx, any) H
-	//头像获取
-	GetPortraitURI(*Ctx) string
 	//运行,用于开启接收消息和调用插件
 	Run()
-
 	//Bot信息查询
 	Card() *BotCard
 
 	BotRuler
+	BotCaller
 }
 
 // BotRuler rule的实现,如果不存在,适配器需要设置函数返回false
@@ -34,6 +28,16 @@ type BotRuler interface {
 	OnlyOverHost(*Ctx) bool
 	//判断管理员
 	OnlyOverAdministrator(*Ctx) bool
+}
+
+// 接口调用
+type BotCaller interface {
+	//发送消息
+	BotSend(*Ctx, ...message.MessageSegment) H
+	//特殊的发送格式
+	BotSendCustom(*Ctx, any) H
+	//头像获取
+	GetPortraitURI(*Ctx) string
 }
 
 type BotCard struct {
