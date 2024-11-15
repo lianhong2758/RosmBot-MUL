@@ -7,12 +7,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"regexp"
+	"strings"
 
-	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	messagezb "github.com/wdvxdr1123/ZeroBot/message"
-	"github.com/wdvxdr1123/ZeroBot/utils/helper"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
 // 新建bot消息
@@ -55,16 +55,16 @@ func formatMessage(msg interface{}) string {
 	switch m := msg.(type) {
 	case string:
 		return m
-	case messagezb.CQCoder:
+	case CQCoder:
 		return m.CQCode()
 	case fmt.Stringer:
 		return m.String()
 	default:
 		s, _ := json.Marshal(msg)
-		return helper.BytesToString(base64Reg.ReplaceAllFunc(s, func(b []byte) []byte {
+		return tool.BytesToString(base64Reg.ReplaceAllFunc(s, func(b []byte) []byte {
 			buf := bytes.NewBuffer([]byte(`"type":"image","data":{"file":"`))
 			b = b[40:]
-			b, err := base64.StdEncoding.DecodeString(helper.BytesToString(b))
+			b, err := base64.StdEncoding.DecodeString(tool.BytesToString(b))
 			if err != nil {
 				buf.WriteString(err.Error())
 			} else {
@@ -77,66 +77,20 @@ func formatMessage(msg interface{}) string {
 	}
 }
 
-func ParseMessageFromString(raw string) (m message.Message) {
-	var seg message.MessageSegment
-	var k string
-	m = message.Message{}
-	for raw != "" {
-		i := 0
-		for i < len(raw) && !(raw[i] == '[' && i+4 < len(raw) && raw[i:i+4] == "[CQ:") {
-			i++
-		}
-
-		if i > 0 {
-			m = append(m, message.Text(messagezb.UnescapeCQText(raw[:i])))
-		}
-
-		if i+4 > len(raw) {
-			return
-		}
-
-		raw = raw[i+4:] // skip "[CQ:"
-		i = 0
-		for i < len(raw) && raw[i] != ',' && raw[i] != ']' {
-			i++
-		}
-
-		if i+1 > len(raw) {
-			return
-		}
-		seg.Type = raw[:i]
-		seg.Data = make(map[string]string)
-		raw = raw[i:]
-		i = 0
-
-		for {
-			if raw[0] == ']' {
-				m = append(m, seg)
-				raw = raw[1:]
-				break
+func resolveURI(addr string) (network, address string) {
+	network, address = "tcp", addr
+	uri, err := url.Parse(addr)
+	if err == nil && uri.Scheme != "" {
+		scheme, ext, _ := strings.Cut(uri.Scheme, "+")
+		if ext != "" {
+			network = ext
+			uri.Scheme = scheme // remove `+unix`/`+tcp4`
+			if ext == "unix" {
+				uri.Host, uri.Path, _ = strings.Cut(uri.Path, ":")
+				uri.Host = base64.StdEncoding.EncodeToString(tool.StringToBytes(uri.Host)) // special handle for unix
 			}
-			raw = raw[1:]
-
-			for i < len(raw) && raw[i] != '=' {
-				i++
-			}
-			if i+1 > len(raw) {
-				return
-			}
-			k = raw[:i]
-			raw = raw[i+1:] // skip "="
-			i = 0
-			for i < len(raw) && raw[i] != ',' && raw[i] != ']' {
-				i++
-			}
-
-			if i+1 > len(raw) {
-				return
-			}
-			seg.Data[k] = messagezb.UnescapeCQCodeText(raw[:i])
-			raw = raw[i:]
-			i = 0
+			address = uri.String()
 		}
 	}
-	return m
+	return
 }

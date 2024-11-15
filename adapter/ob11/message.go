@@ -45,7 +45,7 @@ func CustomNode(nickname string, userID int64, content interface{}) message.Mess
 	case string:
 		str = c
 	case message.Message:
-		str = RosmToZeroMessage(c).String()
+		str =Message(c).String()
 	default:
 		b, _ := json.Marshal(content)
 		str = tool.BytesToString(b)

@@ -9,16 +9,15 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
-	zero "github.com/wdvxdr1123/ZeroBot"
 )
 
 // CallAction 调用 cqhttp API
-func CallAction(ctx *rosm.Ctx, action string, Params zero.Params) zero.APIResponse {
-	req := zero.APIRequest{
+func CallAction(ctx *rosm.Ctx, action string, Params Params) APIResponse {
+	req := APIRequest{
 		Action: action,
 		Params: Params,
 	}
-	rsp, err := ctx.Bot.(*Config).Driver.(zero.APICaller).CallApi(req)
+	rsp, err := ctx.Bot.(*Config).Driver.(APICaller).CallApi(req)
 	if err != nil {
 		log.Errorln("[ob11] [↑]调用", action, "时出现错误: ", err)
 	}
@@ -31,7 +30,7 @@ func CallAction(ctx *rosm.Ctx, action string, Params zero.Params) zero.APIRespon
 // SendGroupMessage 发送群消息
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#send_group_msg-%E5%8F%91%E9%80%81%E7%BE%A4%E6%B6%88%E6%81%AF
 func SendGroupMessage(ctx *rosm.Ctx, groupID int64, message interface{}) int64 {
-	rsp := CallAction(ctx, "send_group_msg", zero.Params{ // 调用并保存返回值
+	rsp := CallAction(ctx, "send_group_msg", Params{ // 调用并保存返回值
 		"group_id": groupID,
 		"message":  message,
 	}).Data.Get("message_id")
@@ -45,7 +44,7 @@ func SendGroupMessage(ctx *rosm.Ctx, groupID int64, message interface{}) int64 {
 // SendPrivateMessage 发送私聊消息
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#send_private_msg-%E5%8F%91%E9%80%81%E7%A7%81%E8%81%8A%E6%B6%88%E6%81%AF
 func SendPrivateMessage(ctx *rosm.Ctx, userID int64, message interface{}) int64 {
-	rsp := CallAction(ctx, "send_private_msg", zero.Params{
+	rsp := CallAction(ctx, "send_private_msg", Params{
 		"user_id": userID,
 		"message": message,
 	}).Data.Get("message_id")
@@ -68,7 +67,7 @@ func CardOrNickName(ctx *rosm.Ctx, uid int64) (name string) {
 // SendGroupForwardMessage 发送合并转发(群)
 // https://github.com/Mrs4s/go-cqhttp/blob/master/docs/cqhttp.md#%E5%9B%BE%E7%89%87ocr
 func SendGroupForwardMessage(ctx *rosm.Ctx, groupID int64, message message.Message) gjson.Result {
-	return CallAction(ctx, "send_group_forward_msg", zero.Params{
+	return CallAction(ctx, "send_group_forward_msg", Params{
 		"group_id": groupID,
 		"messages": message,
 	}).Data
@@ -77,7 +76,7 @@ func SendGroupForwardMessage(ctx *rosm.Ctx, groupID int64, message message.Messa
 // SendPrivateForwardMessage 发送合并转发(私聊)
 // https://github.com/Mrs4s/go-cqhttp/blob/master/docs/cqhttp.md#%E5%9B%BE%E7%89%87ocr
 func SendPrivateForwardMessage(ctx *rosm.Ctx, userID int64, message message.Message) gjson.Result {
-	return CallAction(ctx, "send_private_forward_msg", zero.Params{
+	return CallAction(ctx, "send_private_forward_msg", Params{
 		"user_id":  userID,
 		"messages": message,
 	}).Data
@@ -86,8 +85,8 @@ func SendPrivateForwardMessage(ctx *rosm.Ctx, userID int64, message message.Mess
 // ForwardFriendSingleMessage 转发单条消息到好友
 //
 // https://llonebot.github.io/zh-CN/develop/extends_api
-func ForwardFriendSingleMessage(ctx *rosm.Ctx, userID int64, messageID interface{}) zero.APIResponse {
-	return CallAction(ctx, "forward_friend_single_msg", zero.Params{
+func ForwardFriendSingleMessage(ctx *rosm.Ctx, userID int64, messageID interface{}) APIResponse {
+	return CallAction(ctx, "forward_friend_single_msg", Params{
 		"user_id":    userID,
 		"message_id": messageID,
 	})
@@ -96,8 +95,8 @@ func ForwardFriendSingleMessage(ctx *rosm.Ctx, userID int64, messageID interface
 // ForwardGroupSingleMessage 转发单条消息到群
 //
 // https://llonebot.github.io/zh-CN/develop/extends_api
-func ForwardGroupSingleMessage(ctx *rosm.Ctx, groupID int64, messageID interface{}) zero.APIResponse {
-	return CallAction(ctx, "forward_group_single_msg", zero.Params{
+func ForwardGroupSingleMessage(ctx *rosm.Ctx, groupID int64, messageID interface{}) APIResponse {
+	return CallAction(ctx, "forward_group_single_msg", Params{
 		"group_id":   groupID,
 		"message_id": messageID,
 	})
@@ -109,7 +108,7 @@ func ForwardGroupSingleMessage(ctx *rosm.Ctx, groupID int64, messageID interface
 //
 // emoji_id 参考 https://bot.q.qq.com/wiki/develop/api-v2/openapi/emoji/model.html#EmojiType
 func SetMessageEmojiLike(ctx *rosm.Ctx, messageID interface{}, emojiID rune) error {
-	ret := CallAction(ctx, "set_msg_emoji_like", zero.Params{
+	ret := CallAction(ctx, "set_msg_emoji_like", Params{
 		"message_id": messageID,
 		"emoji_id":   strconv.Itoa(int(emojiID)),
 	}).Data.Get("errMsg").Str

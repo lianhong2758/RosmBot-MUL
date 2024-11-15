@@ -21,7 +21,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/tidwall/gjson v1.18.0
-	github.com/wdvxdr1123/ZeroBot v1.7.5
 	golang.org/x/sys v0.20.0
 )
 
@@ -46,6 +45,7 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20220927061507-ef77025ab5aa // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
+	github.com/wdvxdr1123/ZeroBot v1.7.5-0.20231009162356-57f71b9f5258 // indirect
 	golang.org/x/image v0.3.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/text v0.15.0 // indirect

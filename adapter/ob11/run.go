@@ -1,42 +1,20 @@
 package ob11
 
 import (
-	"strconv"
-
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/sirupsen/logrus"
-	zero "github.com/wdvxdr1123/ZeroBot"
-	"github.com/wdvxdr1123/ZeroBot/driver"
 )
 
 func (config *Config) Run() {
 	switch config.Types {
 	case "WS":
-		config.Driver = driver.NewWebSocketClient(config.URL, config.Token)
+		config.Driver = NewWebSocketClient(config.URL, config.Token)
 	case "WSS":
-		config.Driver = driver.NewWebSocketServer(16, config.URL, config.Token)
+		//wss有问题
+		config.Driver = NewWebSocketServer(16, config.URL, config.Token)
 	}
-	config.Driver.Connect() //连接
-	zero.APICallers.Range(func(key int64, value zero.APICaller) bool {
-		switch v := value.(type) {
-		case *driver.WSClient:
-			if v.Url == config.URL {
-				config.BotID = strconv.FormatInt(key, 10)
-				botMap[strconv.FormatInt(key, 10)] = config
-				return false
-			}
-		case *driver.WSSCaller:
-			config.BotID = strconv.FormatInt(key, 10)
-			botMap[strconv.FormatInt(key, 10)] = config
-			return false
-		default:
-			logrus.Warn("RunError:未适配的APICaller")
-			return true
-		}
-		return true
-	})
+	config.Driver.Connect(config) //连接
 	config.mul()
-	config.Driver.Listen(config.processEvent())
+	config.Driver.Listen(config)
 }
 
 func (c *Config) mul() {

@@ -3,12 +3,10 @@ package ob11
 import (
 	"fmt"
 	"strings"
-	"unsafe"
 
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
-	zms "github.com/wdvxdr1123/ZeroBot/message"
 
 	"github.com/sirupsen/logrus"
 )
@@ -32,14 +30,14 @@ func (c *Config) BotSendCustom(ctx *rosm.Ctx, Count any) rosm.H {
 		return rosm.H{}
 	}
 	if c, ok := Count.(string); ok {
-		Count = zms.UnescapeCQCodeText(c)
+		Count = UnescapeCQCodeText(c)
 	}
 	if ctx.Being.GroupID[0:1] != "-" {
 		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.GroupID),
-			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
+			UnescapeCQCodeText(Count.(string)))), "code": "0"}
 	} else {
 		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.GroupID[1:]),
-			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
+			UnescapeCQCodeText(Count.(string)))), "code": "0"}
 	}
 }
 
@@ -65,14 +63,10 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 			msg[k].Type = "text"
 			msg[k].Data = rosm.H{"text": fmt.Sprintf("%s:\n%s", message.Data["text"], message.Data["url"])}
 			// case "custom":
-			// 	return zms.UnescapeCQCodeText(msg[k].Data["data"])
+			// 	return  UnescapeCQCodeText(msg[k].Data["data"])
 		}
 	}
 	return msg
-}
-
-func RosmToZeroMessage(r message.Message) (z zms.Message) {
-	return *(*zms.Message)(unsafe.Pointer(&r))
 }
 
 // 解析base64等data

@@ -5,7 +5,6 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/sirupsen/logrus"
-	zero "github.com/wdvxdr1123/ZeroBot"
 )
 
 func init() {
@@ -20,7 +19,7 @@ func init() {
 	})
 	//跟随撤回
 	en.OnNoticeWithType(rosm.FriendRecall, rosm.GroupRecall).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
-		if id, ok := ctx.Message.(*zero.Event).MessageID.(int64); ok {
+		if id, ok := ctx.Message.(*ob11.Event).MessageID.(int64); ok {
 			if sids := rosm.GetMessageIDFormMapCache(tool.Int64ToString(id)); len(sids) > 0 {
 				for _, sid := range sids {
 					tool.WaitWhile()

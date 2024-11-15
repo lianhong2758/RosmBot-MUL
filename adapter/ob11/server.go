@@ -10,16 +10,14 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
-	zero "github.com/wdvxdr1123/ZeroBot"
-	"github.com/wdvxdr1123/ZeroBot/message"
 )
 
-func (c *Config) process(e *zero.Event) {
+func (c *Config) process(e *Event) {
 	switch e.PostType {
 	// 消息事件
 	case "message", "message_sent":
 		atList := c.preprocessMessageEvent(e)
-		mess := e.Message.CQString()
+		mess := Message(e.Message).CQString()
 		log.Debug("Message: ", mess)
 		switch e.MessageType {
 		// 私聊信息
@@ -108,57 +106,55 @@ func (c *Config) process(e *zero.Event) {
 	}
 }
 
-func (c *Config) processEvent() func([]byte, zero.APICaller) {
-	return func(response []byte, caller zero.APICaller) {
-		var event zero.Event
-		_ = json.Unmarshal(response, &event)
-		event.RawEvent = gjson.Parse(tool.BytesToString(response))
-		//var msgid message.MessageID
-		messageID, err := strconv.ParseInt(tool.BytesToString(event.RawMessageID), 10, 64)
-		if err == nil {
-			event.MessageID = messageID
-			//	msgid = message.NewMessageIDFromInteger(messageID)
-		} else if event.MessageType == "guild" {
-			// 是 guild 消息，进行如下转换以适配非 guild 插件
-			// MessageID 填为 string
-			event.MessageID, _ = strconv.Unquote(tool.BytesToString(event.RawMessageID))
-			// 伪造 GroupID
-			crc := crc64.New(crc64.MakeTable(crc64.ISO))
-			crc.Write(tool.StringToBytes(event.GuildID))
-			crc.Write(tool.StringToBytes(event.ChannelID))
-			r := int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
-			if r <= 0xffff_ffff {
-				r |= 0x1_0000_0000 // 确保不与正常号码重叠
-			}
-			event.GroupID = r
-			// 伪造 UserID
-			crc.Reset()
-			crc.Write(tool.StringToBytes(event.TinyID))
-			r = int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
-			if r <= 0xffff_ffff {
-				r |= 0x1_0000_0000 // 确保不与正常号码重叠
-			}
-			event.UserID = r
-			if event.Sender != nil {
-				event.Sender.ID = r
-			}
-			//	msgid = message.NewMessageIDFromString(event.MessageID.(string))
+func (c *Config) processEvent(response []byte, caller APICaller) {
+	var event Event
+	_ = json.Unmarshal(response, &event)
+	event.RawEvent = gjson.Parse(tool.BytesToString(response))
+	//var msgid message.MessageID
+	messageID, err := strconv.ParseInt(tool.BytesToString(event.RawMessageID), 10, 64)
+	if err == nil {
+		event.MessageID = messageID
+		//	msgid = message.NewMessageIDFromInteger(messageID)
+	} else if event.MessageType == "guild" {
+		// 是 guild 消息，进行如下转换以适配非 guild 插件
+		// MessageID 填为 string
+		event.MessageID, _ = strconv.Unquote(tool.BytesToString(event.RawMessageID))
+		// 伪造 GroupID
+		crc := crc64.New(crc64.MakeTable(crc64.ISO))
+		crc.Write(tool.StringToBytes(event.GuildID))
+		crc.Write(tool.StringToBytes(event.ChannelID))
+		r := int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
+		if r <= 0xffff_ffff {
+			r |= 0x1_0000_0000 // 确保不与正常号码重叠
 		}
-		switch event.PostType { // process DetailType
-		case "message", "message_sent":
-			event.DetailType = event.MessageType
-		case "notice":
-			event.DetailType = event.NoticeType
-			preprocessNoticeEvent(&event)
-		case "request":
-			event.DetailType = event.RequestType
+		event.GroupID = r
+		// 伪造 UserID
+		crc.Reset()
+		crc.Write(tool.StringToBytes(event.TinyID))
+		r = int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
+		if r <= 0xffff_ffff {
+			r |= 0x1_0000_0000 // 确保不与正常号码重叠
 		}
-		go c.process(&event)
+		event.UserID = r
+		if event.Sender != nil {
+			event.Sender.ID = r
+		}
+		//	msgid = message.NewMessageIDFromString(event.MessageID.(string))
 	}
+	switch event.PostType { // process DetailType
+	case "message", "message_sent":
+		event.DetailType = event.MessageType
+	case "notice":
+		event.DetailType = event.NoticeType
+		preprocessNoticeEvent(&event)
+	case "request":
+		event.DetailType = event.RequestType
+	}
+	go c.process(&event)
 }
 
 // preprocessNoticeEvent 更新事件
-func preprocessNoticeEvent(e *zero.Event) {
+func preprocessNoticeEvent(e *Event) {
 	if e.SubType == "poke" || e.SubType == "lucky_king" {
 		e.IsToMe = e.TargetID == e.SelfID
 	} else {
@@ -167,8 +163,8 @@ func preprocessNoticeEvent(e *zero.Event) {
 }
 
 // preprocessMessageEvent 返回信息事件
-func (c *Config) preprocessMessageEvent(e *zero.Event) []string {
-	e.Message = message.ParseMessage(e.NativeMessage)
+func (c *Config) preprocessMessageEvent(e *Event) []string {
+	e.Message = ParseMessage(e.NativeMessage)
 	atList := []string{}
 	processAt := func() { // 处理是否at机器人
 		//索引纠正
