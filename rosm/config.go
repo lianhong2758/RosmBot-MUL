@@ -41,6 +41,11 @@ func CreateConfig(path string, v any) error {
 	return err
 }
 
+// 保存插件的config
+func (p *PluginData) SaveConfig() {
+	CreateConfig(p.DataFolder+"config.json", p.Config)
+}
+
 // adapter config 路径./config
 func LoadBotConfig(name string, v any) error {
 	if file.IsNotExist("config/" + name) {

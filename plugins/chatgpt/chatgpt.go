@@ -16,11 +16,11 @@ const (
 	proxyURL = "https://api.alioth.center/akasha-whisper/v1/"
 )
 
-var modelList = []string{
-	"gpt-4o-mini",
-	"gpt-4o",
-	"gpt-3.5-turbo",
-}
+// var modelList = []string{
+// 	"gpt-4o-mini",
+// 	"gpt-4o",
+// 	"gpt-3.5-turbo",
+// }
 
 // chatGPTResponseBody 响应体
 type chatGPTResponseBody struct {

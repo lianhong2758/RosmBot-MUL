@@ -25,6 +25,11 @@ var (
 	// 	Content: "", //这里写预设
 	// }}
 )
+var config = struct {
+	Apikey   string
+	ProxyURL string
+	Mode     string
+}{Apikey: "", ProxyURL: "https://api.alioth.center/akasha-whisper/v1/", Mode: "gpt-4o-mini"}
 
 func init() {
 	en := rosm.Register(&rosm.PluginData{
@@ -36,6 +41,7 @@ func init() {
 			"- 设置预设 x\n" +
 			"- 查看预设 xx",
 		DataFolder: "chatgpt",
+		Config:     &config,
 	})
 
 	//预设存储文件夹
@@ -43,40 +49,6 @@ func init() {
 		_ = os.MkdirAll(en.DataFolder+"preset", 0755)
 	}
 
-	apikeyfile := en.DataFolder + "apikey.txt"
-	if file.IsExist(apikeyfile) {
-		apikey, err := os.ReadFile(apikeyfile)
-		if err != nil {
-			panic(err)
-		} else {
-			apiKey = string(apikey)
-		}
-	}
-	//rosm里读取
-	// //读取预设
-	// presetfile := en.DataFolder + "preset.txt"
-	// if file.IsExist(presetfile) {
-	// 	presetb, err := os.ReadFile(presetfile)
-	// 	if err != nil {
-	// 		logrus.Warn("[chatgpt]读取预设名失败...")
-	// 	} else {
-	// 		presetName = string(presetb)
-	// 	}
-	// }
-	// if presetName != "" && file.IsExist(en.DataFolder+"preset"+"/"+presetName+".txt") {
-	// 	contentb, err := os.ReadFile(en.DataFolder + "preset" + "/" + presetName + ".txt")
-	// 	if err != nil {
-	// 		logrus.Warn("[chatgpt]读取预设失败...")
-	// 	} else {
-	// 		//设置当前预设
-	// 		preinstall = []chatMessage{{
-	// 			Role:    "system",
-	// 			Content: string(contentb), //这里写预设
-	// 		}}
-	// 	}
-	// } else {
-	// 	logrus.Warn("[chatgpt]预设不存在...")
-	// }
 	getPrese := func(presetName string) (prese string, err error) {
 		if presetName == "" {
 			return "", nil
@@ -125,8 +97,7 @@ func init() {
 				Content: args,
 			})
 		}
-		modeid, _ := rosm.PluginDB.FindInt(en.Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID))
-		resp, err := completions(messages, apiKey, modelList[modeid])
+		resp, err := completions(messages, apiKey, config.Mode)
 		if err != nil {
 			ctx.Send(message.Text("请求ChatGPT失败: ", err))
 			return
@@ -140,17 +111,8 @@ func init() {
 
 	en.OnRex(`^设置\s*OpenAI\s*apikey\s*(.*)$`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		apiKey = ctx.Being.ResultWord[1]
-		f, err := os.Create(apikeyfile)
-		if err != nil {
-			ctx.Send(message.Text("ERROR: ", err))
-			return
-		}
-		defer f.Close()
-		_, err = f.WriteString(apiKey)
-		if err != nil {
-			ctx.Send(message.Text("ERROR: ", err))
-			return
-		}
+		config.Apikey = apiKey
+		en.SaveConfig()
 		ctx.Send(message.Text("设置成功"))
 	})
 	en.OnRex(`^(删除|添加)预设\s*(\S+)\s+(.*)$`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
