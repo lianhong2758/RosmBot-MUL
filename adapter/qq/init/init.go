@@ -1,8 +1,8 @@
 package init
 
 import (
+	"github.com/lianhong2758/RosmBot-MUL/adapter/qq"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/server/qq"
 )
 
 var filePath = "config/qq.json"

@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/FloatTech/ttl"
+	"github.com/lianhong2758/RosmBot-MUL/adapter/qq/qqmsg"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/server/qq/qqmsg"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	log "github.com/sirupsen/logrus"
@@ -19,7 +19,7 @@ import (
 var seqcache = ttl.NewCache[string, int](time.Minute * 5)
 
 func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
-	var IsGroup bool = ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" || ctx.Being.Def["type"].(string) == "C2C_MESSAGE_CREATE"
+	var IsGroup bool = ctx.State["type"].(string) == "GROUP_AT_MESSAGE_CREATE" || ctx.State["type"].(string) == "C2C_MESSAGE_CREATE"
 	var msgContent *qqmsg.Content
 	if IsGroup {
 		msgContent = qqmsg.GroupMsgContent(ctx, msg...)
@@ -45,15 +45,15 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 	data, _ := json.Marshal(msgContent)
 	url := ""
 	//判断私聊
-	switch ctx.Being.Def["type"].(string) {
+	switch ctx.State["type"].(string) {
 	case "GROUP_AT_MESSAGE_CREATE":
-		url = fmt.Sprintf(urlSendGroup, ctx.Being.RoomID) //群聊
+		url = fmt.Sprintf(urlSendGroup, ctx.Being.GroupID) //群聊
 	case "C2C_MESSAGE_CREATE":
 		url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
 	case "AT_MESSAGE_CREATE", "MESSAGE_CREATE":
-		url = fmt.Sprintf(urlSendGuild, ctx.Being.RoomID) //频道
+		url = fmt.Sprintf(urlSendGuild, ctx.Being.GroupID) //频道
 	case "DIRECT_MESSAGE_CREATE":
-		url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.RoomID2) //频道私聊
+		url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.GuildID) //频道私聊
 	}
 	log.Infoln("[↑]["+url+"]", tool.BytesToString(data))
 	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(data))
@@ -74,17 +74,17 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 func (c *Config) BotSendCustom(ctx *rosm.Ctx, count any) rosm.H {
 	url := ""
 	//判断私聊
-	switch ctx.Being.Def["type"].(string) {
+	switch ctx.State["type"].(string) {
 	case "GROUP_AT_MESSAGE_CREATE":
-		url = fmt.Sprintf(urlSendGroup, ctx.Being.RoomID) //群聊
+		url = fmt.Sprintf(urlSendGroup, ctx.Being.GroupID) //群聊
 	case "C2C_MESSAGE_CREATE":
 		url = fmt.Sprintf(urlSendPrivate, ctx.Being.User.ID) //私聊
 	case "AT_MESSAGE_CREATE", "MESSAGE_CREATE":
-		url = fmt.Sprintf(urlSendGuild, ctx.Being.RoomID) //频道
+		url = fmt.Sprintf(urlSendGuild, ctx.Being.GroupID) //频道
 	case "DIRECT_MESSAGE_CREATE":
-		url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.RoomID2) //频道私聊
+		url = fmt.Sprintf(urlSendGuildPrivate, ctx.Being.GuildID) //频道私聊
 	}
-	log.Infoln("[qq] [↑]["+url+"]",count.(string))
+	log.Infoln("[qq] [↑]["+url+"]", count.(string))
 	data, err := web.Web(clientConst, host+url, http.MethodPost, makeHeard(c.access, c.BotToken.AppId), bytes.NewReader(tool.StringToBytes(count.(string))))
 	if err != nil {
 		log.Errorln("[send][", host+url, "]", err)

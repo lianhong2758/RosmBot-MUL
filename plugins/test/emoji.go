@@ -16,24 +16,24 @@ func init() {
 	rosm.Register(&rosm.PluginData{
 		Name: "emoji",
 		Help: "- [emoji][emoji]",
-	}).AddRex(`^(?:(.)|(?:\[CQ:face,id=(\d+)\]))(?:(.)|(?:\[CQ:face,id=(\d+)\]))$`).Handle(func(ctx *rosm.Ctx) {
+	}).OnRex(`^(?:(.)|(?:\[CQ:face,id=(\d+)\]))(?:(.)|(?:\[CQ:face,id=(\d+)\]))$`).Handle(func(ctx *rosm.Ctx) {
 		var r1, r2 rune
-		if ctx.Being.Rex[1] != "" {
-			r1 = []rune(ctx.Being.Rex[1])[0]
+		if ctx.Being.ResultWord[1] != "" {
+			r1 = []rune(ctx.Being.ResultWord[1])[0]
 		}
-		if ctx.Being.Rex[3] != "" {
-			r2 = []rune(ctx.Being.Rex[3])[0]
+		if ctx.Being.ResultWord[3] != "" {
+			r2 = []rune(ctx.Being.ResultWord[3])[0]
 		}
-		if ctx.Being.Rex[2] != "" {
-			r11, _ := strconv.Atoi(ctx.Being.Rex[2])
+		if ctx.Being.ResultWord[2] != "" {
+			r11, _ := strconv.Atoi(ctx.Being.ResultWord[2])
 			var ok1 bool
 			r1, ok1 = qqface[r11]
 			if !ok1 {
 				return
 			}
 		}
-		if ctx.Being.Rex[4] != "" {
-			r22, _ := strconv.Atoi(ctx.Being.Rex[4])
+		if ctx.Being.ResultWord[4] != "" {
+			r22, _ := strconv.Atoi(ctx.Being.ResultWord[4])
 			var ok2 bool
 			r2, ok2 = qqface[r22]
 			if ok2 {

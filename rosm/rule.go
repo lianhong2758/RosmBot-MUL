@@ -1,7 +1,10 @@
 // Rule的实现,可以在这里增加更多Rule,也可以在server包增加独属于自己平台的rule
 package rosm
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
 
 // 判断rule
 func (m *Matcher) RulePass(ctx *Ctx) bool {
@@ -19,13 +22,13 @@ func rulePass(ctx *Ctx, rs ...Rule) bool {
 
 func OnlyAtMe() Rule {
 	return func(ctx *Ctx) bool {
-		return ctx.Being.AtMe
+		return ctx.Being.IsAtMe
 	}
 }
 
 func OnlyTheRoom(roomid, roomid2 string) Rule {
 	return func(ctx *Ctx) bool {
-		return roomid == ctx.Being.RoomID && roomid2 == ctx.Being.RoomID2
+		return roomid == ctx.Being.GroupID && roomid2 == ctx.Being.GuildID
 	}
 }
 
@@ -64,8 +67,45 @@ func OnlyOverAdministrator() Rule {
 func KeyWords(s ...string) Rule {
 	return func(ctx *Ctx) bool {
 		for _, str := range s {
-			if strings.Contains(ctx.Being.Word, str) {
-				ctx.Being.Def["keyword"] = str
+			if strings.Contains(ctx.Being.KeyWord, str) {
+				ctx.State["keyword"] = str
+				return true
+			}
+		}
+		return false
+	}
+}
+
+func WordRule(words ...string) Rule {
+	// return func(ctx *Ctx) bool {
+	// 	_, ok := WordMatch[ctx.Being.RawWord]
+	// 	return ok
+	// }
+	return func(ctx *Ctx) bool {
+		for _, v := range words {
+			if v == ctx.Being.RawWord {
+				ctx.Being.KeyWord = v
+				return true
+			}
+		}
+		return false
+	}
+}
+func RexRule(rex string) Rule {
+	r := regexp.MustCompile(rex)
+	return func(ctx *Ctx) bool {
+		if match := r.FindStringSubmatch(ctx.Being.RawWord); len(match) > 0 {
+			ctx.Being.ResultWord = match
+			return true
+		}
+		return false
+	}
+}
+
+func NoticeRule(types ...string) Rule {
+	return func(ctx *Ctx) bool {
+		for _, v := range types {
+			if ctx.State["types"].(string) == v {
 				return true
 			}
 		}

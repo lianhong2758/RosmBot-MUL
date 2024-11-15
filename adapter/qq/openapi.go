@@ -40,7 +40,7 @@ func (c *Config) GetOpenAPI(shortUrl string, body, result any) (err error) {
 
 // 获取频道用户信息
 func GetGuildUser(ctx *rosm.Ctx, uid string) (User *GuildUser, err error) {
-	url := host + fmt.Sprintf(urlGuildGetUser, ctx.Being.RoomID2, uid)
+	url := host + fmt.Sprintf(urlGuildGetUser, ctx.Being.GuildID, uid)
 	data, err := web.Web(clientConst, url, http.MethodGet, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
 	log.Debugln("[GetGuildUser][", url, "]", tool.BytesToString(data))
 	if err != nil {
@@ -54,8 +54,8 @@ func GetGuildUser(ctx *rosm.Ctx, uid string) (User *GuildUser, err error) {
 // 上传文件获取file_info,媒体类型：1 图片，2 视频，3 语音，4 文件（暂不开放）
 func UpFile(ctx *rosm.Ctx, url string, types int) (result *UpFileResult, err error) {
 	var upurl string
-	if ctx.Being.Def["type"].(string) == "GROUP_AT_MESSAGE_CREATE" {
-		upurl = host + fmt.Sprintf(urlUPFileGroup, ctx.Being.RoomID)
+	if ctx.State["type"].(string) == "GROUP_AT_MESSAGE_CREATE" {
+		upurl = host + fmt.Sprintf(urlUPFileGroup, ctx.Being.GroupID)
 	} else {
 		upurl = host + fmt.Sprintf(urlUPFilePrivate, ctx.Being.User.ID)
 	}
@@ -89,7 +89,7 @@ func NewDms(ctx *rosm.Ctx, userID, guildID string) (guild_id, channel_id string,
 
 // 子频道撤回消息 hide需要false | true
 func ChannelsDeleteMessage(ctx *rosm.Ctx, MessageID string, hide string) error {
-	urlDeleteMessage := fmt.Sprintf(urlDeleteMessage, ctx.Being.RoomID, MessageID, hide)
+	urlDeleteMessage := fmt.Sprintf(urlDeleteMessage, ctx.Being.GroupID, MessageID, hide)
 	data, err := web.Web(clientConst, host+urlDeleteMessage, http.MethodDelete, makeHeard(ctx.Bot.(*Config).access, ctx.Bot.(*Config).BotToken.AppId), nil)
 	log.Debugln("[DeleteMessage][", host+urlDeleteMessage, "]", tool.BytesToString(data))
 	if err != nil {

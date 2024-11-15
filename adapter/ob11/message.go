@@ -63,7 +63,7 @@ func CustomNode(nickname string, userID int64, content interface{}) message.Mess
 // SendToSelf ...
 func SendToSelf(ctx *rosm.Ctx) NoCtxSendMsg {
 	return func(msg message.Message) rosm.H {
-		ctx.Being.RoomID = "-" + ctx.Bot.Card().BotID
+		ctx.Being.GroupID = "-" + ctx.Bot.Card().BotID
 		return ctx.Send(msg...)
 	}
 }
@@ -79,7 +79,7 @@ func FakeSenderForwardNode(ctx *rosm.Ctx, msgs ...message.MessageSegment) messag
 // SendFakeForwardToGroup ...
 func SendFakeForwardToGroup(ctx *rosm.Ctx, msgs ...message.MessageSegment) NoCtxSendMsg {
 	return func(msg message.Message) rosm.H {
-		return rosm.H{"id": SendGroupForwardMessage(ctx, tool.StringToInt64(ctx.Being.RoomID), message.Message{
+		return rosm.H{"id": SendGroupForwardMessage(ctx, tool.StringToInt64(ctx.Being.GroupID), message.Message{
 			FakeSenderForwardNode(ctx, msg...),
 			FakeSenderForwardNode(ctx, msgs...),
 		}).Get("message_id").String()}

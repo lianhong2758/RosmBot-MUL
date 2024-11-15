@@ -3,7 +3,7 @@ package qq
 import "github.com/lianhong2758/RosmBot-MUL/rosm"
 
 func (c *Config) OnlyReply(ctx *rosm.Ctx) bool {
-	switch ctx.Being.Def["type"].(string) {
+	switch ctx.State["type"].(string) {
 	case "C2C_MESSAGE_CREATE":
 		return false
 	case "GROUP_AT_MESSAGE_CREATE":
@@ -17,7 +17,7 @@ func (c *Config) OnlyReply(ctx *rosm.Ctx) bool {
 
 // 主人
 func (c *Config) OnlyMaster(ctx *rosm.Ctx) bool {
-	switch ctx.Being.Def["type"].(string) {
+	switch ctx.State["type"].(string) {
 	case "C2C_MESSAGE_CREATE":
 		return false
 	case "GROUP_AT_MESSAGE_CREATE":

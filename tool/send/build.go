@@ -2,8 +2,8 @@ package send
 
 import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/server/ob11"
-	"github.com/lianhong2758/RosmBot-MUL/server/qq"
+	"github.com/lianhong2758/RosmBot-MUL/adapter/ob11"
+	"github.com/lianhong2758/RosmBot-MUL/adapter/qq"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 

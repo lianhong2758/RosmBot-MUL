@@ -24,20 +24,20 @@ func (c *Config) process(playload *WebsocketPayload) {
 			BotType: "qq_group",
 			Message: raw,
 			Being: &rosm.Being{
-				RoomID: raw.Author.UserOpenid,
+				GroupID: raw.Author.UserOpenid,
 				User: &rosm.UserData{
 					ID: raw.Author.UserOpenid,
 				},
 				MsgID: raw.ID,
-				Def:   H{"type": playload.T, "id": raw.ID},
 			},
+			State: H{"type": playload.T, "id": raw.ID},
 		}
 		word := raw.Content
 		//判断@
-		ctx.Being.AtMe = true
-		word = strings.TrimSpace(word)
-		log.Debugf("[debug]关键词切割结果: %s", word)
-		ctx.RunWord(word)
+		ctx.Being.IsAtMe = true
+		ctx.Being.RawWord = strings.TrimSpace(word)
+		log.Debugf("[debug]关键词切割结果: %s", ctx.Being.RawWord)
+		ctx.RunWord()
 		//群聊
 	case "GROUP_AT_MESSAGE_CREATE":
 		raw := new(RawGroupMessage)
@@ -52,21 +52,21 @@ func (c *Config) process(playload *WebsocketPayload) {
 			BotType: "qq_group",
 			Message: raw,
 			Being: &rosm.Being{
-				RoomID: raw.GroupID,
+				GroupID: raw.GroupID,
 				User: &rosm.UserData{
 					ID:   raw.Author.ID,
 					Name: raw.Author.ID[len(raw.Author.ID)-8:],
 				},
 				MsgID: raw.ID,
-				Def:   H{"type": playload.T, "id": raw.ID},
 			},
+			State: H{"type": playload.T, "id": raw.ID},
 		}
 		word := raw.Content
 		//判断@
-		ctx.Being.AtMe = true
-		word = strings.TrimSpace(word)
-		log.Debugf("[debug]关键词切割结果: %s", word)
-		ctx.RunWord(word)
+		ctx.Being.IsAtMe = true
+		ctx.Being.RawWord = strings.TrimSpace(word)
+		log.Debugf("[debug]关键词切割结果: %s", ctx.Being.RawWord)
+		ctx.RunWord()
 		//频道私聊
 		//文字子频道@机器人
 		//文字子频道全量消息（私域）
@@ -87,24 +87,25 @@ func (c *Config) process(playload *WebsocketPayload) {
 			BotType: "qq_gulid",
 			Message: raw,
 			Being: &rosm.Being{
-				RoomID:  raw.ChannelID,
-				RoomID2: raw.GuildID,
+				GroupID: raw.ChannelID,
+				GuildID: raw.GuildID,
 				ATList:  at,
 				User: &rosm.UserData{
 					Name: raw.Author.Username,
 					ID:   raw.Author.ID,
 				},
 				MsgID: raw.ID,
-				Def:   H{"type": playload.T, "id": raw.ID},
 			},
+			State: H{"type": playload.T, "id": raw.ID},
 		}
 		word := raw.Content
 		//判断@
 		if strings.Contains(raw.Content, "<@!"+c.Ready.User.ID+">") {
-			ctx.Being.AtMe = true
+			ctx.Being.IsAtMe = true
 			word = strings.TrimSpace(strings.Replace(word, "<@!"+c.Ready.User.ID+">", "", 1))
 		}
+		ctx.Being.RawWord = word
 		log.Debugf("[debug]关键词切割结果: %s", word)
-		ctx.RunWord(word)
+		ctx.RunWord()
 	}
 }

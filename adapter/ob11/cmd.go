@@ -73,7 +73,7 @@ func SetGroupKick(ctx *rosm.Ctx, groupID, userID int64, rejectAddRequest bool) {
 // SetThisGroupKick 本群组踢人
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_kick-%E7%BE%A4%E7%BB%84%E8%B8%A2%E4%BA%BA
 func SetThisGroupKick(ctx *rosm.Ctx, userID int64, rejectAddRequest bool) {
-	SetGroupKick(ctx, tool.StringToInt64(ctx.Being.RoomID), userID, rejectAddRequest)
+	SetGroupKick(ctx, tool.StringToInt64(ctx.Being.GroupID), userID, rejectAddRequest)
 }
 
 // SetGroupBan 群组单人禁言
@@ -89,7 +89,7 @@ func SetGroupBan(ctx *rosm.Ctx, groupID, userID, duration int64) {
 // SetThisGroupBan 本群组单人禁言
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_ban-%E7%BE%A4%E7%BB%84%E5%8D%95%E4%BA%BA%E7%A6%81%E8%A8%80
 func SetThisGroupBan(ctx *rosm.Ctx, userID, duration int64) {
-	SetGroupBan(ctx, tool.StringToInt64(ctx.Being.RoomID), userID, duration)
+	SetGroupBan(ctx, tool.StringToInt64(ctx.Being.GroupID), userID, duration)
 }
 
 // SetGroupWholeBan 群组全员禁言
@@ -104,7 +104,7 @@ func SetGroupWholeBan(ctx *rosm.Ctx, groupID int64, enable bool) {
 // SetThisGroupWholeBan 本群组全员禁言
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_whole_ban-%E7%BE%A4%E7%BB%84%E5%85%A8%E5%91%98%E7%A6%81%E8%A8%80
 func SetThisGroupWholeBan(ctx *rosm.Ctx, enable bool) {
-	SetGroupWholeBan(ctx, tool.StringToInt64(ctx.Being.RoomID), enable)
+	SetGroupWholeBan(ctx, tool.StringToInt64(ctx.Being.GroupID), enable)
 }
 
 // SetGroupAdmin 群组设置管理员
@@ -120,7 +120,7 @@ func SetGroupAdmin(ctx *rosm.Ctx, groupID, userID int64, enable bool) {
 // SetThisGroupAdmin 本群组设置管理员
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_whole_ban-%E7%BE%A4%E7%BB%84%E5%85%A8%E5%91%98%E7%A6%81%E8%A8%80
 func SetThisGroupAdmin(ctx *rosm.Ctx, userID int64, enable bool) {
-	SetGroupAdmin(ctx, tool.StringToInt64(ctx.Being.RoomID), userID, enable)
+	SetGroupAdmin(ctx, tool.StringToInt64(ctx.Being.GroupID), userID, enable)
 }
 
 // SetGroupAnonymous 群组匿名
@@ -135,7 +135,7 @@ func SetGroupAnonymous(ctx *rosm.Ctx, groupID int64, enable bool) {
 // SetThisGroupAnonymous 群组匿名
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_anonymous-%E7%BE%A4%E7%BB%84%E5%8C%BF%E5%90%8D
 func SetThisGroupAnonymous(ctx *rosm.Ctx, enable bool) {
-	SetGroupAnonymous(ctx, tool.StringToInt64(ctx.Being.RoomID), enable)
+	SetGroupAnonymous(ctx, tool.StringToInt64(ctx.Being.GroupID), enable)
 }
 
 // SetGroupCard 设置群名片（群备注）
@@ -151,7 +151,7 @@ func SetGroupCard(ctx *rosm.Ctx, groupID, userID int64, card string) {
 // SetThisGroupCard 设置本群名片（群备注）
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_card-%E8%AE%BE%E7%BD%AE%E7%BE%A4%E5%90%8D%E7%89%87%E7%BE%A4%E5%A4%87%E6%B3%A8
 func SetThisGroupCard(ctx *rosm.Ctx, userID int64, card string) {
-	SetGroupCard(ctx, tool.StringToInt64(ctx.Being.RoomID), userID, card)
+	SetGroupCard(ctx, tool.StringToInt64(ctx.Being.GroupID), userID, card)
 }
 
 // SetGroupName 设置群名
@@ -166,7 +166,7 @@ func SetGroupName(ctx *rosm.Ctx, groupID int64, groupName string) {
 // SetThisGroupName 设置本群名
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_name-%E8%AE%BE%E7%BD%AE%E7%BE%A4%E5%90%8D
 func SetThisGroupName(ctx *rosm.Ctx, groupID int64, groupName string) {
-	SetGroupName(ctx, tool.StringToInt64(ctx.Being.RoomID), groupName)
+	SetGroupName(ctx, tool.StringToInt64(ctx.Being.GroupID), groupName)
 }
 
 // SetGroupLeave 退出群组
@@ -181,7 +181,7 @@ func SetGroupLeave(ctx *rosm.Ctx, groupID int64, isDismiss bool) {
 // SetThisGroupLeave 退出本群组
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_leave-%E9%80%80%E5%87%BA%E7%BE%A4%E7%BB%84
 func SetThisGroupLeave(ctx *rosm.Ctx, isDismiss bool) {
-	SetGroupLeave(ctx, tool.StringToInt64(ctx.Being.RoomID), isDismiss)
+	SetGroupLeave(ctx, tool.StringToInt64(ctx.Being.GroupID), isDismiss)
 }
 
 // SetGroupSpecialTitle 设置群组专属头衔
@@ -197,7 +197,7 @@ func SetGroupSpecialTitle(ctx *rosm.Ctx, groupID, userID int64, specialTitle str
 // SetThisGroupSpecialTitle 设置本群组专属头衔
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#set_group_special_title-%E8%AE%BE%E7%BD%AE%E7%BE%A4%E7%BB%84%E4%B8%93%E5%B1%9E%E5%A4%B4%E8%A1%94
 func SetThisGroupSpecialTitle(ctx *rosm.Ctx, userID int64, specialTitle string) {
-	SetGroupSpecialTitle(ctx, tool.StringToInt64(ctx.Being.RoomID), userID, specialTitle)
+	SetGroupSpecialTitle(ctx, tool.StringToInt64(ctx.Being.GroupID), userID, specialTitle)
 }
 
 // SetFriendAddRequest 处理加好友请求
@@ -257,7 +257,7 @@ func GetGroupInfo(ctx *rosm.Ctx, groupID int64, noCache bool) zero.Group {
 // GetThisGroupInfo 获取本群信息
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#get_group_info-%E8%8E%B7%E5%8F%96%E7%BE%A4%E4%BF%A1%E6%81%AF
 func GetThisGroupInfo(ctx *rosm.Ctx, noCache bool) zero.Group {
-	return GetGroupInfo(ctx, tool.StringToInt64(ctx.Being.RoomID), noCache)
+	return GetGroupInfo(ctx, tool.StringToInt64(ctx.Being.GroupID), noCache)
 }
 
 // GetGroupList 获取群列表
@@ -279,7 +279,7 @@ func GetGroupMemberInfo(ctx *rosm.Ctx, groupID int64, userID int64, noCache bool
 // GetThisGroupMemberInfo 获取本群成员信息
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#get_group_member_info-%E8%8E%B7%E5%8F%96%E7%BE%A4%E6%88%90%E5%91%98%E4%BF%A1%E6%81%AF
 func GetThisGroupMemberInfo(ctx *rosm.Ctx, userID int64, noCache bool) gjson.Result {
-	return GetGroupMemberInfo(ctx, tool.StringToInt64(ctx.Being.RoomID), userID, noCache)
+	return GetGroupMemberInfo(ctx, tool.StringToInt64(ctx.Being.GroupID), userID, noCache)
 }
 
 // GetGroupMemberList 获取群成员列表
@@ -292,7 +292,7 @@ func GetGroupMemberList(ctx *rosm.Ctx, groupID int64) gjson.Result {
 
 // GetThisGroupMemberList 获取本群成员列表
 func GetThisGroupMemberList(ctx *rosm.Ctx) gjson.Result {
-	return GetGroupMemberList(ctx, tool.StringToInt64(ctx.Being.RoomID))
+	return GetGroupMemberList(ctx, tool.StringToInt64(ctx.Being.GroupID))
 }
 
 // GetGroupMemberListNoCache 无缓存获取群员列表
@@ -306,7 +306,7 @@ func GetGroupMemberListNoCache(ctx *rosm.Ctx, groupID int64) gjson.Result {
 
 // GetThisGroupMemberListNoCache 无缓存获取本群员列表
 func GetThisGroupMemberListNoCache(ctx *rosm.Ctx) gjson.Result {
-	return GetGroupMemberListNoCache(ctx, tool.StringToInt64(ctx.Being.RoomID))
+	return GetGroupMemberListNoCache(ctx, tool.StringToInt64(ctx.Being.GroupID))
 }
 
 // GetGroupHonorInfo 获取群荣誉信息
@@ -321,7 +321,7 @@ func GetGroupHonorInfo(ctx *rosm.Ctx, groupID int64, hType string) gjson.Result 
 // GetThisGroupHonorInfo 获取本群荣誉信息
 // https://github.com/botuniverse/onebot-11/blob/master/api/public.md#get_group_honor_info-%E8%8E%B7%E5%8F%96%E7%BE%A4%E8%8D%A3%E8%AA%89%E4%BF%A1%E6%81%AF
 func GetThisGroupHonorInfo(ctx *rosm.Ctx, hType string) gjson.Result {
-	return GetGroupHonorInfo(ctx, tool.StringToInt64(ctx.Being.RoomID), hType)
+	return GetGroupHonorInfo(ctx, tool.StringToInt64(ctx.Being.GroupID), hType)
 }
 
 // GetRecord 获取语音
@@ -361,7 +361,7 @@ func SetGroupPortrait(ctx *rosm.Ctx, groupID int64, file string) {
 // SetThisGroupPortrait 设置本群头像
 // https://github.com/Mrs4s/go-cqhttp/blob/master/docs/cqhttp.md#%E8%AE%BE%E7%BD%AE%E7%BE%A4%E5%A4%B4%E5%83%8F
 func SetThisGroupPortrait(ctx *rosm.Ctx, file string) {
-	SetGroupPortrait(ctx, tool.StringToInt64(ctx.Being.RoomID), file)
+	SetGroupPortrait(ctx, tool.StringToInt64(ctx.Being.GroupID), file)
 }
 
 // OCRImage 图片OCR
@@ -413,7 +413,7 @@ func GetGroupAtAllRemain(ctx *rosm.Ctx, groupID int64) gjson.Result {
 // GetThisGroupAtAllRemain 获取本群@全体成员剩余次数
 // https://github.com/Mrs4s/go-cqhttp/blob/master/docs/cqhttp.md#%E8%8E%B7%E5%8F%96%E7%BE%A4%E5%85%A8%E4%BD%93%E6%88%90%E5%91%98%E5%89%A9%E4%BD%99%E6%AC%A1%E6%95%B0
 func GetThisGroupAtAllRemain(ctx *rosm.Ctx) gjson.Result {
-	return GetGroupAtAllRemain(ctx, tool.StringToInt64(ctx.Being.RoomID))
+	return GetGroupAtAllRemain(ctx, tool.StringToInt64(ctx.Being.GroupID))
 }
 
 // GetGroupMessageHistory 获取群消息历史记录
@@ -438,12 +438,12 @@ func GetLatestGroupMessageHistory(ctx *rosm.Ctx, groupID int64) gjson.Result {
 //
 //	messageID: 起始消息序号, 可通过 get_msg 获得
 func GetThisGroupMessageHistory(ctx *rosm.Ctx, messageID int64) gjson.Result {
-	return GetGroupMessageHistory(ctx, tool.StringToInt64(ctx.Being.RoomID), messageID)
+	return GetGroupMessageHistory(ctx, tool.StringToInt64(ctx.Being.GroupID), messageID)
 }
 
 // GettLatestThisGroupMessageHistory 获取最新本群消息历史记录
 func GetLatestThisGroupMessageHistory(ctx *rosm.Ctx) gjson.Result {
-	return GetLatestGroupMessageHistory(ctx, tool.StringToInt64(ctx.Being.RoomID))
+	return GetLatestGroupMessageHistory(ctx, tool.StringToInt64(ctx.Being.GroupID))
 }
 
 // GetGroupEssenceMessageList 获取群精华消息列表
@@ -456,7 +456,7 @@ func GetGroupEssenceMessageList(ctx *rosm.Ctx, groupID int64) gjson.Result {
 
 // GetThisGroupEssenceMessageList 获取本群精华消息列表
 func GetThisGroupEssenceMessageList(ctx *rosm.Ctx) gjson.Result {
-	return GetGroupEssenceMessageList(ctx, tool.StringToInt64(ctx.Being.RoomID))
+	return GetGroupEssenceMessageList(ctx, tool.StringToInt64(ctx.Being.GroupID))
 }
 
 // SetGroupEssenceMessage 设置群精华消息
@@ -515,7 +515,7 @@ func UploadGroupFile(ctx *rosm.Ctx, groupID int64, file, name, folder string) ze
 //
 //	msg: FILE_NOT_FOUND FILE_SYSTEM_UPLOAD_API_ERROR ...
 func UploadThisGroupFile(ctx *rosm.Ctx, file, name, folder string) zero.APIResponse {
-	return UploadGroupFile(ctx, tool.StringToInt64(ctx.Being.RoomID), file, name, folder)
+	return UploadGroupFile(ctx, tool.StringToInt64(ctx.Being.GroupID), file, name, folder)
 } // SetMyAvatar 设置我的头像
 // https://llonebot.github.io/zh-CN/develop/extends_api
 func SetMyAvatar(ctx *rosm.Ctx, file string) zero.APIResponse {

@@ -3,7 +3,6 @@ package rosm
 
 import (
 	"os"
-	"regexp"
 	"sort"
 	"sync"
 	"time"
@@ -26,23 +25,31 @@ type (
 	Rule = func(ctx *Ctx) bool
 	// Handler 事件处理函数
 	Handler = func(ctx *Ctx)
+	//meta_event,message,notice,request,all,surplus
+	EventType = string
+)
+
+const (
+	AllMessage     = "all"
+	SurplusMessage = "surplus"
 )
 
 type PluginData struct {
 	DefaultOff bool //是否默认禁用
-	Priority   int  //优先级控制,仅对Rex有效,用于插件的匹配顺序,范围0-9,默认5,数字越小优先级越高
 	Help       string
 	Name       string
 	DataFolder string //"data/xxx/"+
-	Matchers   []*Matcher
+	Config     any
+	Matchers   []*Matcher //子插件
 }
 type Matcher struct {
-	Word       []string
-	Rex        *regexp.Regexp
+	types      string //匹配事件类型
 	rules      []Rule
 	handler    Handler
-	mul        []string
+	priority   int         //优先级控制,用于插件的匹配顺序,范围0-9,默认5,数字越小优先级越高,wordRule无效
+	mul        []string    //可用平台
 	block      bool        //阻断
+	temp       bool        //是否是临时Matcher
 	nextchan   chan *Ctx   //用于上下文
 	PluginNode *PluginData //溯源
 }
@@ -57,62 +64,103 @@ var (
 	// 正则字典
 	RegexpMatch = []*Matcher{} //Rex
 
-	//事件触发
+	//事件触发,meta_event,message,notice,request,all,surplus
 	EventMatch = map[EventType][]*Matcher{} //事件触发
 )
 
 // 注册插件
 func Register(p *PluginData) *PluginData {
+	p.Matchers = make([]*Matcher, 0)
 	pluginName := p.Name
-	log.Debugln("插件注册:", pluginName)
+	log.Debugln("[debug]插件注册:", pluginName)
 	plugins[pluginName] = p
 	if p.DataFolder != "" && file.IsNotExist("data/"+p.DataFolder) {
 		_ = os.MkdirAll("data/"+p.DataFolder, 0755)
 	}
 	plugins[pluginName].DataFolder = "data/" + p.DataFolder + "/"
+	if p.DataFolder != "" && p.Config != nil {
+		if err := LoadConfig(p.DataFolder+"config.json", p.Config); err != nil {
+			log.Warnln("[warn]插件注册:", err)
+		}
+	}
 	return plugins[pluginName]
 }
 
 // 创建插件对象信息
-func NewRegist(name, help, dataFolder string) *PluginData {
-	return &PluginData{Name: name, Help: help, DataFolder: dataFolder}
+func NewRegist(name, help, dataFolder string, DefaultOff bool, config any) *PluginData {
+	return &PluginData{Name: name, Help: help, DataFolder: dataFolder, Config: config, DefaultOff: DefaultOff}
 }
 
-// 完全词匹配
-func (p *PluginData) AddWord(word ...string) *Matcher {
-	m := new(Matcher)
-	m.block = true
-	m.Word = append(m.Word, word...)
-	for _, v := range word {
-		WordMatch[v] = m
+// 元事件
+func (p *PluginData) OnMetaEvent() *Matcher {
+	return p.On("meta_event")
+}
+
+// message
+func (p *PluginData) OnMessage() *Matcher {
+	return p.On("message").SetBlock(true)
+}
+
+// notice
+func (p *PluginData) OnNotice() *Matcher {
+	return p.On("notice")
+}
+
+// request
+func (p *PluginData) OnRequest() *Matcher {
+	return p.On("request")
+}
+
+// on 注册一个基础事件响应器，可自定义类型
+func (p *PluginData) On(types string) *Matcher {
+	m := &Matcher{
+		types:      types,
+		block:      false,
+		priority:   5,
+		temp:       false,
+		PluginNode: p,
 	}
+	EventMatch[types] = append(EventMatch[types], m)
 	p.Matchers = append(p.Matchers, m)
-	m.PluginNode = p
 	return m
 }
 
-// 正则匹配
-func (p *PluginData) AddRex(rex string) *Matcher {
-	m := new(Matcher)
-	m.block = true
-	m.Rex = regexp.MustCompile(rex)
+// 注册一个消息事件响应器，匹配word消息
+func (p *PluginData) OnWord(words ...string) *Matcher {
+	//这里用map跳表匹配,所以不用添加匹配的Rule
+	m := p.OnMessage() //p.OnMessage().SetRule(WordRule(words...))
+	for _, word := range words {
+		WordMatch[word] = m
+	}
+	return m
+}
+
+// 注册一个消息事件响应器，匹配rex消息
+func (p *PluginData) OnRex(rex string) *Matcher {
+	m := p.OnMessage().SetRule(RexRule(rex))
 	RegexpMatch = append(RegexpMatch, m)
-	p.Matchers = append(p.Matchers, m)
-	m.PluginNode = p
 	return m
 }
 
-// 其他事件匹配器
-func (p *PluginData) AddEvent(types ...EventType) *Matcher {
-	m := new(Matcher)
-	m.block = false
-	for _, v := range types {
-		EventMatch[v] = append(EventMatch[v], m)
-	}
-	p.Matchers = append(p.Matchers, m)
-	m.PluginNode = p
+// 注册一个消息事件响应器，匹配rex消息
+func (p *PluginData) OnNoticeWithType(types ...string) *Matcher {
+	m := p.OnNotice().SetRule(NoticeRule(types...))
 	return m
 }
+
+// 框架独特的事件,匹配所有消息,但不阻断
+func (p *PluginData) OnAllMessage() *Matcher {
+	m := p.On("all").SetBlock(false)
+	return m
+}
+
+// 框架独特的事件,匹配没有插件匹配的消息,类似最低优先级,不阻断
+func (p *PluginData) OnSurplusMessage() *Matcher {
+	m := p.On("surplus").SetBlock(false)
+	return m
+}
+
+// "data/xxx/"+
 func (p *PluginData) GetFolder() string {
 	return p.DataFolder
 }
@@ -139,7 +187,7 @@ func (m *Matcher) SetBlock(ok bool) *Matcher {
 	return m
 }
 
-func (m *Matcher) Rule(r ...Rule) *Matcher {
+func (m *Matcher) SetRule(r ...Rule) *Matcher {
 	m.rules = append(m.rules, r...)
 	return m
 }
@@ -197,6 +245,7 @@ func Display() {
 	log.Println(WordMatch)
 	log.Println(RegexpMatch)
 }
+
 func GetPlugins() map[string]*PluginData {
 	return plugins
 }
@@ -207,9 +256,26 @@ func GetBotIsOnInThis() func(*Ctx) bool {
 	}
 }
 
-// Rosm RegexpMatch排序
+// Rosm Match排序
 func RosmInit() {
+	//正则排序
 	sort.Slice(RegexpMatch, func(i, j int) bool {
-		return RegexpMatch[i].PluginNode.Priority < RegexpMatch[j].PluginNode.Priority
+		return RegexpMatch[i].priority < RegexpMatch[j].priority
 	})
+	//event排序
+	for _, mas := range EventMatch {
+		sort.Slice(mas, func(i, j int) bool {
+			return mas[i].priority < mas[j].priority
+		})
+	}
+}
+
+func (p *PluginData) GetConfig() any {
+	return p.Config
+}
+
+func DeleteOffRule(p *PluginData) {
+	for _, m := range p.Matchers {
+		m.rules = m.rules[1 : len(m.rules)-1]
+	}
 }

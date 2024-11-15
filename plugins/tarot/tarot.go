@@ -31,7 +31,7 @@ func init() {
 		}
 		log.Infoln("[tarot]加载", len(cardMap), "张塔罗牌...")
 	}
-	en.AddWord("/抽塔罗牌").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("/抽塔罗牌").Handle(func(ctx *rosm.Ctx) {
 		reasons := [...]string{"您抽到的是~\n", "锵锵锵，塔罗牌的预言是~\n", "诶，让我看看您抽到了~\n"}
 		position := [...]string{"『正位』", "『逆位』"}
 		i := rand.Intn(22)

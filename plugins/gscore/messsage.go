@@ -13,7 +13,7 @@ func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 		Bot_self_id: ctx.Bot.Card().BotID,
 		Msg_id:      ctx.Being.MsgID,
 		User_type:   "group",
-		Group_id:    tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2),
+		Group_id:    tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID),
 		User_id:     ctx.Being.User.ID,
 		User_pm: func() int {
 			if rosm.OnlyMaster()(ctx) {
@@ -26,7 +26,7 @@ func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 		Content: []WriteMessage{
 			{
 				Type: "text",
-				Data: ctx.Being.Word,
+				Data: ctx.Being.RawWord,
 			},
 		},
 		Sender: Dictionary{

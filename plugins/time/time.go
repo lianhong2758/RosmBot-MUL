@@ -40,7 +40,7 @@ func init() {
 			"- /删除指令xxx",
 		DataFolder: "time",
 	})
-	en.AddRex(`^/记录在(.*)的指令`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/记录在(.*)的指令`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		next, stop := ctx.GetNext(rosm.AllMessage, true, rosm.OnlyTheUser(ctx.Being.User.ID))
 		ctx.Send(message.Text("发送想要记录的指令:"))
 		var order string
@@ -49,12 +49,15 @@ func init() {
 			ctx.Send(message.Text("时间太久了"))
 			return
 		case ctx2 := <-next:
-			order = ctx2.Being.Word
+			order = ctx2.Being.RawWord
 		}
 		//结束记录
 		stop()
 		// 允许往正在执行的 cron 中添加任务
-		id, err := c.AddFunc(ctx.Being.Rex[1], func() { ctx.RunWord(order) })
+		id, err := c.AddFunc(ctx.Being.ResultWord[1], func() {
+			ctx.Being.RawWord = order
+			ctx.RunWord()
+		})
 		if err != nil {
 			ctx.Send(message.Text("参数不合法,ERROR: ", err))
 			return
@@ -62,11 +65,11 @@ func init() {
 		entryIDMap[order] = id
 		//开始存储数据库
 		m := &mode{
-			Key:     tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2) + order,
-			String1: tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2),
+			Key:     tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID) + order,
+			String1: tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID),
 			Types:   ctx.BotType,
 			Word:    order,
-			Time:    ctx.Being.Rex[1],
+			Time:    ctx.Being.ResultWord[1],
 			UserID:  ctx.Being.User.ID,
 			BotID:   ctx.Bot.Card().BotID,
 		}
@@ -76,15 +79,15 @@ func init() {
 		}
 		ctx.Send(message.Text("记录指令成功!"))
 	})
-	en.AddRex(`^/删除指令(.*)`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/删除指令(.*)`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		// 允许往正在执行的 cron 中添加任务
-		if id, ok := entryIDMap[ctx.Being.Rex[1]]; ok {
-			if err := TimeDB.Delete(tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2) + ctx.Being.Rex[1]); err != nil {
+		if id, ok := entryIDMap[ctx.Being.ResultWord[1]]; ok {
+			if err := TimeDB.Delete(tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID) + ctx.Being.ResultWord[1]); err != nil {
 				ctx.Send(message.Text("ERROR: ", err))
 				return
 			}
 			c.Remove(id)
-			delete(entryIDMap, ctx.Being.Rex[1])
+			delete(entryIDMap, ctx.Being.ResultWord[1])
 		} else {
 			ctx.Send(message.Text("未找到指令任务!"))
 		}
@@ -99,10 +102,10 @@ func cronRun(db *model) {
 	c = cron.New()
 	db.Range(func(i int, m *mode) bool {
 		timeCtx := send.CTXBuild(m.Types, m.BotID, m.String1)
-		timeCtx.Being.Word = m.Word
+		timeCtx.Being.RawWord = m.Word
 		timeCtx.Being.User = &rosm.UserData{ID: m.UserID}
 		id, _ := c.AddFunc(m.Time, func() {
-			timeCtx.RunWord(m.Word)
+			timeCtx.RunWord()
 		})
 		entryIDMap[m.Word] = id
 		return true

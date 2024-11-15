@@ -15,61 +15,62 @@ import (
 )
 
 func (c *Config) process(e *zero.Event) {
-	mess := e.Message.CQString()
-	log.Debug("Message: ", mess)
 	switch e.PostType {
 	// 消息事件
-	case "message":
+	case "message", "message_sent":
+		atList := c.preprocessMessageEvent(e)
+		mess := e.Message.CQString()
+		log.Debug("Message: ", mess)
 		switch e.MessageType {
 		// 私聊信息
 		case "private":
 			ctx := &rosm.Ctx{
 				BotType: "ob11",
 				Being: &rosm.Being{
-					RoomID2: "",
-					RoomID:  "-" + tool.Int64ToString(e.Sender.ID),
-					Word:    mess,
+					ATList:  atList,
+					GuildID: "",
+					GroupID: "-" + tool.Int64ToString(e.Sender.ID),
+					RawWord: mess,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
 					MsgID: tool.BytesToString(e.RawMessageID),
-					Def:   map[string]any{},
 				},
 				Message: e,
 				Bot:     c,
 			}
-			ctx.Being.AtMe = true
-			ctx.RunWord(ctx.Being.Word)
+			ctx.Being.IsAtMe = true
+			ctx.RunWord()
 		// 群聊信息
 		case "group":
 			ctx := &rosm.Ctx{
 				BotType: "ob11",
 				Being: &rosm.Being{
-					RoomID2: e.ChannelID,
-					RoomID:  tool.Int64ToString(e.GroupID) + e.GuildID,
-					Word:    mess,
+					ATList:  atList,
+					GuildID: e.ChannelID,
+					GroupID: tool.Int64ToString(e.GroupID) + e.GuildID,
+					RawWord: mess,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
 						//	PortraitURI: u.User.PortraitURI,
 					},
 					MsgID: tool.BytesToString(e.RawMessageID),
-					Def:   map[string]any{},
 				},
 				Message: e,
 				Bot:     c,
 			}
 
-			ctx.Being.AtMe = e.IsToMe
-			e.IsToMe = ctx.Being.AtMe
+			ctx.Being.IsAtMe = e.IsToMe
+			e.IsToMe = ctx.Being.IsAtMe
 			//log.Println(ctx.Being.Word)
-			ctx.RunWord(ctx.Being.Word)
+			ctx.RunWord()
 		case "guild":
 
 		default:
-			//	log.Warning(fmt.Sprintf("Cannot Parse 'message' event -> %s", receive))
+			log.Warningf("Cannot Parse 'message' event -> %s", e.MessageType)
 		}
 
 		// 通知事件
@@ -78,20 +79,32 @@ func (c *Config) process(e *zero.Event) {
 		ctx := &rosm.Ctx{
 			BotType: "ob11",
 			Being: &rosm.Being{
-				RoomID2: e.ChannelID,
-				RoomID:  tool.Int64ToString(e.GroupID) + e.GuildID,
+				GuildID: e.ChannelID,
+				GroupID: tool.Int64ToString(e.GroupID) + e.GuildID,
 				User: &rosm.UserData{
 					ID: tool.Int64ToString(e.UserID),
 				},
-				Def: map[string]any{},
 			},
 			Message: e,
 			Bot:     c,
 		}
 		log.Debug(ctx)
-		ctx.RunEvent(rosm.EventType(ctx.Message.(*zero.Event).NoticeType))
+		ctx.RunEvent("notice")
 	case "request": //好有请求
+		ctx := &rosm.Ctx{
+			BotType: "ob11",
+			Being: &rosm.Being{
+				User: &rosm.UserData{
+					ID: tool.Int64ToString(e.UserID),
+				},
+			},
+			Message: e,
+			Bot:     c,
+		}
+		log.Debug(ctx)
+		ctx.RunEvent("request")
 	default:
+		log.Warningf("Cannot Parse 'message' event -> %s", e.PostType)
 	}
 }
 
@@ -140,9 +153,6 @@ func (c *Config) processEvent() func([]byte, zero.APICaller) {
 		case "request":
 			event.DetailType = event.RequestType
 		}
-		if event.PostType == "message" {
-			c.preprocessMessageEvent(&event)
-		}
 		go c.process(&event)
 	}
 }
@@ -157,31 +167,30 @@ func preprocessNoticeEvent(e *zero.Event) {
 }
 
 // preprocessMessageEvent 返回信息事件
-func (c *Config) preprocessMessageEvent(e *zero.Event) {
+func (c *Config) preprocessMessageEvent(e *zero.Event) []string {
 	e.Message = message.ParseMessage(e.NativeMessage)
-
+	atList := []string{}
 	processAt := func() { // 处理是否at机器人
+		//索引纠正
+		var ioffset = 0
 		e.IsToMe = false
-		deleteFirstAtMe := func() {}
 		for i, m := range e.Message {
 			if m.Type == "at" {
 				qq, _ := strconv.ParseInt(m.Data["qq"], 10, 64)
 				if qq == e.SelfID && !e.IsToMe {
 					e.IsToMe = true
-					deleteFirstAtMe = func() {
-						e.Message = append(e.Message[:i], e.Message[i+1:]...)
-					}
+					e.Message = append(e.Message[:i+ioffset], e.Message[i+ioffset+1:]...)
+					ioffset--
 					continue
 				}
 				if qq != 0 {
-					e.Message = append(append(e.Message[:i], message.MessageSegment{Type: "at", Data: map[string]string{
-						"qq": m.Data["qq"],
-					}}), e.Message[i+1:]...)
+					atList = append(atList, m.Data["qq"])
+					e.Message = append(e.Message[:i+ioffset], e.Message[i+ioffset+1:]...)
+					ioffset--
 					continue
 				}
 			}
 		}
-		deleteFirstAtMe()
 		if len(e.Message) == 0 || e.Message[0].Type != "text" {
 			return
 		}
@@ -193,7 +202,6 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 			first.Data["text"] = text[len(c.Card().BotName):]
 			return
 		}
-
 	}
 	switch {
 	case e.DetailType == "group":
@@ -207,7 +215,5 @@ func (c *Config) preprocessMessageEvent(e *zero.Event) {
 		e.IsToMe = true // 私聊也判断为at
 		log.Infof("[ob11] [↓][私聊消息][%v] : %v", e.Sender.String(), e.RawMessage)
 	}
-	if len(e.Message) > 0 && e.Message[0].Type == "text" { // Trim Again!
-		e.Message[0].Data["text"] = strings.TrimLeft(e.Message[0].Data["text"], " ")
-	}
+	return atList
 }

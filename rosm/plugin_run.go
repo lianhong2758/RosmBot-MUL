@@ -15,11 +15,13 @@ func (ctx *Ctx) RunEvent(types EventType) (block bool) {
 			log.Errorf("[rosm] RunEvent Err: %v\n%v", pa, tool.BytesToString(debug.Stack()))
 		}
 	}()
-	log.Debug("[Event]开始匹配事件type", types)
+	//bot启用状态
+	ctx.on = PluginIsOn(boten)(ctx)
+	//next
 	if ctx.sendNext(types) {
 		return true
 	}
-	ctx.on = PluginIsOn(boten)(ctx)
+	//event
 	for _, m := range EventMatch[types] {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
@@ -31,40 +33,31 @@ func (ctx *Ctx) RunEvent(types EventType) (block bool) {
 }
 
 // 匹配修剪好的触发词
-func (ctx *Ctx) RunWord(word string) {
+func (ctx *Ctx) RunWord() {
 	defer func() {
 		if pa := recover(); pa != nil {
 			log.Errorf("[rosm] RunEvent Err: %v\n%v", pa, tool.BytesToString(debug.Stack()))
 		}
 	}()
-	ctx.Being.Word = word
 	//全匹配
-	if ctx.RunEvent(AllMessage) {
+	if ctx.RunEvent("all") {
 		return
 	}
-	ctx.on = PluginIsOn(boten)(ctx)
-	//关键词触发
-	if m, ok := WordMatch[word]; ok {
+	//关键词触发,不检查block
+	if m, ok := WordMatch[ctx.Being.RawWord]; ok {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
-			log.Debugf("调用插件: %s - 匹配关键词: %s", m.PluginNode.Name, word)
 		}
 		return
 	}
 	//正则匹配
 	for _, m := range RegexpMatch {
-		regex := m.Rex
-		if match := regex.FindStringSubmatch(word); len(match) > 0 {
-			if m.RulePass(ctx) {
-				ctx.Being.Rex = match
-				m.handler(ctx)
-				log.Debugf("调用插件: %s - 匹配关键词: %s", m.PluginNode.Name, word)
-				if m.block {
-					return
-				}
+		if m.RulePass(ctx) {
+			if m.handler(ctx); m.block {
+				return
 			}
 		}
 	}
 	//未匹配时触发
-	ctx.RunEvent(SurplusMessage)
+	ctx.RunEvent("surplus")
 }

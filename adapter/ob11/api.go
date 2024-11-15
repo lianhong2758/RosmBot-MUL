@@ -58,7 +58,7 @@ func SendPrivateMessage(ctx *rosm.Ctx, userID int64, message interface{}) int64 
 
 // CardOrNickName 从 uid 获取群名片，如果没有则获取昵称
 func CardOrNickName(ctx *rosm.Ctx, uid int64) (name string) {
-	name = GetGroupMemberInfo(ctx, tool.StringToInt64(ctx.Being.RoomID), uid, false).Get("card").String()
+	name = GetGroupMemberInfo(ctx, tool.StringToInt64(ctx.Being.GroupID), uid, false).Get("card").String()
 	if name == "" {
 		name = GetStrangerInfo(ctx, uid, false).Get("nickname").String()
 	}

@@ -19,10 +19,10 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 		return rosm.H{}
 	}
 	t := MakeMsgContent(ctx, msg...)
-	if ctx.Being.RoomID[0:1] != "-" {
-		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID), t)), "code": "0"}
+	if ctx.Being.GroupID[0:1] != "-" {
+		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.GroupID), t)), "code": "0"}
 	} else {
-		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID[1:]), t)), "code": "0"}
+		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.GroupID[1:]), t)), "code": "0"}
 	}
 }
 
@@ -34,11 +34,11 @@ func (c *Config) BotSendCustom(ctx *rosm.Ctx, Count any) rosm.H {
 	if c, ok := Count.(string); ok {
 		Count = zms.UnescapeCQCodeText(c)
 	}
-	if ctx.Being.RoomID[0:1] != "-" {
-		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.RoomID),
+	if ctx.Being.GroupID[0:1] != "-" {
+		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.GroupID),
 			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
 	} else {
-		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.RoomID[1:]),
+		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.GroupID[1:]),
 			zms.UnescapeCQCodeText(Count.(string)))), "code": "0"}
 	}
 }

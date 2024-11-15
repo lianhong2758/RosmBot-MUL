@@ -38,9 +38,9 @@ func init() {
 		DataFolder: "chat",				   //可选,创建插件的数据文件夹,不需要数据存储则不需要填写
 	})
 	//这里是匹配词------这里设置是否阻断继续匹配
-	//还有.Rule()设置指令初始化函数
+	//还有.SetRule()设置指令初始化函数
     //MUL()设置插件专用的平台,一般在插件调用了对应平台的server包后填写
-	en.AddWord("").SetBlock(true).Rule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
+	en.AddWord("").SetBlock(true).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text(ctx.Bot.Card().BotName, "不在呢~"))
 	})
 }
@@ -76,7 +76,7 @@ reply用message.reply()
 ```
 4更改发送房间
 ```
-ctx.Being.RoomID/RoomID2用于发送消息的房间索引,可以直接修改这里的数据
+ctx.Being.GroupID/RoomID2用于发送消息的房间索引,可以直接修改这里的数据
 ```
 5部分接口(可能存在没有及时更新,导致调用出错的情况,如有请反馈)
 ```

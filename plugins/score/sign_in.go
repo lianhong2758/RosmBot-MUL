@@ -51,11 +51,11 @@ func init() {
 		}
 		sdb = initialize(en.DataFolder + "score.db")
 	}()
-	en.AddRex(`^/签到\s?(\d*)$`).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/签到\s?(\d*)$`).Handle(func(ctx *rosm.Ctx) {
 		// 选择key
 		var key string = defKey
-		if ctx.Being.Rex[1] != "" {
-			key = ctx.Being.Rex[1]
+		if ctx.Being.ResultWord[1] != "" {
+			key = ctx.Being.ResultWord[1]
 		}
 		drawfunc, ok := drawmap[key]
 		if !ok {
@@ -147,7 +147,7 @@ func init() {
 		ctx.Send(message.Reply(), message.Image("file://"+file.BOTPATH+"/"+drawedFile))
 	})
 
-	en.AddWord("/获得签到背景").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("/获得签到背景").Handle(func(ctx *rosm.Ctx) {
 		picFile := cachePath + ctx.Being.User.ID + time.Now().Format("20060102") + ".png"
 		if file.IsNotExist(picFile) {
 			ctx.Send(message.Reply(), message.Text("请先签到！"))

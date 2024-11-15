@@ -47,7 +47,7 @@ func init() {
 		logrus.Warnln("[dish]插件未能成功初始化")
 	}
 
-	en.AddWord("/随机菜谱", "/随便做点菜").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("/随机菜谱", "/随便做点菜").Handle(func(ctx *rosm.Ctx) {
 		var d dish
 		if err := db.Pick("dish", &d); err != nil {
 			ctx.Send(message.Text("小店好像出错了，暂时端不出菜来惹"))

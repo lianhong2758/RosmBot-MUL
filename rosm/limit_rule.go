@@ -39,7 +39,7 @@ func LimitByUser(ctx *Ctx) *rate.Limiter {
 //
 //	按群号限制
 func LimitByGroup(ctx *Ctx) *rate.Limiter {
-	return defaultLimiterManager.Load(tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2))
+	return defaultLimiterManager.Load(tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID))
 }
 
 // LimiterManager 自定义限速器管理
@@ -64,5 +64,5 @@ func (m LimiterManager) LimitByUser(ctx *Ctx) *rate.Limiter {
 //
 //	按群号限制
 func (m LimiterManager) LimitByGroup(ctx *Ctx) *rate.Limiter {
-	return m.m.Load(tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2))
+	return m.m.Load(tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID))
 }

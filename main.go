@@ -11,7 +11,7 @@ import (
 	//_"github.com/lianhong2758/RosmBot-MUL/server/mys/init"
 	//_ "github.com/lianhong2758/RosmBot-MUL/server/qq/init"
 	//"github.com/lianhong2758/RosmBot-MUL/server/ob11"
-	_ "github.com/lianhong2758/RosmBot-MUL/server/ob11/init"
+	_ "github.com/lianhong2758/RosmBot-MUL/adapter/ob11/init"
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	//插件注册
@@ -19,10 +19,11 @@ import (
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/fhl"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/gscore"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/lc"
-//	_ "github.com/lianhong2758/RosmBot-MUL/plugins/liuyao"
-//	_ "github.com/lianhong2758/RosmBot-MUL/plugins/phi"
+	//	_ "github.com/lianhong2758/RosmBot-MUL/plugins/liuyao"
+	//	_ "github.com/lianhong2758/RosmBot-MUL/plugins/phi"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/score"
-//	_ "github.com/lianhong2758/RosmBot-MUL/plugins/tarot"
+	//	_ "github.com/lianhong2758/RosmBot-MUL/plugins/tarot"
+	_ "github.com/lianhong2758/RosmBot-MUL/plugins/onplugin"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/test"
 	_ "github.com/lianhong2758/RosmBot-MUL/plugins/time"
 	//_ "github.com/lianhong2758/RosmBot-MUL/plugins/wife"

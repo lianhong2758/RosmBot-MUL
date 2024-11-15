@@ -26,7 +26,7 @@ func NewCTX(botid, group string) *rosm.Ctx {
 		BotType: "ob11",
 		Bot:     botMap[botid],
 		Being: &rosm.Being{
-			RoomID: group,
+			GroupID: group,
 		},
 	}
 }

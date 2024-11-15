@@ -38,8 +38,8 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 		}
 	}
 	cnt.Text = tool.HideURL(cnt.Text)
-	if ctx.Being.Def["id"] != nil {
-		cnt.MsgID = ctx.Being.Def["id"].(string)
+	if ctx.State["id"] != nil {
+		cnt.MsgID = ctx.State["id"].(string)
 	}
 	return cnt
 }
@@ -71,15 +71,15 @@ func GroupMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			cnt.Reference = &ReferenceS{ID: ctx.Being.MsgID, NeedError: true}
 		case "markdown":
 			var parm []KV = nil
-			if t, ok := ctx.Being.Def["kv"]; ok {
+			if t, ok := ctx.State["kv"]; ok {
 				parm = t.([]KV)
 			}
 			cnt.MarkDown = &MarkDownS{Content: message.Data["content"], ID: message.Data["id"], Params: parm}
 		}
 	}
 	cnt.Text = tool.HideURL(cnt.Text)
-	if ctx.Being.Def["id"] != nil {
-		cnt.MsgID = ctx.Being.Def["id"].(string)
+	if ctx.State["id"] != nil {
+		cnt.MsgID = ctx.State["id"].(string)
 	}
 	return cnt
 }
