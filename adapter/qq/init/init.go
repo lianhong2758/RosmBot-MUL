@@ -5,7 +5,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 )
 
-var filePath = "config/qq.json"
+var filePath = "qq.json"
 
 func init() { //main
 	var runner rosm.Boter = qq.NewConfig(filePath)

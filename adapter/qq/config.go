@@ -1,8 +1,6 @@
 package qq
 
 import (
-	"encoding/json"
-	"os"
 	"sync"
 
 	"github.com/RomiChan/websocket"
@@ -21,7 +19,7 @@ type Config struct {
 	*rosm.BotCard
 	BotToken   Token    `json:"token"`
 	Intents    uint32   `json:"-"`           // Intents 欲接收的事件
-	IntentsNum []uint32 `json:"intents"`     //用户输入的
+	IntentsNum []uint32 `json:"intents"`     //按照类型填写接收事件
 	ShardIndex uint16   `json:"shard_index"` //分片序号
 
 	access    string
@@ -61,32 +59,18 @@ func (c *Config) Card() *rosm.BotCard {
 func (c *Config) GetReady() EventReady {
 	return c.Ready
 }
+
 func NewConfig(path string) (c *Config) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		c = new(Config)
-		c.BotCard = new(rosm.BotCard)
-		c.Master = []string{"123456"}
-		c.BotName = "雪儿"
-		c.IntentsNum = []uint32{0, 1, 12, 30, 25}
-		c.ShardIndex = 0
-		c.BotCard.BotID = "123456"
-		err = os.MkdirAll("config", os.ModePerm)
-		if err != nil {
-			log.Fatalln("[qq]无法创建 config 目录: ", err)
-		}
-		data, _ = json.MarshalIndent(c, "", "  ")
-		err = os.WriteFile(path, data, 0644)
-		if err != nil {
-			log.Fatalln("[qq]创建config失败: ", err)
-		}
-		log.Fatalln("[qq]创建初始配置完成,请填写config中的配置文件后再启动本程序")
+	c = &Config{
+		BotCard: &rosm.BotCard{
+			Master:  []string{"123456"},
+			BotName: "雪儿",
+			BotID:   "123456",
+		},
+		IntentsNum: []uint32{0, 1, 12, 30, 25},
+		ShardIndex: 0,
 	}
-	c = new(Config)
-	err = json.Unmarshal(data, c)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	rosm.LoadBotConfig(path, c)
 	if c.BotToken.AppId == "" || c.BotToken.Token == "" {
 		log.Fatalln("[qq]未设置bot信息")
 	}

@@ -4,7 +4,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/adapter/ob11"
 )
 
-var filePath = "config/ob11.json"
+var filePath = "ob11.json"
 
 func init() { //main
 	var runner rosm.Boter = ob11.NewConfig(filePath)
