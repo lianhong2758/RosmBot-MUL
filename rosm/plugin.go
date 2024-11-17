@@ -200,7 +200,7 @@ func (m *Matcher) mulPass() Rule {
 			return true
 		}
 		for _, value := range m.mul {
-			if value == ctx.BotType {
+			if value == ctx.Bot.Card().BotType {
 				return true
 			}
 		}

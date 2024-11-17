@@ -27,7 +27,7 @@ func init() { // 插件主体
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		ctx.Send(message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Text("\n今天你的VTB老婆是: "+r.Name), message.Image("url://"+r.Imgurl))
+		ctx.Send(message.AT(ctx.Being.User.ID), message.Text("\n今天你的VTB老婆是: "+r.Name), message.Image("url://"+r.Imgurl))
 		ctx.Send(message.Text(r.Message))
 	})
 }

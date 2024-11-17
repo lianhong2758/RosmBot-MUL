@@ -3,10 +3,10 @@ package time
 import (
 	"time"
 
+	"github.com/lianhong2758/RosmBot-MUL/adapter"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
-	"github.com/lianhong2758/RosmBot-MUL/tool/send"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -67,7 +67,7 @@ func init() {
 		m := &mode{
 			Key:     tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID) + order,
 			String1: tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID),
-			Types:   ctx.BotType,
+			Types:   ctx.Bot.Card().BotType,
 			Word:    order,
 			Time:    ctx.Being.ResultWord[1],
 			UserID:  ctx.Being.User.ID,
@@ -101,7 +101,8 @@ func cronRun(db *model) {
 	tool.WaitWhile()
 	c = cron.New()
 	db.Range(func(i int, m *mode) bool {
-		timeCtx := send.CTXBuild(m.Types, m.BotID, m.String1)
+		//timeCtx := send.CTXBuild(m.Types, m.BotID, m.String1)
+		timeCtx := adapter.NewCtxWithPad(m.Types, m.BotID, m.String1)
 		timeCtx.Being.RawWord = m.Word
 		timeCtx.Being.User = &rosm.UserData{ID: m.UserID}
 		id, _ := c.AddFunc(m.Time, func() {

@@ -5,7 +5,6 @@ import "github.com/lianhong2758/RosmBot-MUL/message"
 // 上下文结构
 type Ctx struct {
 	Bot     Boter
-	BotType string
 	Message message.Message //Message
 	Being   *Being          //常用消息解析,需实现
 	State   map[string]any  //框架中途产生的内容,不固定,即时有效

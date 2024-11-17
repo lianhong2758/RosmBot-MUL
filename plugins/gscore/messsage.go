@@ -9,7 +9,7 @@ import (
 
 func MakeSendCoreMessage(ctx *rosm.Ctx) []byte {
 	MessageReport := MessageReceive{
-		Bot_id:      ctx.BotType,
+		Bot_id:     ctx.Bot.Card().BotType,
 		Bot_self_id: ctx.Bot.Card().BotID,
 		Msg_id:      ctx.Being.MsgID,
 		User_type:   "group",

@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
@@ -47,25 +46,25 @@ func resolveURI(addr string) (network, address string) {
 	return
 }
 
-// 新建bot消息
-func NewBot(botid string) rosm.Boter {
-	return botMap[botid]
-}
+// // 新建bot消息
+// func NewBot(botid string) rosm.Boter {
+// 	return botMap[botid]
+// }
 
-// 新建上下文
-func NewCTX(botid, types, GroupID, GuildID string) *rosm.Ctx {
-	return &rosm.Ctx{
-		BotType: types,
-		Bot:     botMap[botid],
-		Being: &rosm.Being{
-			GroupID: GroupID,
-			GuildID: GuildID,
-		},
-	}
-}
-func GetRandBot() *Config {
-	for k := range botMap {
-		return botMap[k]
-	}
-	return nil
-}
+// // 新建上下文
+// func NewCTX(botid, types, GroupID, GuildID string) *rosm.Ctx {
+// 	return &rosm.Ctx{
+// 		BotType: types,
+// 		Bot:     botMap[botid],
+// 		Being: &rosm.Being{
+// 			GroupID: GroupID,
+// 			GuildID: GuildID,
+// 		},
+// 	}
+// }
+// func GetRandBot() *Config {
+// 	for k := range botMap {
+// 		return botMap[k]
+// 	}
+// 	return nil
+// }

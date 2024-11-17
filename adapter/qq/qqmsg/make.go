@@ -19,7 +19,10 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 			continue
 		case "text":
 			cnt.Text += text
-		case "at", "mentioned_robot":
+		case "at":
+			if message.Data["uid"]=="all"{
+				
+			}
 			cnt.Text += `<@!` + message.Data["uid"] + `>`
 		case "atall":
 			cnt.Text += "@everyone"

@@ -51,9 +51,6 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 			continue
 		case "at":
 			msg[k].Data = rosm.H{"qq": message.Data["uid"]}
-		case "atall":
-			msg[k].Type = "at"
-			msg[k].Data = rosm.H{"qq": "all"}
 		case "image":
 			msg[k].Data = rosm.H{"file": ImageAnalysis(message.Data["file"])}
 		case "replyuser":

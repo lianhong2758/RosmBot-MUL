@@ -54,6 +54,6 @@ func init() {
 			logrus.Warnln("[dish]随机菜谱请求出错：" + err.Error())
 			return
 		}
-		ctx.Send(message.Text("已为客官"), message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Text(fmt.Sprintf("送上%s的做法：\n原材料：%s\n步骤：\n%s", d.Name, d.Materials, d.Steps)))
+		ctx.Send(message.Text("已为客官"), message.AT(ctx.Being.User.ID), message.Text(fmt.Sprintf("送上%s的做法：\n原材料：%s\n步骤：\n%s", d.Name, d.Materials, d.Steps)))
 	})
 }

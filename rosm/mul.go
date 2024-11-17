@@ -41,23 +41,22 @@ type BotCaller interface {
 }
 
 type BotCard struct {
-	BotName string   `json:"bot_name"`
-	BotID   string   `json:"bot_id,omitempty"`
-	Master  []string `json:"master_id"`
+	MUL
+	Master []string `json:"master_id"`
 }
 
 // 进行一个通道注册,同于接收平台注册消息进行统计,虽然不是强制性需要,但还是建议实现一下
 var MULChan = make(chan MUL)
 
 type MUL struct {
-	Types string
-	Name  string
-	BotID string
+	BotType string `json:"bot_type"`
+	BotName string `json:"bot_name"`
+	BotID   string `json:"bot_id,omitempty"`
 }
 
 func Listen() {
 	plugindbinit()
 	for mulData := range MULChan {
-		log.Infof("[mul]新增注册,平台: %s,昵称: %s,BotID: %s", mulData.Types, mulData.Name, mulData.BotID)
+		log.Infof("[mul]新增注册,平台: %s,昵称: %s,BotID: %s", mulData.BotType, mulData.BotName, mulData.BotID)
 	}
 }

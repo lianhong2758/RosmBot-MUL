@@ -148,7 +148,7 @@ func casefunc(types string) func(ctx *rosm.Ctx) {
 				switch ar.Code {
 				case 202:
 					//游戏结束
-					ctx.Send(message.Text(ar.Data.Reason), message.AT(ctx2.Being.User.ID, ctx2.Being.User.Name), message.Text("获胜。\nhistory:", strings.Join(ar.Data.HistoryText, "\n")))
+					ctx.Send(message.Text(ar.Data.Reason), message.AT(ctx2.Being.User.ID), message.Text("获胜。\nhistory:", strings.Join(ar.Data.HistoryText, "\n")))
 					return
 				case 200:
 					tup := ""

@@ -14,6 +14,7 @@ import (
 
 	"github.com/RomiChan/websocket"
 
+	"github.com/lianhong2758/RosmBot-MUL/adapter"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -90,7 +91,9 @@ func (ws *WSClient) Connect(config *Config) {
 		}
 		ws.selfID = rsp.SelfID
 		config.BotID = strconv.FormatInt(ws.selfID, 10)
-		botMap[config.BotID] = config
+		adapter.AddNewBot(config)
+		// config.BotID = strconv.FormatInt(ws.selfID, 10)
+		// botMap[config.BotID] = config
 		//zero.APICallers.Store(ws.selfID, ws) // 添加Caller到 APICaller list...
 		log.Infof("[ws] 连接Websocket服务器: %s 成功, 账号: %d", ws.Url, rsp.SelfID)
 		break
@@ -102,7 +105,8 @@ func (ws *WSClient) Listen(config *Config) {
 	for {
 		t, payload, err := ws.conn.ReadMessage()
 		if err != nil { // reconnect
-			delete(botMap, strconv.FormatInt(ws.selfID, 10))
+			adapter.Delete(config)
+			//	delete(botMap, strconv.FormatInt(ws.selfID, 10))
 			//	zero.APICallers.Delete(ws.selfID) // 断开从apicaller中删除
 			log.Warn("[ws] Websocket服务器连接断开...")
 			time.Sleep(time.Millisecond * time.Duration(3))

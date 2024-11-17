@@ -8,7 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var botMap = map[string]*Config{}
 
 type Token struct {
 	AppId     string `json:"AppId"`
@@ -63,9 +62,12 @@ func (c *Config) GetReady() EventReady {
 func NewConfig(path string) (c *Config) {
 	c = &Config{
 		BotCard: &rosm.BotCard{
-			Master:  []string{"123456"},
-			BotName: "雪儿",
-			BotID:   "123456",
+			MUL: rosm.MUL{
+				BotType: "QQ官方bot",
+				BotName: "雪儿",
+				BotID:   "123456",
+			},
+			Master: []string{"123456"},
 		},
 		IntentsNum: []uint32{0, 1, 12, 30, 25},
 		ShardIndex: 0,

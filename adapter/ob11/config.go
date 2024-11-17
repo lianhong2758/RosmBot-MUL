@@ -4,7 +4,7 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 )
 
-var botMap = map[string]*Config{}
+const BotType = "OneBot V11"
 
 type Config struct {
 	*rosm.BotCard
@@ -21,9 +21,12 @@ func (c *Config) Card() *rosm.BotCard {
 func NewConfig(path string) (c *Config) {
 	c = &Config{
 		BotCard: &rosm.BotCard{
-			Master:  []string{"123456"},
-			BotName: "雪儿",
-			BotID:   "1",
+			MUL: rosm.MUL{
+				BotType:  BotType,
+				BotName: "雪儿",
+				BotID:   "1",
+			},
+			Master: []string{"123456"},
 		},
 		URL:   "ws://127.0.0.1:6700",
 		Types: "WS",

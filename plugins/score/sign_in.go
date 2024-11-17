@@ -62,7 +62,7 @@ func init() {
 			ctx.Send(message.Text("未找到签到设定:", key)) // 避免签到配置错误造成无图发送,但是已经签到的情况
 			return
 		}
-		uid, name := ctx.Being.User.ID, ctx.Being.User.Name
+		uid:= ctx.Being.User.ID
 		today := time.Now().Format("20060102")
 		// 签到图片
 		drawedFile := cachePath + uid + today + "signin.png"
@@ -96,7 +96,7 @@ func init() {
 		level := sdb.GetScoreByUID(uid).Score + 1
 		if level > SCOREMAX {
 			level = SCOREMAX
-			ctx.Send(message.AT(uid, name), message.Text("你的等级已经达到上限"))
+			ctx.Send(message.AT(uid), message.Text("你的等级已经达到上限"))
 		}
 		err = sdb.InsertOrUpdateScoreByUID(uid, level)
 		if err != nil {

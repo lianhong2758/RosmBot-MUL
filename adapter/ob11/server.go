@@ -2,7 +2,6 @@ package ob11
 
 import (
 	"encoding/json"
-	"hash/crc64"
 	"strconv"
 	"strings"
 
@@ -13,6 +12,7 @@ import (
 )
 
 func (c *Config) process(e *Event) {
+
 	switch e.PostType {
 	// 消息事件
 	case "message", "message_sent":
@@ -23,7 +23,6 @@ func (c *Config) process(e *Event) {
 		// 私聊信息
 		case "private":
 			ctx := &rosm.Ctx{
-				BotType: "ob11",
 				Being: &rosm.Being{
 					ATList:  atList,
 					GuildID: "",
@@ -32,11 +31,10 @@ func (c *Config) process(e *Event) {
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
-						//	PortraitURI: u.User.PortraitURI,
 					},
 					MsgID: tool.BytesToString(e.RawMessageID),
 				},
-				State: map[string]any{"event":e},
+				State:   map[string]any{"event": e},
 				Message: e.Message,
 				Bot:     c,
 			}
@@ -44,8 +42,12 @@ func (c *Config) process(e *Event) {
 			ctx.RunWord()
 		// 群聊信息
 		case "group":
+			uid := tool.Int64ToString(e.Sender.ID)
+			if e.MessageType == "guild" {
+				uid = e.TinyID
+			}
 			ctx := &rosm.Ctx{
-				BotType: "ob11",
+
 				Being: &rosm.Being{
 					ATList:  atList,
 					GuildID: e.ChannelID,
@@ -53,12 +55,11 @@ func (c *Config) process(e *Event) {
 					RawWord: mess,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
-						ID:   tool.Int64ToString(e.Sender.ID),
-						//	PortraitURI: u.User.PortraitURI,
+						ID:   uid,
 					},
 					MsgID: tool.BytesToString(e.RawMessageID),
 				},
-				State: map[string]any{"event":e},
+				State:   map[string]any{"event": e},
 				Message: e.Message,
 				Bot:     c,
 			}
@@ -75,9 +76,10 @@ func (c *Config) process(e *Event) {
 
 		// 通知事件
 	case "notice":
+		preprocessNoticeEvent(e)
 		//https://github.com/botuniverse/onebot-11/blob/master/event/notice.md
 		ctx := &rosm.Ctx{
-			BotType: "ob11",
+
 			Being: &rosm.Being{
 				GuildID: e.ChannelID,
 				GroupID: tool.Int64ToString(e.GroupID) + e.GuildID,
@@ -85,7 +87,7 @@ func (c *Config) process(e *Event) {
 					ID: tool.Int64ToString(e.UserID),
 				},
 			},
-			State: map[string]any{"event":e},
+			State:   map[string]any{"event": e, "notice_type": e.NoticeType},
 			Message: e.Message,
 			Bot:     c,
 		}
@@ -93,13 +95,13 @@ func (c *Config) process(e *Event) {
 		ctx.RunEvent("notice")
 	case "request": //好有请求
 		ctx := &rosm.Ctx{
-			BotType: "ob11",
+
 			Being: &rosm.Being{
 				User: &rosm.UserData{
 					ID: tool.Int64ToString(e.UserID),
 				},
 			},
-			State: map[string]any{"event":e},
+			State:   map[string]any{"event": e},
 			Message: e.Message,
 			Bot:     c,
 		}
@@ -114,46 +116,7 @@ func (c *Config) processEvent(response []byte, caller APICaller) {
 	var event Event
 	_ = json.Unmarshal(response, &event)
 	event.RawEvent = gjson.Parse(tool.BytesToString(response))
-	//var msgid message.MessageID
-	messageID, err := strconv.ParseInt(tool.BytesToString(event.RawMessageID), 10, 64)
-	if err == nil {
-		event.MessageID = messageID
-		//	msgid = message.NewMessageIDFromInteger(messageID)
-	} else if event.MessageType == "guild" {
-		// 是 guild 消息，进行如下转换以适配非 guild 插件
-		// MessageID 填为 string
-		event.MessageID, _ = strconv.Unquote(tool.BytesToString(event.RawMessageID))
-		// 伪造 GroupID
-		crc := crc64.New(crc64.MakeTable(crc64.ISO))
-		crc.Write(tool.StringToBytes(event.GuildID))
-		crc.Write(tool.StringToBytes(event.ChannelID))
-		r := int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
-		if r <= 0xffff_ffff {
-			r |= 0x1_0000_0000 // 确保不与正常号码重叠
-		}
-		event.GroupID = r
-		// 伪造 UserID
-		crc.Reset()
-		crc.Write(tool.StringToBytes(event.TinyID))
-		r = int64(crc.Sum64() & 0x7fff_ffff_ffff_ffff) // 确保为正数
-		if r <= 0xffff_ffff {
-			r |= 0x1_0000_0000 // 确保不与正常号码重叠
-		}
-		event.UserID = r
-		if event.Sender != nil {
-			event.Sender.ID = r
-		}
-		//	msgid = message.NewMessageIDFromString(event.MessageID.(string))
-	}
-	switch event.PostType { // process DetailType
-	case "message", "message_sent":
-		event.DetailType = event.MessageType
-	case "notice":
-		event.DetailType = event.NoticeType
-		preprocessNoticeEvent(&event)
-	case "request":
-		event.DetailType = event.RequestType
-	}
+	event.MessageID = tool.BytesToString(event.RawMessageID)
 	go c.process(&event)
 }
 

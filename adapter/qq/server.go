@@ -22,7 +22,6 @@ func (c *Config) process(playload *WebsocketPayload) {
 		log.Infof("[qq] [↓]私聊消息%s:%s", raw.Author.UserOpenid, raw.Content)
 		ctx := &rosm.Ctx{
 			Bot:     c,
-			BotType: "qq_group",
 			Message: message.Message{},
 			Being: &rosm.Being{
 				GroupID: raw.Author.UserOpenid,
@@ -50,7 +49,6 @@ func (c *Config) process(playload *WebsocketPayload) {
 		log.Infof("[qq] [↓]群聊消息[%s]%s:%s", raw.GroupID, raw.Author.ID, raw.Content)
 		ctx := &rosm.Ctx{
 			Bot:     c,
-			BotType: "qq_group",
 			Message: message.Message{},
 			Being: &rosm.Being{
 				GroupID: raw.GroupID,
@@ -85,7 +83,6 @@ func (c *Config) process(playload *WebsocketPayload) {
 		}
 		ctx := &rosm.Ctx{
 			Bot:     c,
-			BotType: "qq_gulid",
 			Message: message.Message{},
 			Being: &rosm.Being{
 				GroupID: raw.ChannelID,

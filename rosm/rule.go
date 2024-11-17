@@ -26,6 +26,13 @@ func OnlyAtMe() Rule {
 	}
 }
 
+func NoAtForOther() Rule {
+	return func(ctx *Ctx) bool {
+		//atme,noat
+		return ctx.Being.IsAtMe || len(ctx.Being.ATList) == 0  
+	}
+}
+
 func OnlyTheRoom(roomid, roomid2 string) Rule {
 	return func(ctx *Ctx) bool {
 		return roomid == ctx.Being.GroupID && roomid2 == ctx.Being.GuildID
@@ -76,11 +83,8 @@ func KeyWords(s ...string) Rule {
 	}
 }
 
+// 完全匹配词
 func WordRule(words ...string) Rule {
-	// return func(ctx *Ctx) bool {
-	// 	_, ok := WordMatch[ctx.Being.RawWord]
-	// 	return ok
-	// }
 	return func(ctx *Ctx) bool {
 		for _, v := range words {
 			if v == ctx.Being.RawWord {
@@ -91,6 +95,8 @@ func WordRule(words ...string) Rule {
 		return false
 	}
 }
+
+// Rex匹配
 func RexRule(rex string) Rule {
 	r := regexp.MustCompile(rex)
 	return func(ctx *Ctx) bool {
@@ -102,10 +108,11 @@ func RexRule(rex string) Rule {
 	}
 }
 
+// Notice事件匹配
 func NoticeRule(types ...string) Rule {
 	return func(ctx *Ctx) bool {
 		for _, v := range types {
-			if ctx.State["types"].(string) == v {
+			if ctx.State["notice_type"].(string) == v {
 				return true
 			}
 		}
