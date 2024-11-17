@@ -50,6 +50,10 @@ func MakeMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) message.Messag
 		case "text", "video", "node", "reply":
 			continue
 		case "at":
+			if message.Data["uid"] == "all" {
+				msg[k].Data = rosm.H{"qq": "all"}
+				continue
+			}
 			msg[k].Data = rosm.H{"qq": message.Data["uid"]}
 		case "image":
 			msg[k].Data = rosm.H{"file": ImageAnalysis(message.Data["file"])}

@@ -20,13 +20,11 @@ func GuildMsgContent(ctx *rosm.Ctx, msg ...message.MessageSegment) *Content {
 		case "text":
 			cnt.Text += text
 		case "at":
-			if message.Data["uid"]=="all"{
-				
+			if message.Data["uid"] == "all" {
+				cnt.Text += "@everyone"
+				continue
 			}
 			cnt.Text += `<@!` + message.Data["uid"] + `>`
-		case "atall":
-			cnt.Text += "@everyone"
-
 		case "image":
 			cnt.Text += text
 			if url, _ := web.ImageAnalysis(message.Data["file"]); url != "" {
