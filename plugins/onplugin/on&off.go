@@ -75,10 +75,10 @@ func init() {
 				ctx.Send(message.Text("响应失败,ERROR: ", err))
 				return
 			}
-			ctx.Send(message.Text("早安,", ctx.Bot.Card().BotName, "开始工作了喵~"))
+			ctx.Send(message.Text("早安,", rosm.GetRandBotName(), "开始工作了喵~"))
 		} else {
 			// 已经响应了
-			ctx.Send(message.Text("早安,", ctx.Bot.Card().BotName, "已经在认真工作了喵~"))
+			ctx.Send(message.Text("早安,", rosm.GetRandBotName(), "已经在认真工作了喵~"))
 		}
 	})
 	en.OnWord(`晚安`).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
@@ -89,7 +89,7 @@ func init() {
 				ctx.Send(message.Text("沉默失败,ERROR: ", err))
 				return
 			}
-			ctx.Send(message.Text("晚安,", ctx.Bot.Card().BotName, "要睡觉了喵~"))
+			ctx.Send(message.Text("晚安,", rosm.GetRandBotName(), "要睡觉了喵~"))
 		} else {
 			// 已经响应了
 			ctx.Send(message.Text("晚安,Zzz~"))

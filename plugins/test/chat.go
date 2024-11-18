@@ -11,6 +11,6 @@ func init() {
 		Help: "- @机器人",
 	})
 	en.OnWord("").SetBlock(true).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
-		ctx.Send(message.Text(ctx.Bot.Card().BotName, "不在呢~"))
+		ctx.Send(message.Text(rosm.GetRandBotName(), "不在呢~"))
 	})
 }

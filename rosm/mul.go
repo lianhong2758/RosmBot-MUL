@@ -50,13 +50,12 @@ var MULChan = make(chan MUL)
 
 type MUL struct {
 	BotType string `json:"bot_type"`
-	BotName string `json:"bot_name"`
 	BotID   string `json:"bot_id,omitempty"`
 }
 
 func Listen() {
 	plugindbinit()
 	for mulData := range MULChan {
-		log.Infof("[mul]新增注册,平台: %s,昵称: %s,BotID: %s", mulData.BotType, mulData.BotName, mulData.BotID)
+		log.Infof("[mul]新增注册,平台: %s,BotID: %s", mulData.BotType, mulData.BotID)
 	}
 }

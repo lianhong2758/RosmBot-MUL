@@ -57,36 +57,36 @@ type User struct {
 
 // Event is the event emitted form cqhttp
 type Event struct {
-	Time          int64           `json:"time"`
-	PostType      string          `json:"post_type"`
-	DetailType    string          `json:"-"`
-	MessageType   string          `json:"message_type"`
-	SubType       string          `json:"sub_type"`
-	MessageID     interface{}     `json:"-"`          // int64 in qq or string in guild
-	RawMessageID  json.RawMessage `json:"message_id"` // int64 in qq or string in guild
-	GroupID       int64           `json:"group_id"`
-	ChannelID     string          `json:"channel_id"`
-	GuildID       string          `json:"guild_id"`
-	UserID        int64           `json:"user_id"`
-	TinyID        string          `json:"tiny_id"`
-	TargetID      int64           `json:"target_id"`
-	SelfID        int64           `json:"self_id"`
-	SelfTinyID    string          `json:"self_tiny_id"`
-	RawMessage    string          `json:"raw_message"` // raw_message is always string
-	Anonymous     interface{}     `json:"anonymous"`
-	AnonymousFlag string          `json:"anonymous_flag"` // This field is deprecated and will get removed, see #11
-	Event         string          `json:"event"`
-	NoticeType    string          `json:"notice_type"` // This field is deprecated and will get removed, see #11
-	OperatorID    int64           `json:"operator_id"` // This field is used for Notice Event
-	File          *File           `json:"file"`
-	RequestType   string          `json:"request_type"`
-	Flag          string          `json:"flag"`
-	Comment       string          `json:"comment"` // This field is used for Request Event
-	Message       message.Message `json:"-"`       // Message parsed
-	Sender        *User           `json:"sender"`
-	NativeMessage json.RawMessage `json:"message"`
-	IsToMe        bool            `json:"-"`
-	RawEvent      gjson.Result    `json:"-"` // raw event
+	Time           int64           `json:"time"`
+	PostType       string          `json:"post_type"`
+	DetailType     string          `json:"-"`
+	MessageType    string          `json:"message_type"`
+	SubType        string          `json:"sub_type"`
+	MessageID      string          `json:"message_id"`
+	GroupID        int64           `json:"group_id"`
+	ChannelID      string          `json:"channel_id"`
+	GuildID        string          `json:"guild_id"`
+	UserID         int64           `json:"user_id"`
+	TinyID         string          `json:"tiny_id"`
+	TargetID       int64           `json:"target_id"`
+	SelfID         int64           `json:"self_id"`
+	SelfTinyID     string          `json:"self_tiny_id"`
+	RawMessage     string          `json:"raw_message"` // raw_message is always string
+	Anonymous      interface{}     `json:"anonymous"`
+	AnonymousFlag  string          `json:"anonymous_flag"` // This field is deprecated and will get removed, see #11
+	Event          string          `json:"event"`
+	NoticeType     string          `json:"notice_type"` // This field is deprecated and will get removed, see #11
+	OperatorID     int64           `json:"operator_id"` // This field is used for Notice Event
+	File           *File           `json:"file"`
+	RequestType    string          `json:"request_type"`
+	Flag           string          `json:"flag"`
+	Comment        string          `json:"comment"` // This field is used for Request Event
+	Message        message.Message `json:"-"`       // Message parsed
+	Sender         *User           `json:"sender"`
+	NativeMessage  json.RawMessage `json:"message"`
+	IsToMe         bool            `json:"-"`
+	ReplyMessageID string          `json:"-"`
+	RawEvent       gjson.Result    `json:"-"` // raw event
 }
 
 // Message 消息

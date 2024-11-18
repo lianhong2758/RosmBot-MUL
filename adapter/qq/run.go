@@ -10,10 +10,10 @@ func (c *Config) Run() {
 	c.setInit()
 	err := c.getinitinfo()
 	if err != nil {
-		log.Errorln("QQ-Run", err, "Name: ", c.BotName)
+		log.Errorln("QQ-Run", err)
 	}
 	c.Connect()
-	c.BotID= c.BotToken.AppId
+	c.BotID = c.BotToken.AppId
 	adapter.AddNewBot(c)
 	c.Listen()
 }

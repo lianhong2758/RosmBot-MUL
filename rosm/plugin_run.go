@@ -17,16 +17,20 @@ func (ctx *Ctx) RunEvent(types EventType) (block bool) {
 	}()
 	//bot启用状态
 	ctx.on = PluginIsOn(boten)(ctx)
-	//next
+	//next,拥有最高匹配优先级
 	if ctx.sendNext(types) {
 		return true
 	}
-	//event
+	//event 
 	for _, m := range EventMatch[types] {
 		if m.RulePass(ctx) {
 			m.handler(ctx)
 			log.Debugf("调用插件: %s - 类型: %s", m.PluginNode.Name, types)
-			return m.block
+			//return m.block
+			//由于其特殊性,true时返回,false则继续执行
+			if m.block {
+				return m.block
+			}
 		}
 	}
 	return false

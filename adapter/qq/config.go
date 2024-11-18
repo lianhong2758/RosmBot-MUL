@@ -64,7 +64,6 @@ func NewConfig(path string) (c *Config) {
 		BotCard: &rosm.BotCard{
 			MUL: rosm.MUL{
 				BotType: "QQ官方bot",
-				BotName: "雪儿",
 				BotID:   "123456",
 			},
 			Master: []string{"123456"},

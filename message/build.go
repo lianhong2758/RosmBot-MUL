@@ -23,7 +23,7 @@ import (
 
 type H = map[string]string
 
-type Message = []MessageSegment
+type Message  []MessageSegment
 
 type MessageSegment struct {
 	Type string `json:"type"`

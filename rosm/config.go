@@ -2,6 +2,7 @@ package rosm
 
 import (
 	"encoding/json"
+	"math/rand/v2"
 	"os"
 
 	"github.com/FloatTech/floatbox/file"
@@ -77,7 +78,6 @@ var config = &RosmConfig{
 	ApiTimeout: 30,
 	BotName:    []string{"雪儿", "梦雪"},
 	CmdStar:    []string{"/", ""},
-	CmdSep:     []string{" ", "."},
 }
 
 func init() {
@@ -95,5 +95,8 @@ type RosmConfig struct {
 	ApiTimeout int      //s
 	BotName    []string //botName
 	CmdStar    []string //命令的起始标记
-	CmdSep     []string //命令的分隔标记
+}
+
+func GetRandBotName() string {
+	return config.BotName[rand.IntN(len(config.BotName))]
 }

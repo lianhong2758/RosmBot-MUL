@@ -23,7 +23,6 @@ func NewConfig(path string) (c *Config) {
 		BotCard: &rosm.BotCard{
 			MUL: rosm.MUL{
 				BotType:  BotType,
-				BotName: "雪儿",
 				BotID:   "1",
 			},
 			Master: []string{"123456"},
