@@ -56,13 +56,12 @@ func (c *Config) process(e *Event) {
 					},
 					MsgID: e.MessageID,
 				},
-				State:   map[string]any{"event": e, "reply": ""},
+				State:   map[string]any{"event": e, "reply": e.ReplyMessageID},
 				Message: e.Message,
 				Bot:     c,
 			}
 
 			ctx.Being.IsAtMe = e.IsToMe
-			e.IsToMe = ctx.Being.IsAtMe
 			//log.Println(ctx.Being.Word)
 			ctx.RunWord()
 		case "guild":
@@ -155,7 +154,7 @@ func (c *Config) preprocessMessageEvent(e *Event) {
 			for _, nickname := range rosm.GetRosmConfig().BotName {
 				if strings.HasPrefix(text, nickname) {
 					e.IsToMe = true
-					e.Message[0].Data["text"] =  strings.TrimLeft(text[len(nickname):]," ")//Trim!
+					e.Message[0].Data["text"] = strings.TrimLeft(text[len(nickname):], " ") //Trim!
 					return
 				}
 			}

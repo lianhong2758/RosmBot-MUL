@@ -4,6 +4,8 @@ package rosm
 import (
 	"regexp"
 	"strings"
+
+	"github.com/lianhong2758/RosmBot-MUL/message"
 )
 
 // 判断rule
@@ -29,7 +31,7 @@ func OnlyAtMe() Rule {
 func NoAtForOther() Rule {
 	return func(ctx *Ctx) bool {
 		//atme,noat
-		return ctx.Being.IsAtMe || len(ctx.Being.ATList) == 0  
+		return ctx.Being.IsAtMe || len(ctx.Being.ATList) == 0
 	}
 }
 
@@ -117,5 +119,93 @@ func NoticeRule(types ...string) Rule {
 			}
 		}
 		return false
+	}
+}
+
+// 模板匹配
+// 一般使用UniMessage内的函数作为 message.MessageSegment
+func TemplateRule(msg ...message.MessageSegment) Rule {
+	rexList := []*regexp.Regexp{}
+	for _, v := range msg {
+		if v.Type == "rex" {
+			rexList = append(rexList, regexp.MustCompile(v.Data["text"]))
+		}
+	}
+	return func(ctx *Ctx) bool {
+		ok := false
+		ir := 0 //rex存储表的索引
+	Next:
+		for mi, i := 0, 0; mi < len(msg) && i < len(ctx.Message); {
+			switch msg[mi].Type {
+			case "any":
+				ctx.Being.ResultWord = append(ctx.Being.ResultWord, ctx.Message[i].Text())
+				mi++
+				i++
+				continue
+			case "at":
+				if ctx.Message[i].Type != "at" {
+					ok = false
+					break Next
+				}
+				if msg[mi].Data["qq"] != "" {
+					for _, v := range ctx.Message[i].Data {
+						if v == msg[mi].Data["qq"] {
+							ctx.Being.ResultWord = append(ctx.Being.ResultWord, msg[mi].Data["qq"])
+							ok = true
+							i++
+							mi++
+							continue Next
+						}
+					}
+					//匹配失败
+					ok = false
+					break Next
+				}
+				if id := ctx.Message[i].AtId(); id == "" {
+					ok = false
+					break Next
+				} else {
+					ctx.Being.ResultWord = append(ctx.Being.ResultWord, id)
+					ok = true
+					mi++
+					i++
+				}
+			case "rex":
+				if ctx.Message[i].Type != "text" {
+					ok = false
+					break Next
+				}
+				if match := rexList[ir].FindStringSubmatch(ctx.Message[i].Data["text"]); len(match) > 0 {
+					ctx.Being.ResultWord = append(ctx.Being.ResultWord, match[1:]...)
+					ok = true
+					i++
+					mi++
+					ir++
+				} else {
+					ok = false
+				}
+			case "text":
+				if ctx.Message[i].Type != "text" {
+					ok = false
+					break Next
+				}
+				if ctx.Message[i].TrimSpaceText() != msg[i].Data["text"] {
+					ok = false
+					break Next
+				}
+				i++
+				mi++
+			default:
+				if ctx.Message[i].Type != msg[i].Type {
+					ok = false
+					break Next
+				}
+				ctx.Being.ResultWord = append(ctx.Being.ResultWord, ctx.Message[i].Text())
+				ok = true
+				i++
+				mi++
+			}
+		}
+		return ok
 	}
 }

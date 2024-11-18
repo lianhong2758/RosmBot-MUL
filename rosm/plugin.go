@@ -162,6 +162,12 @@ func (p *PluginData) OnSurplusMessage() *Matcher {
 	return m
 }
 
+// 模板匹配消息
+func (p *PluginData) OnTemplate(msg ...message.MessageSegment) *Matcher {
+	m := p.OnAllMessage().SetRule(TemplateRule(msg...))
+	return m
+}
+
 // "data/xxx/"+
 func (p *PluginData) GetFolder() string {
 	return p.DataFolder

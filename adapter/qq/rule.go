@@ -36,10 +36,10 @@ func (c *Config) OnlyMaster(ctx *rosm.Ctx) bool {
 
 // 群主权限 未实现
 func (c *Config) OnlyOverHost(ctx *rosm.Ctx) bool {
-	return false
+	return c.OnlyMaster(ctx)
 }
 
 // 管理员 未实现
 func (c *Config) OnlyOverAdministrator(ctx *rosm.Ctx) bool {
-	return false
+	return c.OnlyMaster(ctx)
 }

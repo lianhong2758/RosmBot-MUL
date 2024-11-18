@@ -21,13 +21,13 @@ func OnlyOverHost(ctx *rosm.Ctx) bool {
 
 // 管理员权限以上
 func OnlyOverAdministrator(ctx *rosm.Ctx) bool {
-	return OnlyMaster(ctx) || ctx.State["event"].(*Event).Sender.Role == "owner" || 
-	ctx.State["event"].(*Event).Sender.Role == "admin"
+	return OnlyMaster(ctx) || ctx.State["event"].(*Event).Sender.Role == "owner" ||
+		ctx.State["event"].(*Event).Sender.Role == "admin"
 }
 
 // 触发消息是否是回复消息
 func OnlyReply(ctx *rosm.Ctx) bool {
-	return false
+	return ctx.State["reply"].(string) != ""
 }
 
 func (c *Config) OnlyReply(ctx *rosm.Ctx) bool {

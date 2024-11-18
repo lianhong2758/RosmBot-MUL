@@ -17,17 +17,6 @@ func (m Message) CQString() string {
 	return m.String()
 }
 
-// ExtractPlainText 提取消息中的纯文本
-func (m Message) ExtractPlainText() string {
-	sb := strings.Builder{}
-	for _, val := range m {
-		if val.Type == "text" {
-			sb.WriteString(val.Data["text"])
-		}
-	}
-	return sb.String()
-}
-
 // Modified from https://github.com/catsworld/qq-bot-api
 
 // ParseMessage parses msg, which might have 2 types, string or array,

@@ -1,5 +1,7 @@
 package message
 
+import "strings"
+
 //合并消息内连续的纯文本段。
 func (message *Message) Reduce() {
 	for index := 0; index < len(*message)-1; {
@@ -10,4 +12,37 @@ func (message *Message) Reduce() {
 			index++
 		}
 	}
+}
+
+// ExtractPlainText 提取消息中的纯文本
+func (m Message) ExtractPlainText() string {
+	sb := strings.Builder{}
+	for _, val := range m {
+		if val.Type == "text" {
+			sb.WriteString(val.Data["text"])
+		}
+	}
+	return sb.String()
+}
+func (m MessageSegment) Text() string {
+	sb := strings.Builder{}
+	for _, val := range m.Data {
+		sb.WriteString(val)
+		break
+	}
+	return sb.String()
+}
+func (m MessageSegment) TrimSpaceText() string {
+ return strings.TrimSpace(m.Data["text"])
+}
+
+func (m MessageSegment) AtId() string {
+	sb := strings.Builder{}
+	for k, val := range m.Data {
+		if k == "qq" || k == "channel" || k == "role" {
+			sb.WriteString(val)
+			break
+		}
+	}
+	return sb.String()
 }
