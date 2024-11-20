@@ -13,7 +13,7 @@ func init() {
 		Name: "帮助菜单",
 		Help: "- /help\n",
 	})
-	en.OnWord("/help", "/帮助").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("/help", "/帮助").SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
 		var msg strings.Builder
 		msg.WriteString("****RosmBot菜单*****")
 		for _, v := range rosm.GetPlugins() {

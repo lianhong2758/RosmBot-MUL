@@ -19,7 +19,7 @@ var en = rosm.Register(&rosm.PluginData{
 })
 
 func init() {
-	en.OnRex(`^/启用\s*(.*)`).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/启用\s*(.*)`).SetRule(rosm.NoAtForOther()).Handle(func(ctx *rosm.Ctx) {
 		name := ctx.Being.ResultWord[1]
 		if _, ok := rosm.GetPlugins()[name]; !ok {
 			ctx.Send(message.Text("未找到插件: ", name))
@@ -32,7 +32,7 @@ func init() {
 		}
 		ctx.Send(message.Text(name, "已启用..."))
 	})
-	en.OnRex(`^/禁用\s*(.*)`).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/禁用\s*(.*)`).SetRule(rosm.NoAtForOther()).Handle(func(ctx *rosm.Ctx) {
 		name := ctx.Being.ResultWord[1]
 		if _, ok := rosm.GetPlugins()[name]; !ok {
 			ctx.Send(message.Text("未找到插件: ", name))
@@ -45,7 +45,7 @@ func init() {
 		}
 		ctx.Send(message.Text(name, "已禁用..."))
 	})
-	en.OnRex(`^/用法\s*(.*)`).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/用法\s*(.*)`).SetRule(rosm.NoAtForOther()).Handle(func(ctx *rosm.Ctx) {
 		name := ctx.Being.ResultWord[1]
 		plugin, ok := rosm.GetPlugins()[name]
 		if !ok {
@@ -67,7 +67,7 @@ func init() {
 		msg.WriteString(strings.Repeat("*", 20))
 		ctx.Send(message.Text(msg.String()))
 	})
-	en.OnWord(`早安`).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
+	en.OnWord(`早安`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		on := rosm.PluginIsOn(rosm.GetBoten())(ctx)
 		if !on {
 			err := rosm.PluginDB.InsertOff(rosm.GetBoten().Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID), false)
@@ -81,7 +81,7 @@ func init() {
 			ctx.Send(message.Text("早安,", rosm.GetRandBotName(), "已经在认真工作了喵~"))
 		}
 	})
-	en.OnWord(`晚安`).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
+	en.OnWord(`晚安`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		on := rosm.PluginIsOn(rosm.GetBoten())(ctx)
 		if on {
 			err := rosm.PluginDB.InsertOff(rosm.GetBoten().Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID), true)
