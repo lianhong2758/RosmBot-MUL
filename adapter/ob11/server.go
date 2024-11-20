@@ -51,7 +51,7 @@ func (c *Config) process(e *Event) {
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
 					},
-					MsgID:  tool.Int64ToString(e.Sender.ID),
+					MsgID:  tool.BytesToString(e.RawMessageID),
 					ATList: e.AtList,
 				},
 				State:   map[string]any{"event": e, "reply": e.ReplyMessageID},
@@ -132,18 +132,18 @@ func (c *Config) preprocessMessageEvent(e *Event) {
 	e.Message = ParseMessage(e.NativeMessage)
 	e.IsToMe = false
 	// 处理是否是回复消息,at消息
-	//索引纠正
+	var f = func() {}
 	for i, m := range e.Message {
 		if m.Type == "reply" {
 			e.ReplyMessageID = m.Data["id"]
-			e.Message = append(e.Message[:i], e.Message[i+1:]...)
+			f = func() { e.Message = append(e.Message[:i], e.Message[i+1:]...) }
 			continue
 		}
 		if m.Type == "at" {
 			e.AtList = append(e.AtList, m.Data["qq"])
 		}
 	}
-
+	f()
 	if len(e.Message) == 0 {
 		return
 	}
