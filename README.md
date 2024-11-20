@@ -33,32 +33,49 @@ RosmBot-Mul [-d] [-lf path] [-nolf]
 ```
 func init() {
 	en := c.Register("chat", &c.PluginData{//第一个参数是插件名,用于区分插件
-		Name: "@回复",        			   //插件名,用于help
-		Help: "- @机器人",				   //帮助信息,用于help
-		DataFolder: "chat",				   //可选,创建插件的数据文件夹,不需要数据存储则不需要填写
+		DefaultOff: false,    //是否默认禁用本插件
+		Name:       "@回复",    //插件名,用于help
+		Help:       "- @机器人", //帮助信息,用于help
+		//DataFolder: "chat",				   //可选,创建插件的数据文件夹,不需要数据存储则不需要填写
+		//Config: map[string]string{"1": "1"},//可选,配置每个插件独立的config,传入带有默认值的结构体指针即可
 	})
 	//这里是匹配词------这里设置是否阻断继续匹配
 	//还有.SetRule()设置指令初始化函数
     //MUL()设置插件专用的平台,一般在插件调用了对应平台的server包后填写
-	en.AddWord("").SetBlock(true).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
-		ctx.Send(message.Text(ctx.Bot.Card().BotName, "不在呢~"))
+	//完全词匹配,因为前缀config默认为[]string{"/",""},所以这里可以匹配 "" 或者 "/"
+	en.OnWord("").SetBlock(true).SetRule(rosm.OnlyAtMe()).Handle(func(ctx *rosm.Ctx) {
+		ctx.Send(message.Text(rosm.GetRandBotName(), "不在呢~"))
 	})
+	//除此之外还有别的匹配方法
+	//匹配正则
+	en.OnRex(`^/你好`).Handle(func(ctx *rosm.Ctx) {})
+	//匹配事件rosm.FriendRecall
+	en.OnNoticeWithType(rosm.FriendRecall).Handle(func(ctx *rosm.Ctx) {})
+
 }
 ```
 2获取触发时传送的数据
 ```
 //ctx.Being里有所有需要的数据,结构如下
 type Being struct {
-	RoomID   string         //房间号
-	RoomID2  string         //如果有需要,存放房间号上级号码
-	RoomName string         //房间名称,存在上级则存放上级名称
-	User     *UserData      //触发事件者信息
-	ATList   []string       //at的id列表
-	MsgID    []string       //用于reply,存放消息id,reply的其他需要参数写在第二位
-	AtMe     bool           //是否是at机器人触发的事件
-	Word     string         //接收的用户发送的信息,进行了首位的空格切割
-	Rex      []string       //如果有正则匹配,这里存放匹配结果
-	Def      map[string]any //自定义存储的参数
+	GroupID    string    //房间号,群号
+	GuildID    string    //如果有需要,存放房间号上级号码
+	GroupName  string    //房间名称,存在上级则存放上级名称
+	User       *UserData //触发事件者信息
+	ATList     []string  //at的id列表
+	MsgID      string    //用于reply,存放消息id
+	IsAtMe     bool      //是否是at机器人触发的事件
+	RawWord    string    //原始消息
+	KeyWord    string    //匹配词
+	ResultWord []string  //匹配结果
+}
+
+//ctx中有上下文传递的信息
+type Ctx struct {
+	Bot     Boter
+	Message message.Message //Message
+	Being   *Being          //常用消息解析,需实现
+	State   map[string]any  //框架中途产生的内容,不固定,即时有效
 }
 ```
 3发送消息
@@ -68,9 +85,8 @@ ctx.Send(xxx)
 xxx有很多,可以无限续接,逗号分开
 message包里为通用的结构,可以在任意平台使用
 其中文本消息用message.Text(any)
-byte图片用message.Image(img []byte)
-url图片用message.ImageUrl(url string)
-at用message.AT(id , name string)
+byte图片用message.ImageByte(img []byte)
+at用message.AT(id string)
 reply用message.reply()
 其余看源码学习...
 ```
