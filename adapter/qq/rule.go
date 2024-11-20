@@ -9,7 +9,8 @@ func (c *Config) OnlyReply(ctx *rosm.Ctx) bool {
 	case "GROUP_AT_MESSAGE_CREATE":
 		return false
 	case "DIRECT_MESSAGE_CREATE", "AT_MESSAGE_CREATE", "MESSAGE_CREATE":
-		return ctx.State["event"].(*RawGuildMessage).MessageReference.MessageID != ""
+		ctx.State["reply"] = ctx.State["event"].(*RawGuildMessage).MessageReference.MessageID
+		return ctx.State["reply"].(string) != ""
 	default:
 		return false
 	}
