@@ -23,7 +23,7 @@ RosmBot-Mul [-d] [-lf path] [-nolf]
 
 ## 部署方法
 
-- ~~[mys部署]( server/mys/README.md)~~
+- ~~[mys部署]~~
 - [qq官方bot部署]( server/qq/README.md)
 - [ob11协议部署]( server/ob11/README.md)
 
