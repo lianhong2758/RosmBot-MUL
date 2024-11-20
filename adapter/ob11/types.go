@@ -62,7 +62,7 @@ type Event struct {
 	DetailType     string          `json:"-"`
 	MessageType    string          `json:"message_type"`
 	SubType        string          `json:"sub_type"`
-	MessageID      string          `json:"message_id"`
+	RawMessageID   json.RawMessage `json:"message_id"` // int64 in qq or string in guild
 	GroupID        int64           `json:"group_id"`
 	ChannelID      string          `json:"channel_id"`
 	GuildID        string          `json:"guild_id"`

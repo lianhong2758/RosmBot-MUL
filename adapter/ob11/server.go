@@ -17,7 +17,7 @@ func (c *Config) process(e *Event) {
 	case "message", "message_sent":
 		c.preprocessMessageEvent(e)
 		mess := e.Message.ExtractPlainText()
-		log.Debug("Message: ", mess)
+		log.Debugf("Event: %+v\n", e)
 		switch e.MessageType {
 		// 私聊信息
 		case "private":
@@ -31,7 +31,7 @@ func (c *Config) process(e *Event) {
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
 					},
-					MsgID: e.MessageID,
+					MsgID: tool.BytesToString(e.RawMessageID),
 				},
 				State:   map[string]any{"event": e},
 				Message: e.Message,
@@ -51,7 +51,7 @@ func (c *Config) process(e *Event) {
 						Name: e.Sender.NickName,
 						ID:   tool.Int64ToString(e.Sender.ID),
 					},
-					MsgID:  e.MessageID,
+					MsgID:  tool.Int64ToString(e.Sender.ID),
 					ATList: e.AtList,
 				},
 				State:   map[string]any{"event": e, "reply": e.ReplyMessageID},
@@ -67,6 +67,7 @@ func (c *Config) process(e *Event) {
 			// if e.MessageType == "guild" {
 			// 	uid = e.TinyID
 			// }
+			//strconv.Unquote(helper.BytesToString(event.RawMessageID))
 		default:
 			log.Warningf("Cannot Parse 'message' event -> %s", e.MessageType)
 		}
@@ -74,15 +75,16 @@ func (c *Config) process(e *Event) {
 		// 通知事件
 	case "notice":
 		preprocessNoticeEvent(e)
+		log.Infof("[ob11] [↓][事件 %v]: %v", e.GroupID, e.NoticeType)
 		//https://github.com/botuniverse/onebot-11/blob/master/event/notice.md
 		ctx := &rosm.Ctx{
-
 			Being: &rosm.Being{
 				GuildID: e.ChannelID,
 				GroupID: tool.Int64ToString(e.GroupID) + e.GuildID,
 				User: &rosm.UserData{
 					ID: tool.Int64ToString(e.UserID),
 				},
+				MsgID: tool.BytesToString(e.RawMessageID),
 			},
 			State:   map[string]any{"event": e, "notice_type": e.NoticeType},
 			Message: e.Message,
@@ -149,6 +151,7 @@ func (c *Config) preprocessMessageEvent(e *Event) {
 	if e.Message[0].Type == "at" && tool.Int64ToString(e.SelfID) == e.Message[0].Data["qq"] {
 		e.IsToMe = true
 		e.Message = e.Message[1:]
+		e.AtList = e.AtList[1:]
 		return
 	}
 	if e.Message[0].Type == "text" {

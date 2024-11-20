@@ -14,37 +14,6 @@ import (
 	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
-// // 新建bot消息
-// func NewBot(botid string) rosm.Boter {
-// 	return botMap[botid]
-// }
-
-// // 新建上下文
-// func NewCTX(botid, group string) *rosm.Ctx {
-// 	return &rosm.Ctx{
-// 		BotType: "ob11",
-// 		Bot:     botMap[botid],
-// 		Being: &rosm.Being{
-// 			GroupID: group,
-// 		},
-// 	}
-// }
-// func GetRandBot() *Config {
-// 	for k := range botMap {
-// 		return botMap[k]
-// 	}
-// 	return nil
-// }
-
-// // RangeBot 遍历所有bot实例
-// func RangeBot(fn func(id string, bot *Config) bool) {
-// 	for k, v := range botMap {
-// 		if !fn(k, v) {
-// 			return
-// 		}
-// 	}
-// }
-
 var base64Reg = regexp.MustCompile(`"type":"image","data":\{"file":"base64://[\w/\+=]+`)
 
 // formatMessage 格式化消息数组

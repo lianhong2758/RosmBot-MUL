@@ -24,8 +24,8 @@ func init() {
 			for _, sid := range sids {
 				tool.WaitWhile()
 				ob11.DeleteMessage(ctx, sid)
+				logrus.Info("[delete]跟随撤回消息", ctx.Being.MsgID, " - ", sid)
 			}
 		}
-
 	})
 }

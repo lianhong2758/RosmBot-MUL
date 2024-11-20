@@ -22,8 +22,9 @@ func (m Message) ExtractPlainText() string {
 			sb.WriteString(val.Data["text"])
 		}
 	}
-	return sb.String()
+	return strings.TrimLeft(sb.String()," ")
 }
+
 func (m MessageSegment) Text() string {
 	sb := strings.Builder{}
 	for _, val := range m.Data {
