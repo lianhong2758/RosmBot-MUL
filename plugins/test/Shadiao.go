@@ -1,10 +1,12 @@
-package  test
+package test
+
 import (
 	"encoding/json"
-	"github.com/lianhong2758/RosmBot-MUL/message"
-	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"io"
 	"net/http"
+
+	"github.com/lianhong2758/RosmBot-MUL/message"
+	"github.com/lianhong2758/RosmBot-MUL/rosm"
 )
 
 const (
@@ -21,16 +23,16 @@ func init() {
 		Name: "沙雕插件",
 		Help: "- /夸我 今天的你已经很棒了加油\n- /毒鸡汤 换个角度看问题世界从此不同\n- /朋友圈文案 向朋友们宣告你的新脑洞\n- /段子 感到不开心的话就笑一笑吧\n- /甘海 爱情需要一些甜蜜小短句",
 	})
-	Engine.AddWord("/夸我").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
+	Engine.OnWord("夸我").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text(GetShaDiaOApiText(chpURL)))
 	})
-	Engine.AddWord("/毒鸡汤").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
+	Engine.OnWord("毒鸡汤").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text(GetShaDiaOApiText(duURL)))
 	})
-	Engine.AddWord("/朋友圈文案").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
+	Engine.OnWord("朋友圈文案").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text(GetShaDiaOApiText(pyqURL)))
 	})
-	Engine.AddWord("/甘海").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
+	Engine.OnWord("甘海").SetBlock(true).Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text(GetGanHaiApiText(ganhaiURL)))
 	})
 }
@@ -64,7 +66,6 @@ type DuanZiStruct struct {
 	Duanzi  string `json:"duanzi"`
 	Qiafan  bool   `json:"qiafan"`
 }
-
 
 type GanHaiStruct struct {
 	Code      int    `json:"code"`

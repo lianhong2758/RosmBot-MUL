@@ -26,7 +26,7 @@ func init() {
 		_ = json.Unmarshal(data, &cards)
 		log.Infoln("[wife]加载", len(cards), "位wife...")
 	}
-	en.AddWord("/抽wife").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("抽wife").Handle(func(ctx *rosm.Ctx) {
 		id, err := strconv.Atoi(ctx.Being.User.ID)
 		if err != nil {
 			var lastThree string = ctx.Being.User.ID
@@ -40,6 +40,6 @@ func init() {
 		card := cards[tool.RandSenderPerDayN(int64(id), len(cards))]
 		path := file.BOTPATH + "/" + en.DataFolder + "pic/" + card
 		card = strings.Split(card, ".")[0]
-		ctx.Send(message.AT(ctx.Being.User.ID, ctx.Being.User.Name), message.Text("今天的二次元老婆是~【", card, "】哒"), message.Image("file://"+path))
+		ctx.Send(message.AT(ctx.Being.User.ID), message.Text("今天的二次元老婆是~【", card, "】哒"), message.Image("file://"+path))
 	})
 }

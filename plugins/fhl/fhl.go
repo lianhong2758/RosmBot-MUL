@@ -31,10 +31,10 @@ func init() { // 插件主体
 			"- /天女散花[13]\n" +
 			"- /雾里看花[5-10]",
 	})
-	en.AddWord("/梦笔生花").Handle(casefunc("A"))
-	en.AddRex(`^/走马观花\s*(\d)`).Handle(casefunc("B"))
-	en.AddRex(`^/天女散花\s*(\d)`).Handle(casefunc("C"))
-	en.AddRex(`^/雾里看花\s*(\d)`).Handle(casefunc("D"))
+	en.OnWord("梦笔生花").Handle(casefunc("A"))
+	en.OnRex(`^/走马观花\s*(\d)`).Handle(casefunc("B"))
+	en.OnRex(`^/天女散花\s*(\d)`).Handle(casefunc("C"))
+	en.OnRex(`^/雾里看花\s*(\d)`).Handle(casefunc("D"))
 }
 
 type TopicResp struct {
@@ -80,8 +80,8 @@ type AnswerResq struct {
 
 func answer(ctx *rosm.Ctx, ar *AnswerResq) error {
 	data, err := json.Marshal(Answer{
-		ID:   "RosmBot" + ctx.Being.RoomID + ctx.Being.RoomID2,
-		Text: ctx.Being.Word,
+		ID:   "RosmBot" + ctx.Being.GroupID + ctx.Being.GuildID,
+		Text: ctx.Being.RawWord,
 	})
 	if err != nil {
 
@@ -98,7 +98,7 @@ func gettopic(ctx *rosm.Ctx, types string, size int, r *TopicResp) error {
 	data, err := json.Marshal(Topic{
 		ModType: types,
 		Size:    size,
-		ID:      "RosmBot" + ctx.Being.RoomID + ctx.Being.RoomID2,
+		ID:      "RosmBot" + ctx.Being.GroupID + ctx.Being.GuildID,
 	})
 	if err != nil {
 		return err
@@ -115,7 +115,7 @@ func casefunc(types string) func(ctx *rosm.Ctx) {
 		r := new(TopicResp)
 		size := 0
 		if types != "A" {
-			size, _ = strconv.Atoi(ctx.Being.Rex[1])
+			size, _ = strconv.Atoi(ctx.Being.ResultWord[1])
 		}
 		err := gettopic(ctx, types, size, r)
 		if err != nil {
@@ -127,7 +127,7 @@ func casefunc(types string) func(ctx *rosm.Ctx) {
 			return
 		}
 		ctx.Send(message.Text(helpMap[types], "\n题目如下:", r.Data.SubjectString))
-		next, close := ctx.GetNext(rosm.AllMessage, false, rosm.OnlyAtMe(), rosm.OnlyTheRoom(ctx.Being.RoomID, ctx.Being.RoomID2))
+		next, close := ctx.GetNext(rosm.AllMessage, false, rosm.OnlyAtMe(), rosm.OnlyTheRoom(ctx.Being.GroupID, ctx.Being.GuildID))
 		defer close()
 		ar := new(AnswerResq)
 		for {
@@ -136,7 +136,7 @@ func casefunc(types string) func(ctx *rosm.Ctx) {
 				ctx.Send(message.Text("时间太久了,不玩了喵..."))
 				return
 			case ctx2 := <-next:
-				if ctx2.Being.Word == "/结束游戏" {
+				if ctx2.Being.RawWord == "/结束游戏" {
 					ctx.Send(message.Text("飞花令游戏结束..."))
 					return
 				}
@@ -148,7 +148,7 @@ func casefunc(types string) func(ctx *rosm.Ctx) {
 				switch ar.Code {
 				case 202:
 					//游戏结束
-					ctx.Send(message.Text(ar.Data.Reason), message.AT(ctx2.Being.User.ID, ctx2.Being.User.Name), message.Text("获胜。\nhistory:", strings.Join(ar.Data.HistoryText, "\n")))
+					ctx.Send(message.Text(ar.Data.Reason), message.AT(ctx2.Being.User.ID), message.Text("获胜。\nhistory:", strings.Join(ar.Data.HistoryText, "\n")))
 					return
 				case 200:
 					tup := ""

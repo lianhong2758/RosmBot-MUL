@@ -21,7 +21,7 @@ func init() {
 		Name: "gal表情包",
 		Help: "- /表情包\n",
 	})
-	en.AddWord("/gal表情包", "/表情包").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("gal表情包", "表情包").Handle(func(ctx *rosm.Ctx) {
 		//随机一个集合id (1-6)
 		listId := rand.IntN(6) + 1
 		data, err := web.GetData(fmt.Sprintf(listURL, listId), "")

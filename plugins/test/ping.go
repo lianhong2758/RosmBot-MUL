@@ -17,7 +17,7 @@ func init() { // 主函数
 		Name: "ping",
 		Help: "- /ping xxx",
 	})
-	en.AddRex(`^\/ping\s*(https:\/\/||http:\/\/)?(\S*)`).SetBlock(true).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^\/ping\s*(https:\/\/||http:\/\/)?(\S*)`).SetBlock(true).Handle(func(ctx *rosm.Ctx) {
 		var (
 			timeout      int64 = 1000 // 超时
 			size         int   = 64   // 字节
@@ -39,8 +39,8 @@ func init() { // 主函数
 			ID          uint16
 			SequenceNum uint16
 		}
-		dstIp := ctx.Being.Rex[2]
-		if ctx.Being.Rex[1] != "" {
+		dstIp := ctx.Being.ResultWord[2]
+		if ctx.Being.ResultWord[1] != "" {
 			dstIp = dstIp[:len(dstIp)-1]
 		}
 		conn, err := net.DialTimeout("ip:icmp", dstIp, time.Duration(timeout)*time.Millisecond)

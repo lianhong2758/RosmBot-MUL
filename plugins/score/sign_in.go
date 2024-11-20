@@ -51,18 +51,18 @@ func init() {
 		}
 		sdb = initialize(en.DataFolder + "score.db")
 	}()
-	en.AddRex(`^/签到\s?(\d*)$`).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/签到\s?(\d*)$`).Handle(func(ctx *rosm.Ctx) {
 		// 选择key
 		var key string = defKey
-		if ctx.Being.Rex[1] != "" {
-			key = ctx.Being.Rex[1]
+		if ctx.Being.ResultWord[1] != "" {
+			key = ctx.Being.ResultWord[1]
 		}
 		drawfunc, ok := drawmap[key]
 		if !ok {
 			ctx.Send(message.Text("未找到签到设定:", key)) // 避免签到配置错误造成无图发送,但是已经签到的情况
 			return
 		}
-		uid, name := ctx.Being.User.ID, ctx.Being.User.Name
+		uid:= ctx.Being.User.ID
 		today := time.Now().Format("20060102")
 		// 签到图片
 		drawedFile := cachePath + uid + today + "signin.png"
@@ -96,7 +96,7 @@ func init() {
 		level := sdb.GetScoreByUID(uid).Score + 1
 		if level > SCOREMAX {
 			level = SCOREMAX
-			ctx.Send(message.AT(uid, name), message.Text("你的等级已经达到上限"))
+			ctx.Send(message.AT(uid), message.Text("你的等级已经达到上限"))
 		}
 		err = sdb.InsertOrUpdateScoreByUID(uid, level)
 		if err != nil {
@@ -147,7 +147,7 @@ func init() {
 		ctx.Send(message.Reply(), message.Image("file://"+file.BOTPATH+"/"+drawedFile))
 	})
 
-	en.AddWord("/获得签到背景").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("获得签到背景").Handle(func(ctx *rosm.Ctx) {
 		picFile := cachePath + ctx.Being.User.ID + time.Now().Format("20060102") + ".png"
 		if file.IsNotExist(picFile) {
 			ctx.Send(message.Reply(), message.Text("请先签到！"))

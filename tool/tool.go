@@ -35,33 +35,33 @@ func Int64ToString(ID int64) string {
 	return strconv.FormatInt(ID, 10)
 }
 
-// 40位以下id字符串合并,结果称为string1,one为roomID1
-func MergePadString(one, two string) string {
-	return one + strings.Repeat(" ", 40-len(one)) + two + strings.Repeat(" ", 40-len(two))
+// 40位以下id字符串合并,结果称PadString
+func MergePadString(group, guild string) string {
+	return group + strings.Repeat(" ", 40-len(group)) + guild + strings.Repeat(" ", 40-len(guild))
 }
 
-// 40位以下id字符串拆分,结果称为string2
-func SplitPadString(only string) (one, two string) {
+// 40位以下id字符串拆分
+func SplitPadString(only string) (group, guild string) {
 	return strings.TrimRight(only[:40], " "), strings.TrimRight(only[40:], " ")
 }
 
-func MergeIntToInt64(one, two int) int64 {
-	return int64(two)<<32 | int64(one)
+func MergeIntToInt64(group, guild int) int64 {
+	return int64(guild)<<32 | int64(group)
 }
 
-func SplitInt64ToInt(x int64) (one, two int) {
-	one = int(x & 0xffffffff)
-	two = int(x >> 32)
+func SplitInt64ToInt(x int64) (group, guild int) {
+	group = int(x & 0xffffffff)
+	guild = int(x >> 32)
 	return
 }
 
-// JoinTypeAndString结果和type的组合数据
-func JoinTypeAndString(types, string1 string) string {
-	return types + string1
+// JoinTypeAndPadString结果和type的组合数据
+func JoinTypeAndPadString(types, padString string) string {
+	return types + padString
 }
 
 // 解析JoinTypeAndString结果和type的组合数据
-func SplitTypeAndString(value string) (types, string1 string) {
+func SplitTypeAndPadString(value string) (types, padString string) {
 	return value[:len(value)-80], value[len(value)-80:]
 }
 

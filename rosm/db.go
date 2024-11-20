@@ -17,7 +17,7 @@ import (
 var PluginDB = &model{sql: &sql.Sqlite{}}
 
 func init() {
-	PluginDB.sql.DBPath = en.DataFolder + "regulate.db"
+	PluginDB.sql.DBPath = boten.DataFolder + "regulate.db"
 	err := PluginDB.sql.Open(time.Hour * 24)
 	if err != nil {
 		log.Error("[regulate]初始化数据库失败!")
@@ -99,14 +99,15 @@ func (db *model) InsertInt(pluginname, roomid string, i int) (err error) {
 		RoomID: roomid,
 		Off:    oldm.Off,
 		String: oldm.String,
-		Int:     i,
+		Int:    i,
 	}
 	return db.sql.Insert(pluginname, &m)
 }
+
 // 查询是否开启插件
 func MatcherIsOn(m *Matcher) func(ctx *Ctx) bool {
 	return func(ctx *Ctx) bool {
-		off, err := PluginDB.FindOff(m.PluginNode.Name, tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2))
+		off, err := PluginDB.FindOff(m.PluginNode.Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID))
 		log.Debugln("[db]PluginIsOn 插件:", m.PluginNode.Name, "Off: ", off, "err: ", err)
 		return (!off && err == nil) || (!m.PluginNode.DefaultOff && err == sql.ErrNullResult)
 	}
@@ -115,7 +116,7 @@ func MatcherIsOn(m *Matcher) func(ctx *Ctx) bool {
 // 查询是否开启插件,传入Plugin
 func PluginIsOn(PluginNode *PluginData) func(ctx *Ctx) bool {
 	return func(ctx *Ctx) bool {
-		off, err := PluginDB.FindOff(PluginNode.Name, tool.MergePadString(ctx.Being.RoomID, ctx.Being.RoomID2))
+		off, err := PluginDB.FindOff(PluginNode.Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID))
 		log.Debugln("[db]PluginIsOn 插件:", PluginNode.Name, "Off: ", off, "err: ", err)
 		return (!off && err == nil) || (!PluginNode.DefaultOff && err == sql.ErrNullResult)
 	}

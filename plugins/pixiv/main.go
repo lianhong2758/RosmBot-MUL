@@ -9,12 +9,11 @@ import (
 
 	"github.com/FloatTech/floatbox/file"
 	"github.com/jozsefsallai/gophersauce"
+	"github.com/lianhong2758/RosmBot-MUL/adapter/ob11"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
-	"github.com/lianhong2758/RosmBot-MUL/server/ob11"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	"github.com/sirupsen/logrus"
-	zero "github.com/wdvxdr1123/ZeroBot"
 )
 
 var (
@@ -33,8 +32,8 @@ func init() {
 		_ = os.MkdirAll(en.DataFolder+"cache", 0755)
 	}
 
-	en.AddRex(`^/搜图\s*(\d+)$`).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
-		id, _ := strconv.ParseInt(ctx.Being.Rex[1], 10, 64)
+	en.OnRex(`^/搜图\s*(\d+)$`).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
+		id, _ := strconv.ParseInt(ctx.Being.ResultWord[1], 10, 64)
 		ctx.Send(message.Text("雪儿正在寻找中......"))
 		// 获取P站插图信息
 		illust, err := Works(id)
@@ -89,7 +88,7 @@ func init() {
 			ctx.Send(message.Text("图片不存在呜..."))
 		}
 	})
-	en.AddWord("/以图搜图", "/以图识图").MUL("ob11").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("以图搜图", "以图识图").MUL("ob11").Handle(func(ctx *rosm.Ctx) {
 		pics := GetMustPic(ctx)
 		if len(pics) == 0 {
 			ctx.Send(message.Text("雪儿没有收到图片唔..."))
@@ -136,17 +135,17 @@ func init() {
 			// if !find{}
 		}
 	})
-	en.AddRex(`^\/设置\s?saucenao\s?api\s?key\s?([0-9a-f]{40})$`).Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^\/设置\s?saucenao\s?api\s?key\s?([0-9a-f]{40})$`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		var err error
 		saucenaocli, err = gophersauce.NewClient(&gophersauce.Settings{
 			MaxResults: 1,
-			APIKey:     ctx.Being.Rex[1],
+			APIKey:     ctx.Being.ResultWord[1],
 		})
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		rosm.PluginDB.InsertString(en.Name, "0", ctx.Being.Rex[1])
+		rosm.PluginDB.InsertString(en.Name, "0", ctx.Being.ResultWord[1])
 		ctx.Send(message.Text("设置成功!"))
 	})
 }
@@ -177,7 +176,7 @@ func GetMustPic(ctx *rosm.Ctx) []string {
 // 获取这次ctx内容的图片
 func GetPicFormCtx(ctx *rosm.Ctx) []string {
 	var urls = []string{}
-	e, _ := ctx.Message.(*zero.Event)
+	e, _ := ctx.State["event"].(*ob11.Event)
 	for _, elem := range e.Message {
 		if elem.Type == "image" {
 			if elem.Data["url"] != "" {

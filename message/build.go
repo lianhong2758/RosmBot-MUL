@@ -23,7 +23,7 @@ import (
 
 type H = map[string]string
 
-type Message = []MessageSegment
+type Message  []MessageSegment
 
 type MessageSegment struct {
 	Type string `json:"type"`
@@ -39,37 +39,18 @@ func Text(text ...any) MessageSegment {
 }
 
 // at用户
-func AT(uid, name string) MessageSegment {
-	name = "@" + name + " "
+func AT(uid string) MessageSegment {
 	return MessageSegment{
 		Type: "at",
 		Data: H{
-			"text": name,
-			"uid":  uid,
-		},
-	}
-}
-
-// atbot
-func ATBot(botid, botname string) MessageSegment {
-	botname = "@" + botname + " "
-	return MessageSegment{
-		Type: "mentioned_robot",
-		Data: H{
-			"text": botname,
-			"uid":  botid,
+			"uid": uid,
 		},
 	}
 }
 
 // at all
 func ATAll() MessageSegment {
-	return MessageSegment{
-		Type: "atall",
-		Data: H{
-			"text": "@全体成员 ",
-		},
-	}
+	return AT("all")
 }
 
 // 发送普通图片

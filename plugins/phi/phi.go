@@ -23,7 +23,6 @@ var fontsd []byte
 func init() {
 	//	en := rosm.Register(rosm.NewRegist("phi", "- /bind you_Session\n- /b19", "phi"))
 	en := rosm.Register(&rosm.PluginData{
-		Priority: 3,
 		Name: "phi",
 		Help: "- /bind you_Session\n" +
 			"- /b19\n" +
@@ -53,8 +52,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	en.AddRex(`^/b(\d+)$`).Handle(func(ctx *rosm.Ctx) {
-		blen, _ := strconv.Atoi(ctx.Being.Rex[1])
+	en.OnRex(`^/b(\d+)$`).Handle(func(ctx *rosm.Ctx) {
+		blen, _ := strconv.Atoi(ctx.Being.ResultWord[1])
 		if blen <= 0 {
 			return
 		}
@@ -108,26 +107,26 @@ func init() {
 		}
 		ctx.Send(message.Image("file://" + file.BOTPATH + "/" + output + Session + ".png"))
 	})
-	en.AddRex(`^/bind\s*(.*)$`).Handle(func(ctx *rosm.Ctx) {
-		if ctx.Being.Rex[1] == "" {
+	en.OnRex(`^/bind\s*(.*)$`).Handle(func(ctx *rosm.Ctx) {
+		if ctx.Being.ResultWord[1] == "" {
 			ctx.Send(message.Text("Session不能为空"))
 			return
 		}
-		_, err := phigros.GetDataFormTap(phigros.UserMeUrl, ctx.Being.Rex[1]) //获取id
+		_, err := phigros.GetDataFormTap(phigros.UserMeUrl, ctx.Being.ResultWord[1]) //获取id
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		SaveSession(en.DataFolder+"sessions/"+ctx.Being.User.ID+".b19", ctx.Being.Rex[1])
+		SaveSession(en.DataFolder+"sessions/"+ctx.Being.User.ID+".b19", ctx.Being.ResultWord[1])
 		ctx.Send(message.Text("绑定成功,发送`/b19`查询战绩"))
 	})
-	en.AddRex("^/phi(扫码)?登录$").Handle(func(ctx *rosm.Ctx) {
+	en.OnRex("^/phi(扫码)?登录$").Handle(func(ctx *rosm.Ctx) {
 		r, err := qr.LoginQrCode(true, "public_profile")
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		if ctx.Being.Rex[1] != "" {
+		if ctx.Being.ResultWord[1] != "" {
 			var png []byte
 			png, err = qrcode.Encode(r.Data.QrcodeURL, qrcode.Medium, 256)
 			if err != nil {
@@ -180,7 +179,7 @@ func init() {
 		SaveSession(en.DataFolder+"sessions/"+ctx.Being.User.ID+".b19", k.SessionToken)
 		ctx.Send(message.Text("绑定成功,发送`/b19`查询战绩"))
 	})
-	en.AddWord("/phi帮助").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("phi帮助").Handle(func(ctx *rosm.Ctx) {
 		ctx.Send(message.Text("Session获取:\n用mt文件管理器打开`.userdata`文件\n打开后找到`sessionToken:xxx`\nxxx即为所需\n.userdata文件的相对路径: “./Android/data/com.PigeonGames.Phigros/files/.userdata"))
 	})
 }

@@ -13,8 +13,12 @@ import (
 var cache = ttl.NewCache[string, *rosm.Ctx](time.Minute * 3)
 
 func init() {
-	en := rosm.Register(rosm.NewRegist("gscore", "参考gscore帮助\nGenshinUID帮助页:https://www.kdocs.cn/l/ccpc6z0bZx6u\n- 启动gscore \n- 关闭gscore", "gscore"))
-	en.AddWord("启动gscore").Handle(func(ctx *rosm.Ctx) { //.Rule(rosm.OnlyMaster())
+	en := rosm.Register(&rosm.PluginData{
+		Name:       "gscore",
+		Help:       "参考gscore帮助\nGenshinUID帮助页:https://www.kdocs.cn/l/ccpc6z0bZx6u\n- 启动gscore \n- 关闭gscore",
+		DataFolder: "gscore",
+	})
+	en.OnWord("启动gscore").Handle(func(ctx *rosm.Ctx) { //.SetRule(rosm.OnlyMaster())
 		//创建ws
 		Config.NewWebSocket()
 		//启动ws接收
@@ -24,13 +28,13 @@ func init() {
 		Config.on = true
 		ctx.Send(message.Text("gscore已启动"))
 	})
-	en.AddWord("关闭gscore").Rule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("关闭gscore").SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		Config.on = false
 		//启动ws接收
 		Config.cancel()
 		ctx.Send(message.Text("gscore已关闭"))
 	})
-	en.AddEvent(rosm.AllMessage).Rule(func(ctx *rosm.Ctx) bool { return Config.on }).Handle(func(ctx *rosm.Ctx) {
+	en.OnAllMessage().SetRule(func(ctx *rosm.Ctx) bool { return Config.on }).Handle(func(ctx *rosm.Ctx) {
 		for {
 			SendErr := SendWsMessage(MakeSendCoreMessage(ctx), Config.conn)
 			if SendErr != nil {

@@ -1,3 +1,0 @@
-package qqmsg
-
-import ()

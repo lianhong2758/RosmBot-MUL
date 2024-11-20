@@ -15,7 +15,7 @@ func init() {
 		Name: "今日早报",
 		Help: "- /今日早报",
 	})
-	en.AddWord("/今日早报").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("今日早报").Handle(func(ctx *rosm.Ctx) {
 		data, err := web.GetData(api, "")
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))

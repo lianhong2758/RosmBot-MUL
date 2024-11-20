@@ -27,11 +27,11 @@ func init() {
 			log.Error("[liuyao]未找到解卦文件...")
 		}
 	}
-	en.AddRex(`/六爻春风\s*(\d*)?$`).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`/六爻春风\s*(\d*)?$`).Handle(func(ctx *rosm.Ctx) {
 		var buf bytes.Buffer
 		seed := uint64(0)
-		if ctx.Being.Rex[1] != "" {
-			seed = uint64(tool.StringToInt64(ctx.Being.Rex[1]))
+		if ctx.Being.ResultWord[1] != "" {
+			seed = uint64(tool.StringToInt64(ctx.Being.ResultWord[1]))
 		} else {
 			seed = uint64(tool.StringToInt64(ctx.Being.User.ID))
 		}

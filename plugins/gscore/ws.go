@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/RomiChan/websocket"
+	"github.com/lianhong2758/RosmBot-MUL/adapter"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
-	"github.com/lianhong2758/RosmBot-MUL/tool/send"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -99,7 +99,8 @@ func SendMessage(RecMessage *RecMessageStr) {
 	makeMsg(nodeMessage)
 	ctx := cache.Get(RecMessage.MsgId)
 	if ctx == nil {
-		ctx = send.CTXBuild(RecMessage.BotId, "", RecMessage.TargetId)
+		ctx = adapter.NewCtxWithPad(RecMessage.BotId, "", RecMessage.TargetId)
+		//ctx = send.CTXBuild(RecMessage.BotId, "", RecMessage.TargetId)
 	}
 	if ctx != nil {
 		ctx.Send(msg...)

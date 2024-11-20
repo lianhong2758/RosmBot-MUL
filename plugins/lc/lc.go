@@ -14,7 +14,7 @@ func init() {
 		Help: "- 每日一题\n" +
 			"- rlc e/m/h",
 	})
-	en.AddWord("每日一题", "/每日一题").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("每日一题", "/每日一题").Handle(func(ctx *rosm.Ctx) {
 		err := GetCsrftoken()
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
@@ -39,7 +39,7 @@ func init() {
 			"https://leetcode.cn/problems/"+titleSlug,
 		)))
 	})
-	en.AddRex(`^/?(?:rlc|随机lc)\s*([EeMmHh])?$`).Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/?(?:rlc|随机lc)\s*([EeMmHh])?$`).Handle(func(ctx *rosm.Ctx) {
 		/*
 			大概估计题库有3500+
 			其中会员题700+
@@ -47,7 +47,7 @@ func init() {
 			MEDIUM 1900+
 			HARD 800+
 		*/
-		difficulty := ctx.Being.Rex[1]
+		difficulty := ctx.Being.ResultWord[1]
 		err := GetCsrftoken()
 		if err != nil {
 			ctx.Send(message.Text("ERROR: ", err))
