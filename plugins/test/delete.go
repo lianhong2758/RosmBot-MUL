@@ -12,14 +12,14 @@ func init() {
 		Name: "撤回消息",
 		Help: "- 撤回",
 	})
-	en.OnRex(`^\[CQ:reply,id=(-?[0-9]+)\].*`).MUL("ob11").SetRule(rosm.OnlyMaster(), rosm.KeyWords("撤回")).Handle(func(ctx *rosm.Ctx) {
-		ob11.DeleteMessage(ctx, ctx.Being.ResultWord[1])
+	en.OnWord("撤回").MUL(ob11.BotType).SetRule(rosm.OnlyMaster(), rosm.OnlyReply()).Handle(func(ctx *rosm.Ctx) {
+		ob11.DeleteMessage(ctx, ctx.State["reply"].(string))
 		ob11.DeleteMessage(ctx, ctx.Being.MsgID)
-		logrus.Info("[delete]撤回消息", ctx.Being.ResultWord[1], " - ", ctx.Being.MsgID[0])
+		logrus.Info("[delete]撤回消息", ctx.State["reply"].(string), " - ", ctx.Being.MsgID)
 	})
 	//跟随撤回
-	en.OnNoticeWithType(rosm.FriendRecall, rosm.GroupRecall).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
-		id := ctx.State["event"].(*ob11.Event).MessageID
+	en.OnNoticeWithType(rosm.FriendRecall, rosm.GroupRecall).MUL(ob11.BotType).Handle(func(ctx *rosm.Ctx) {
+		id := ctx.Being.MsgID
 		if sids := rosm.GetMessageIDFormMapCache(id); len(sids) > 0 {
 			for _, sid := range sids {
 				tool.WaitWhile()

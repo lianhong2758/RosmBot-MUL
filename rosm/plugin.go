@@ -119,6 +119,7 @@ func (p *PluginData) On(types string) *Matcher {
 		priority:   5,
 		temp:       false,
 		PluginNode: p,
+		rules:      []Rule{GetBotIsOnInThis()},
 	}
 	EventMatch[types] = append(EventMatch[types], m)
 	p.Matchers = append(p.Matchers, m)
@@ -183,8 +184,7 @@ func (m *Matcher) MUL(name ...string) *Matcher {
 func (m *Matcher) Handle(h Handler) {
 	//加载默认的rule
 	//全局bot启动＋插件单独启用
-	m.rules = append([]func(ctx *Ctx) bool{GetBotIsOnInThis()}, m.rules...)
-	m.rules = append(m.rules, m.mulPass(), MatcherIsOn(m))
+	m.SetRule(m.mulRule(), MatcherIsOn(m))
 	//执行hander
 	m.handler = h
 }
@@ -200,7 +200,7 @@ func (m *Matcher) SetRule(r ...Rule) *Matcher {
 	return m
 }
 
-func (m *Matcher) mulPass() Rule {
+func (m *Matcher) mulRule() Rule {
 	return func(ctx *Ctx) bool {
 		if len(m.mul) == 0 {
 			return true
@@ -217,7 +217,7 @@ func (m *Matcher) mulPass() Rule {
 // Limit 限速器
 // postfn 当请求被拒绝时的操作
 func (m *Matcher) Limit(limiterfn func(*Ctx) *rate.Limiter, postfn ...func(*Ctx)) *Matcher {
-	m.rules = append(m.rules, func(ctx *Ctx) bool {
+	m.SetRule(func(ctx *Ctx) bool {
 		if limiterfn(ctx).Acquire() {
 			return true
 		}

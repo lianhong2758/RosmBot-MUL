@@ -16,7 +16,7 @@ func (c *Config) process(e *Event) {
 	// 消息事件
 	case "message", "message_sent":
 		c.preprocessMessageEvent(e)
-		mess := Message(e.Message).CQString()
+		mess := e.Message.ExtractPlainText()
 		log.Debug("Message: ", mess)
 		switch e.MessageType {
 		// 私聊信息
@@ -148,6 +148,7 @@ func (c *Config) preprocessMessageEvent(e *Event) {
 		if e.Message[0].Type == "at" && tool.Int64ToString(e.SelfID) == e.Message[0].Data["id"] {
 			e.IsToMe = true
 			e.Message = e.Message[1:]
+			return 
 		}
 		if e.Message[0].Type == "text" {
 			e.Message[0].Data["text"] = strings.TrimLeft(e.Message[0].Data["text"], " ") // Trim!
