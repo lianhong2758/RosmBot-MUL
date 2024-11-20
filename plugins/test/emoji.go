@@ -16,39 +16,40 @@ func init() {
 	rosm.Register(&rosm.PluginData{
 		Name: "emoji",
 		Help: "- [emoji][emoji]",
-	}).OnRex(`^(?:(.)|(?:\[CQ:face,id=(\d+)\]))(?:(.)|(?:\[CQ:face,id=(\d+)\]))$`).Handle(func(ctx *rosm.Ctx) {
-		var r1, r2 rune
-		if ctx.Being.ResultWord[1] != "" {
-			r1 = []rune(ctx.Being.ResultWord[1])[0]
-		}
-		if ctx.Being.ResultWord[3] != "" {
-			r2 = []rune(ctx.Being.ResultWord[3])[0]
-		}
-		if ctx.Being.ResultWord[2] != "" {
-			r11, _ := strconv.Atoi(ctx.Being.ResultWord[2])
-			var ok1 bool
-			r1, ok1 = qqface[r11]
-			if !ok1 {
-				return
+	}).OnAllMessage().SetBlock(true).SetRule(func(ctx *rosm.Ctx) bool {
+		if len(ctx.Message) == 2 {
+			r1 := face2emoji(ctx.Message[0])
+			if _, ok := emojis[r1]; !ok {
+				return false
 			}
-		}
-		if ctx.Being.ResultWord[4] != "" {
-			r22, _ := strconv.Atoi(ctx.Being.ResultWord[4])
-			var ok2 bool
-			r2, ok2 = qqface[r22]
-			if ok2 {
-				return
+			r2 := face2emoji(ctx.Message[1])
+			if _, ok := emojis[r2]; !ok {
+				return false
 			}
+			ctx.State["emojimix"] = []rune{r1, r2}
+			return true
 		}
 
-		r1id, ok1 := emojis[r1]
-		r2id, ok2 := emojis[r2]
-		if !(ok1 && ok2) {
-			return
+		r := []rune(ctx.Being.RawWord)
+		if len(r) == 2 {
+			if _, ok := emojis[r[0]]; !ok {
+				return false
+			}
+			if _, ok := emojis[r[1]]; !ok {
+				return false
+			}
+			ctx.State["emojimix"] = r
+			return true
 		}
-		u1 := fmt.Sprintf(bed, r1id, r1, r1, r2)
-		u2 := fmt.Sprintf(bed, r2id, r2, r2, r1)
-		logrus.Info("[emoji]", r1id, " - ", r2id)
+		return false
+
+	}).Handle(func(ctx *rosm.Ctx) {
+		r := ctx.State["emojimix"].([]rune)
+		logrus.Debugln("[emojimix] match:", r)
+		r1, r2 := r[0], r[1]
+		u1 := fmt.Sprintf(bed, emojis[r1], r1, r1, r2)
+		u2 := fmt.Sprintf(bed, emojis[r2], r2, r2, r1)
+		logrus.Info("[emoji]", u1, " - ", u2)
 		resp1, err := http.Head(u1)
 		if err == nil {
 			resp1.Body.Close()
@@ -66,6 +67,26 @@ func init() {
 			}
 		}
 	})
+}
+func face2emoji(face message.MessageSegment) rune {
+	if face.Type == "text" {
+		r := []rune(face.Data["text"])
+		if len(r) != 1 {
+			return 0
+		}
+		return r[0]
+	}
+	if face.Type != "face" {
+		return 0
+	}
+	id, err := strconv.Atoi(face.Data["id"])
+	if err != nil {
+		return 0
+	}
+	if r, ok := qqface[id]; ok {
+		return r
+	}
+	return 0
 }
 
 var emojis = map[rune]int64{
