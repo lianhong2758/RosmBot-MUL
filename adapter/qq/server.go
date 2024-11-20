@@ -19,7 +19,8 @@ func (c *Config) process(playload *WebsocketPayload) {
 			log.Errorln("[qq-err]", err)
 			return
 		}
-		log.Infof("[qq] [↓]私聊消息%s:%s", raw.Author.UserOpenid, raw.Content)
+		word := strings.TrimSpace(raw.Content)
+		log.Infof("[qq] [↓]私聊消息%s:%s", raw.Author.UserOpenid, word)
 		ctx := &rosm.Ctx{
 			Bot:     c,
 			Message: message.Message{},
@@ -32,10 +33,9 @@ func (c *Config) process(playload *WebsocketPayload) {
 			},
 			State: H{"type": playload.T, "id": raw.ID, "event": raw},
 		}
-		word := raw.Content
 		//判断@
 		ctx.Being.IsAtMe = true
-		ctx.Being.RawWord = strings.TrimSpace(word)
+		ctx.Being.RawWord = word
 		log.Debugf("[debug]关键词切割结果: %s", ctx.Being.RawWord)
 		ctx.RunWord()
 		//群聊
@@ -46,10 +46,11 @@ func (c *Config) process(playload *WebsocketPayload) {
 			log.Errorln("[qq-err]", err)
 			return
 		}
-		log.Infof("[qq] [↓]群聊消息[%s]%s:%s", raw.GroupID, raw.Author.ID, raw.Content)
+		word := strings.TrimSpace(raw.Content)
+		log.Infof("[qq] [↓]群聊消息[%s]%s:%s", raw.GroupID, raw.Author.ID, word)
 		ctx := &rosm.Ctx{
 			Bot:     c,
-			Message: message.Message{},
+			Message: message.Message{message.Text(word)},
 			Being: &rosm.Being{
 				GroupID: raw.GroupID,
 				User: &rosm.UserData{
@@ -60,7 +61,7 @@ func (c *Config) process(playload *WebsocketPayload) {
 			},
 			State: H{"type": playload.T, "id": raw.ID, "event": raw},
 		}
-		word := raw.Content
+
 		//判断@
 		ctx.Being.IsAtMe = true
 		ctx.Being.RawWord = strings.TrimSpace(word)
@@ -76,14 +77,29 @@ func (c *Config) process(playload *WebsocketPayload) {
 			log.Errorln("[info]", err)
 			return
 		}
+		atme := false
+		//判断@
+		// if strings.Contains(raw.Content, "<@!"+c.Ready.User.ID+">") {
+		// 	atme = true
+		// 	raw.Content = strings.TrimSpace(strings.Replace(raw.Content, "<@!"+c.Ready.User.ID+">", "", 1))
+		// 	raw.Mentions = raw.Mentions[1:]
+		// }
+		word := raw.Content
 		log.Infof("[qq] [↓]频道消息[%s]%s:%s", raw.GuildID, raw.Author.Username, raw.Content)
 		at := []string{}
+		msg := message.Message{}
 		for _, v := range raw.Mentions {
 			at = append(at, v.ID)
+			// 必定存在
+			// raw.Content = strings.TrimSpace(strings.Replace(raw.Content, "<@!"+c.Ready.User.ID+">", "", 1))
+			ct := strings.Split(word, "<@!"+c.Ready.User.ID+">")
+			msg, word = append(msg, message.Text(ct[0]), message.AT(v.ID)), ct[1]
 		}
+		msg = append(msg, message.Text(word))
+		word = msg.ExtractPlainText()
 		ctx := &rosm.Ctx{
 			Bot:     c,
-			Message: message.Message{},
+			Message: msg,
 			Being: &rosm.Being{
 				GroupID: raw.ChannelID,
 				GuildID: raw.GuildID,
@@ -92,17 +108,12 @@ func (c *Config) process(playload *WebsocketPayload) {
 					Name: raw.Author.Username,
 					ID:   raw.Author.ID,
 				},
-				MsgID: raw.ID,
+				RawWord: word,
+				IsAtMe:  atme,
+				MsgID:   raw.ID,
 			},
 			State: H{"type": playload.T, "id": raw.ID, "event": raw},
 		}
-		word := raw.Content
-		//判断@
-		if strings.Contains(raw.Content, "<@!"+c.Ready.User.ID+">") {
-			ctx.Being.IsAtMe = true
-			word = strings.TrimSpace(strings.Replace(word, "<@!"+c.Ready.User.ID+">", "", 1))
-		}
-		ctx.Being.RawWord = word
 		log.Debugf("[debug]关键词切割结果: %s", word)
 		ctx.RunWord()
 	}

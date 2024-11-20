@@ -40,11 +40,6 @@ func (c *Config) process(e *Event) {
 			ctx.RunWord()
 		// 群聊信息
 		case "group":
-			uid := tool.Int64ToString(e.Sender.ID)
-			if e.MessageType == "guild" {
-				uid = e.TinyID
-			}
-
 			ctx := &rosm.Ctx{
 				Being: &rosm.Being{
 					GuildID: e.ChannelID,
@@ -52,9 +47,10 @@ func (c *Config) process(e *Event) {
 					RawWord: mess,
 					User: &rosm.UserData{
 						Name: e.Sender.NickName,
-						ID:   uid,
+						ID:   tool.Int64ToString(e.Sender.ID),
 					},
-					MsgID: e.MessageID,
+					MsgID:  e.MessageID,
+					ATList: e.AtList,
 				},
 				State:   map[string]any{"event": e, "reply": e.ReplyMessageID},
 				Message: e.Message,
@@ -65,7 +61,9 @@ func (c *Config) process(e *Event) {
 			//log.Println(ctx.Being.Word)
 			ctx.RunWord()
 		case "guild":
-
+			// if e.MessageType == "guild" {
+			// 	uid = e.TinyID
+			// }
 		default:
 			log.Warningf("Cannot Parse 'message' event -> %s", e.MessageType)
 		}
@@ -129,13 +127,16 @@ func (c *Config) preprocessMessageEvent(e *Event) {
 	e.Message = ParseMessage(e.NativeMessage)
 	e.Message.Reduce()
 	e.IsToMe = false
-	processReply := func() { // 处理是否是回复消息
+	processReply := func() { // 处理是否是回复消息,at消息
 		//索引纠正
 		for i, m := range e.Message {
 			if m.Type == "reply" {
 				e.ReplyMessageID = m.Data["id"]
 				e.Message = append(e.Message[:i], e.Message[i+1:]...)
-				return
+				continue
+			}
+			if m.Type == "at" {
+				e.AtList = append(e.AtList, m.Data["qq"])
 			}
 		}
 

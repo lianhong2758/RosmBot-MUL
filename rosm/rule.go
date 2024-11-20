@@ -147,10 +147,10 @@ func TemplateRule(msg ...message.MessageSegment) Rule {
 					ok = false
 					break Next
 				}
-				if msg[mi].Data["qq"] != "" {
+				if msg[mi].Data["uid"] != "" {
 					for _, v := range ctx.Message[i].Data {
-						if v == msg[mi].Data["qq"] {
-							ctx.Being.ResultWord = append(ctx.Being.ResultWord, msg[mi].Data["qq"])
+						if v == msg[mi].Data["uid"] {
+							ctx.Being.ResultWord = append(ctx.Being.ResultWord, msg[mi].Data["uid"])
 							ok = true
 							i++
 							mi++

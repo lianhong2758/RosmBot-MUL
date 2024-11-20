@@ -87,6 +87,7 @@ type Event struct {
 	IsToMe         bool            `json:"-"`
 	ReplyMessageID string          `json:"-"`
 	RawEvent       gjson.Result    `json:"-"` // raw event
+	AtList         []string        `json:"-"`
 }
 
 // Message 消息

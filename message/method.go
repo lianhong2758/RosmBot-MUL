@@ -33,13 +33,13 @@ func (m MessageSegment) Text() string {
 	return sb.String()
 }
 func (m MessageSegment) TrimSpaceText() string {
- return strings.TrimSpace(m.Data["text"])
+	return strings.TrimSpace(m.Data["text"])
 }
 
 func (m MessageSegment) AtId() string {
 	sb := strings.Builder{}
 	for k, val := range m.Data {
-		if k == "qq" || k == "channel" || k == "role" {
+		if k == "qq" || k == "uid" {
 			sb.WriteString(val)
 			break
 		}

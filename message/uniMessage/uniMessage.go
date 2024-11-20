@@ -14,7 +14,7 @@ import (
 func At(uid string) message.MessageSegment {
 	return message.MessageSegment{
 		Type: "at",
-		Data: message.H{"qq": uid},
+		Data: message.H{"uid": uid},
 	}
 }
 
