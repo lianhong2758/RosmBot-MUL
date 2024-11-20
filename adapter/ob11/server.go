@@ -21,6 +21,7 @@ func (c *Config) process(e *Event) {
 		switch e.MessageType {
 		// 私聊信息
 		case "private":
+			log.Infof("[ob11] [↓][私聊消息][%v] : %v", e.Sender.String(), e.RawMessage)
 			ctx := &rosm.Ctx{
 				Being: &rosm.Being{
 					GuildID: "",
@@ -40,6 +41,7 @@ func (c *Config) process(e *Event) {
 			ctx.RunWord()
 		// 群聊信息
 		case "group":
+			log.Infof("[ob11] [↓][群(%v)消息][%v] : %v", e.GroupID, e.Sender.String(), e.RawMessage)
 			ctx := &rosm.Ctx{
 				Being: &rosm.Being{
 					GuildID: e.ChannelID,
@@ -56,11 +58,12 @@ func (c *Config) process(e *Event) {
 				Message: e.Message,
 				Bot:     c,
 			}
-
 			ctx.Being.IsAtMe = e.IsToMe
+			//log.Debugf("%+v\n", ctx.Being)
 			//log.Println(ctx.Being.Word)
 			ctx.RunWord()
 		case "guild":
+			log.Infof("[ob11] [↓][频道(%v)(%v-%v)消息][%v] : %v", e.GroupID, e.GuildID, e.ChannelID, e.Sender.String(), e.Message)
 			// if e.MessageType == "guild" {
 			// 	uid = e.TinyID
 			// }
@@ -125,54 +128,38 @@ func preprocessNoticeEvent(e *Event) {
 // preprocessMessageEvent 返回信息事件
 func (c *Config) preprocessMessageEvent(e *Event) {
 	e.Message = ParseMessage(e.NativeMessage)
-	e.Message.Reduce()
 	e.IsToMe = false
-	processReply := func() { // 处理是否是回复消息,at消息
-		//索引纠正
-		for i, m := range e.Message {
-			if m.Type == "reply" {
-				e.ReplyMessageID = m.Data["id"]
-				e.Message = append(e.Message[:i], e.Message[i+1:]...)
-				continue
-			}
-			if m.Type == "at" {
-				e.AtList = append(e.AtList, m.Data["qq"])
-			}
+	// 处理是否是回复消息,at消息
+	//索引纠正
+	for i, m := range e.Message {
+		if m.Type == "reply" {
+			e.ReplyMessageID = m.Data["id"]
+			e.Message = append(e.Message[:i], e.Message[i+1:]...)
+			continue
 		}
-
-		if len(e.Message) == 0 {
-			return
+		if m.Type == "at" {
+			e.AtList = append(e.AtList, m.Data["qq"])
 		}
-
-		//判断at
-		if e.Message[0].Type == "at" && tool.Int64ToString(e.SelfID) == e.Message[0].Data["id"] {
-			e.IsToMe = true
-			e.Message = e.Message[1:]
-			return 
-		}
-		if e.Message[0].Type == "text" {
-			e.Message[0].Data["text"] = strings.TrimLeft(e.Message[0].Data["text"], " ") // Trim!
-			text := e.Message[0].Data["text"]
-			for _, nickname := range rosm.GetRosmConfig().BotName {
-				if strings.HasPrefix(text, nickname) {
-					e.IsToMe = true
-					e.Message[0].Data["text"] = strings.TrimLeft(text[len(nickname):], " ") //Trim!
-					return
-				}
-			}
-		}
-
 	}
-	switch {
-	case e.DetailType == "group":
-		log.Infof("[ob11] [↓][群(%v)消息][%v] : %v", e.GroupID, e.Sender.String(), e.RawMessage)
-		processReply()
-	case e.DetailType == "guild" && e.SubType == "channel":
-		log.Infof("[ob11] [↓][频道(%v)(%v-%v)消息][%v] : %v", e.GroupID, e.GuildID, e.ChannelID, e.Sender.String(), e.Message)
-		processReply()
-	default:
-		processReply()
-		e.IsToMe = true // 私聊也判断为at
-		log.Infof("[ob11] [↓][私聊消息][%v] : %v", e.Sender.String(), e.RawMessage)
+
+	if len(e.Message) == 0 {
+		return
+	}
+	//判断at
+	if e.Message[0].Type == "at" && tool.Int64ToString(e.SelfID) == e.Message[0].Data["qq"] {
+		e.IsToMe = true
+		e.Message = e.Message[1:]
+		return
+	}
+	if e.Message[0].Type == "text" {
+		e.Message[0].Data["text"] = strings.TrimLeft(e.Message[0].Data["text"], " ") // Trim!
+		text := e.Message[0].Data["text"]
+		for _, nickname := range rosm.GetRosmConfig().BotName {
+			if strings.HasPrefix(text, nickname) {
+				e.IsToMe = true
+				e.Message[0].Data["text"] = strings.TrimLeft(text[len(nickname):], " ") //Trim!
+				return
+			}
+		}
 	}
 }
