@@ -44,8 +44,8 @@ func CustomNode(nickname string, userID int64, content interface{}) message.Mess
 	switch c := content.(type) {
 	case string:
 		str = c
-	case message.Message:
-		str =Message(c).String()
+	case []message.MessageSegment:
+		str = Message(c).String()
 	default:
 		b, _ := json.Marshal(content)
 		str = tool.BytesToString(b)
