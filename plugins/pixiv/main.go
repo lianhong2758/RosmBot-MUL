@@ -32,7 +32,7 @@ func init() {
 		_ = os.MkdirAll(en.DataFolder+"cache", 0755)
 	}
 
-	en.OnRex(`^/搜图\s*(\d+)$`).MUL("ob11").Handle(func(ctx *rosm.Ctx) {
+	en.OnRex(`^/搜图\s*(\d+)$`).MUL(ob11.BotType).Handle(func(ctx *rosm.Ctx) {
 		id, _ := strconv.ParseInt(ctx.Being.ResultWord[1], 10, 64)
 		ctx.Send(message.Text("雪儿正在寻找中......"))
 		// 获取P站插图信息
@@ -88,7 +88,7 @@ func init() {
 			ctx.Send(message.Text("图片不存在呜..."))
 		}
 	})
-	en.OnWord("以图搜图", "以图识图").MUL("ob11").Handle(func(ctx *rosm.Ctx) {
+	en.OnWord("以图搜图", "以图识图").MUL(ob11.BotType).Handle(func(ctx *rosm.Ctx) {
 		pics := GetMustPic(ctx)
 		if len(pics) == 0 {
 			ctx.Send(message.Text("雪儿没有收到图片唔..."))
