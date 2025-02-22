@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/FloatTech/floatbox v0.0.0-20240505082030-226ec6713e14
-	github.com/FloatTech/gg v1.1.2
+	github.com/FloatTech/gg v1.1.3
 	github.com/FloatTech/imgfactory v0.2.2-0.20230315152233-49741fc994f9
 	github.com/FloatTech/rendercard v0.0.10-0.20230223064326-45d29fa4ede9
 	github.com/FloatTech/sqlite v1.6.3
@@ -15,7 +15,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jozsefsallai/gophersauce v1.0.1
-	github.com/lianhong2758/PhigrosAPI v0.1.2-0.20241018053339-299eb9e74cbc
+	github.com/lianhong2758/PhigrosAPI v0.1.2-0.20250222074602-97caa0c357ff
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/sirupsen/logrus v1.9.3
@@ -44,7 +44,7 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20220927061507-ef77025ab5aa // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	golang.org/x/image v0.3.0 // indirect
+	golang.org/x/image v0.15.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
 	modernc.org/libc v1.22.2 // indirect
