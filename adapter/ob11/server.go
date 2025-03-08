@@ -16,7 +16,7 @@ func (c *Config) process(e *Event) {
 	// 消息事件
 	case "message", "message_sent":
 		c.preprocessMessageEvent(e)
-		mess := e.Message.ExtractPlainText()
+		mess := Message(e.Message).CQString()
 		log.Debugf("Event: %+v\n", e)
 		switch e.MessageType {
 		// 私聊信息
