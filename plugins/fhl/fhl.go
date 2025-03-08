@@ -14,7 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const host = "http://106.54.63.95:8080"
+const host = "http://117.72.123.235:8080"
 
 var helpMap = map[string]string{
 	"A": "游戏类型: 梦笔生花\n规则:题目为单字或二字词，玩家轮流说出带有该字或词的诗句。",
