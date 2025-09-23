@@ -7,13 +7,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/FloatTech/floatbox/file"
-	"github.com/FloatTech/floatbox/process"
 	"github.com/FloatTech/imgfactory"
 	"github.com/lianhong2758/RosmBot-MUL/kanban"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	walle "github.com/lianhong2758/RosmBot-MUL/plugins/public"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 )
 
@@ -62,7 +61,7 @@ func init() {
 			ctx.Send(message.Text("未找到签到设定:", key)) // 避免签到配置错误造成无图发送,但是已经签到的情况
 			return
 		}
-		uid:= ctx.Being.User.ID
+		uid := ctx.Being.User.ID
 		today := time.Now().Format("20060102")
 		// 签到图片
 		drawedFile := cachePath + uid + today + "signin.png"
@@ -74,8 +73,8 @@ func init() {
 		case si.Count >= signinMax && siUpdateTimeStr == today:
 			// 如果签到时间是今天
 			ctx.Send(message.Reply(), message.Text("今天你已经签到过了！"))
-			if file.IsExist(drawedFile) {
-				ctx.Send(message.Image("file://" + file.BOTPATH + "/" + drawedFile))
+			if tool.IsExist(drawedFile) {
+				ctx.Send(message.Image("file://" + tool.BOTPATH + "/" + drawedFile))
 			}
 			return
 		case siUpdateTimeStr != today:
@@ -144,23 +143,23 @@ func init() {
 			ctx.Send(message.Text("ERROR7: ", err))
 			return
 		}
-		ctx.Send(message.Reply(), message.Image("file://"+file.BOTPATH+"/"+drawedFile))
+		ctx.Send(message.Reply(), message.Image("file://"+tool.BOTPATH+"/"+drawedFile))
 	})
 
 	en.OnWord("获得签到背景").Handle(func(ctx *rosm.Ctx) {
 		picFile := cachePath + ctx.Being.User.ID + time.Now().Format("20060102") + ".png"
-		if file.IsNotExist(picFile) {
+		if tool.IsNotExist(picFile) {
 			ctx.Send(message.Reply(), message.Text("请先签到！"))
 			return
 		}
-		ctx.Send(message.Image("file://" + file.BOTPATH + "/" + picFile))
+		ctx.Send(message.Image("file://" + tool.BOTPATH + "/" + picFile))
 	})
 	/*en.AddWord("查看等级排名").SetBlock(true).
 		Handle(func(ctx *c.CTX) {
 			today := time.Now().Format("20060102")
 			drawedFile := cachePath + today + "scoreRank.png"
-			if file.IsExist(drawedFile) {
-				ctx.SendChain(message.Image("file:///" + file.BOTPATH + "/" + drawedFile))
+			if  tool.IsExist(drawedFile) {
+				ctx.SendChain(message.Image("file:///" + tool.BOTPATH + "/" + drawedFile))
 				return
 			}
 			st, err := sdb.GetScoreRankByTopN(10)
@@ -225,7 +224,7 @@ func init() {
 				ctx.Send(message.Text("ERROR: ", err))
 				return
 			}
-			ctx.SendChain(message.Image("file:///" + file.BOTPATH + "/" + drawedFile))
+			ctx.SendChain(message.Image("file:///" + tool.BOTPATH + "/" + drawedFile))
 		})
 	engine.OnRegex(`^设置(默认)?签到预设\s?(\d*)$`, zero.SuperUserPermission).Limit(ctxext.LimitByUser).SetBlock(true).Handle(func(ctx *zero.Ctx) {
 		if ctx.State["regex_matched"].([]string)[2] == "" {
@@ -285,10 +284,10 @@ func getrank(count int) int {
 }
 
 func initPic(picFile, userurl string) (avatar []byte, err error) {
-	if file.IsExist(picFile) {
+	if tool.IsExist(picFile) {
 		return nil, nil
 	}
-	defer process.SleepAbout1sTo2s()
+	defer tool.WaitWhile()
 	url, err := web.GetRealURL(backgroundURL)
 	if err != nil {
 		return nil, err

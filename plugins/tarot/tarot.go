@@ -6,9 +6,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/FloatTech/floatbox/file"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -43,7 +43,7 @@ func init() {
 			description = card.ReverseDescription
 			card.ImgURL = "D" + card.ImgURL
 		}
-		imgpath := file.BOTPATH + "/" + en.DataFolder + card.ImgURL
+		imgpath := tool.BOTPATH + "/" + en.DataFolder + card.ImgURL
 		ctx.Send(message.Reply(), message.Text(reasons[rand.Intn(len(reasons))], position[p], "的『", name, "』\n其释义为: ", description), message.Image("file://"+imgpath))
 	})
 }

@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FloatTech/floatbox/file"
 	"github.com/FloatTech/ttl"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
@@ -45,7 +44,7 @@ func init() {
 	})
 
 	//预设存储文件夹
-	if file.IsNotExist(en.DataFolder + "preset") {
+	if tool.IsNotExist(en.DataFolder + "preset") {
 		_ = os.MkdirAll(en.DataFolder+"preset", 0755)
 	}
 
@@ -53,7 +52,7 @@ func init() {
 		if presetName == "" {
 			return "", nil
 		}
-		if file.IsExist(en.DataFolder + "preset" + "/" + presetName + ".txt") {
+		if tool.IsExist(en.DataFolder + "preset" + "/" + presetName + ".txt") {
 			contentb, err := os.ReadFile(en.DataFolder + "preset" + "/" + presetName + ".txt")
 			if err != nil {
 				return "", err
@@ -143,7 +142,7 @@ func init() {
 	en.OnRex(`^设置预设\s*(\S+)`).SetRule(rosm.OnlyMaster()).Handle(func(ctx *rosm.Ctx) {
 		presetName := ctx.Being.ResultWord[1]
 		contentfile := en.DataFolder + "preset" + "/" + ctx.Being.ResultWord[1] + ".txt"
-		if file.IsExist(contentfile) {
+		if tool.IsExist(contentfile) {
 			//记录预设名
 			rosm.PluginDB.InsertString(en.Name, tool.MergePadString(ctx.Being.GroupID, ctx.Being.GuildID), presetName)
 			ctx.Send(message.Text("设置预设`", presetName, "`成功"))

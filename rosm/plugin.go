@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/FloatTech/floatbox/file"
 	"github.com/FloatTech/ttl"
 	"github.com/lianhong2758/RosmBot-MUL/message"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/rate"
 	log "github.com/sirupsen/logrus"
 )
@@ -74,7 +74,7 @@ func Register(p *PluginData) *PluginData {
 	pluginName := p.Name
 	log.Debugln("[debug]插件注册:", pluginName)
 	plugins[pluginName] = p
-	if p.DataFolder != "" && file.IsNotExist("data/"+p.DataFolder) {
+	if p.DataFolder != "" && tool.IsNotExist("data/"+p.DataFolder) {
 		_ = os.MkdirAll("data/"+p.DataFolder, 0755)
 	}
 	plugins[pluginName].DataFolder = "data/" + p.DataFolder + "/"

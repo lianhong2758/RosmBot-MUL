@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FloatTech/floatbox/file"
 	"github.com/jozsefsallai/gophersauce"
 	"github.com/lianhong2758/RosmBot-MUL/adapter/ob11"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/lianhong2758/RosmBot-MUL/tool/web"
 	"github.com/sirupsen/logrus"
 )
@@ -28,7 +28,7 @@ func init() {
 			"- 设置 saucenao api key [apikey]",
 		DataFolder: "pixiv",
 	})
-	if file.IsNotExist(en.DataFolder + "cache") {
+	if tool.IsNotExist(en.DataFolder + "cache") {
 		_ = os.MkdirAll(en.DataFolder+"cache", 0755)
 	}
 
@@ -49,11 +49,11 @@ func init() {
 			name := strconv.FormatInt(illust.Pid, 10)
 			var imgs message.Message
 			for i, v := range illust.URLs {
-				f := fmt.Sprint(file.BOTPATH, "/", en.DataFolder, "cache/", name, "-", i+1, ".png")
+				f := fmt.Sprint(tool.BOTPATH, "/", en.DataFolder, "cache/", name, "-", i+1, ".png")
 				n := fmt.Sprint(name, "-", i+1, ".png")
 				remessage += fmt.Sprint("\nhttps://pixiv.re/", n)
 				//下载非R18图
-				if file.IsNotExist(f) {
+				if tool.IsNotExist(f) {
 					logrus.Debugln("[pixiv]开始下载", n)
 					logrus.Debugln("[pixiv]urls:", v)
 					err1 := DownLoadWorks(v, f)
@@ -96,6 +96,7 @@ func init() {
 		}
 		ctx.Send(message.Text("雪儿正在寻找中..."))
 		for _, pic := range pics {
+			logrus.Debugln("[pixiv]尝试搜索图片,url=", pic)
 			//saucenao
 			//	find := false
 			if saucenaocli != nil || func() bool {

@@ -1,9 +1,13 @@
 package test
 
 import (
+	"os"
+
+	"github.com/FloatTech/imgfactory"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	draw "github.com/lianhong2758/RosmBot-MUL/plugins/public"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
+	"github.com/lianhong2758/marktoimage"
 )
 
 func init() {
@@ -24,6 +28,27 @@ func init() {
 		if m["code"] != "0" {
 			ctx.Send(message.Text("发送失败: ", m["state"]))
 		}
+	})
+	en.OnRex(`^用markdown渲染([\s\S]+)$`).Handle(func(ctx *rosm.Ctx) {
+		data, err := os.ReadFile(draw.MaokenFontFile)
+		if err != nil {
+			ctx.Send(message.Text("ERROR: ", err))
+			return
+		}
+		rt := marktoimage.NewRichText(
+			marktoimage.Config{
+				FontData:   [][]byte{data},
+				Width:      1080,
+				Height:     1920,
+				LineHeight: 8,
+				TextMargin: 20,
+				TopMargin:  10,
+			})
+		rt.ParseMarkdown(ctx.Being.ResultWord[1])
+		rt.Draw()
+		rt.Cut()
+		img, _ := imgfactory.ToBytes(rt.Cov.Image())
+		ctx.Send(message.ImageByte(img))
 	})
 	en.OnRex(`^(用.+)?渲染(抖动)?文字([\s\S]+)$`).Handle(func(ctx *rosm.Ctx) {
 		font := ctx.Being.ResultWord[1]
