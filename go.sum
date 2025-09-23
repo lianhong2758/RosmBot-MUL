@@ -74,6 +74,8 @@ github.com/lianhong2758/PhigrosAPI v0.1.2-0.20250222074602-97caa0c357ff h1:qVvkK
 github.com/lianhong2758/PhigrosAPI v0.1.2-0.20250222074602-97caa0c357ff/go.mod h1:bu7J29P+jSqCtWaB9hrgxzs3pp/i/oMQsJR+k9MR710=
 github.com/lianhong2758/marktoimage v0.0.0-20250923092420-9c5c2de9af93 h1:xrfzRw1RBYN1bX2dQcrorAwoOIJgRQr5PNVkEExc9S8=
 github.com/lianhong2758/marktoimage v0.0.0-20250923092420-9c5c2de9af93/go.mod h1:yTIgjKJDcaEVP6wrL3B0oU0EcCPsL8EWXkwsjOEpSVQ=
+github.com/lianhong2758/marktoimage v0.0.0-20250923103544-0cabbd613797 h1:uGWszCOf8WLFZ4D5S0bKmDxRjGpSqh+qTZO030SPSmY=
+github.com/lianhong2758/marktoimage v0.0.0-20250923103544-0cabbd613797/go.mod h1:yTIgjKJDcaEVP6wrL3B0oU0EcCPsL8EWXkwsjOEpSVQ=
 github.com/lib/pq v1.1.1 h1:sJZmqHoEaY7f+NPP8pgLB/WxulyR3fewgCM2qaSlBb4=
 github.com/lib/pq v1.1.1/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=

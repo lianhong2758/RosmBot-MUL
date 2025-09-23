@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/FloatTech/imgfactory"
+	"github.com/lianhong2758/RosmBot-MUL/adapter/ob11"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	draw "github.com/lianhong2758/RosmBot-MUL/plugins/public"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
@@ -44,6 +45,9 @@ func init() {
 				TextMargin: 20,
 				TopMargin:  10,
 			})
+		if ctx.Bot.Card().BotType == ob11.BotType {
+			ctx.Being.ResultWord[1] = ob11.UnescapeCQText(ctx.Being.ResultWord[1])
+		}
 		rt.ParseMarkdown(ctx.Being.ResultWord[1])
 		rt.Draw()
 		rt.Cut()

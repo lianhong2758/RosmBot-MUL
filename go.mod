@@ -16,7 +16,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jozsefsallai/gophersauce v1.0.1
 	github.com/lianhong2758/PhigrosAPI v0.1.2-0.20250222074602-97caa0c357ff
-	github.com/lianhong2758/marktoimage v0.0.0-20250923092420-9c5c2de9af93
+	github.com/lianhong2758/marktoimage v0.0.0-20250923103544-0cabbd613797
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/sirupsen/logrus v1.9.3
