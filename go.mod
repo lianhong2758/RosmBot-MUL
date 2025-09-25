@@ -1,6 +1,6 @@
 module github.com/lianhong2758/RosmBot-MUL
 
-go 1.22.0
+go 1.24.0
 
 require (
 	github.com/FloatTech/floatbox v0.0.0-20240505082030-226ec6713e14
@@ -16,6 +16,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jozsefsallai/gophersauce v1.0.1
 	github.com/lianhong2758/PhigrosAPI v0.1.2-0.20250222074602-97caa0c357ff
+	github.com/lianhong2758/marktoimage v0.0.0-20250923103544-0cabbd613797
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/sirupsen/logrus v1.9.3
@@ -44,9 +45,10 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20220927061507-ef77025ab5aa // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	golang.org/x/image v0.15.0 // indirect
+	github.com/yuin/goldmark v1.7.13 // indirect
+	golang.org/x/image v0.24.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	modernc.org/libc v1.22.2 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
 	modernc.org/memory v1.5.0 // indirect

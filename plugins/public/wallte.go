@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/FloatTech/floatbox/file"
 	sql "github.com/FloatTech/sqlite"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 )
 
 // Storage 货币系统
@@ -32,7 +32,7 @@ var (
 )
 
 func init() {
-	if file.IsNotExist("data/wallet") {
+	if tool.IsNotExist("data/wallet") {
 		err := os.MkdirAll("data/wallet", 0755)
 		if err != nil {
 			panic(err)

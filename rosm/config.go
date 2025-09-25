@@ -5,14 +5,14 @@ import (
 	"math/rand/v2"
 	"os"
 
-	"github.com/FloatTech/floatbox/file"
 	"github.com/lianhong2758/RosmBot-MUL/kanban"
+	"github.com/lianhong2758/RosmBot-MUL/tool"
 	"github.com/sirupsen/logrus"
 )
 
 // 插件的config
 func LoadConfig(path string, v any) error {
-	if file.IsNotExist(path) {
+	if tool.IsNotExist(path) {
 		//new
 		data, err := json.MarshalIndent(v, "", "  ") //json.Marshal(v)
 		if err != nil {
@@ -49,13 +49,13 @@ func (p *PluginData) SaveConfig() {
 
 // adapter config 路径./config
 func LoadBotConfig(name string, v any) error {
-	if file.IsNotExist("config/" + name) {
+	if tool.IsNotExist("config/" + name) {
 		//new
 		data, err := json.MarshalIndent(v, "", "  ")
 		if err != nil {
 			return err
 		}
-		if file.IsNotExist("config") {
+		if tool.IsNotExist("config") {
 			if err = os.MkdirAll("config", os.ModePerm); err != nil {
 				return err
 			}

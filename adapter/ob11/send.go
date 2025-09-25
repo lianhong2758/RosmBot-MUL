@@ -17,11 +17,16 @@ func (c *Config) BotSend(ctx *rosm.Ctx, msg ...message.MessageSegment) rosm.H {
 		return rosm.H{}
 	}
 	t := MakeMsgContent(ctx, msg...)
+	if t[0].Type == "node" {
+		if ctx.Being.GroupID[0:1] != "-" {
+			return rosm.H{"id": SendGroupForwardMessage(ctx, tool.StringToInt64(ctx.Being.GroupID), t).Get("message_id").String(), "code": "0"}
+		}
+		return rosm.H{"id": SendPrivateForwardMessage(ctx, tool.StringToInt64(ctx.Being.GroupID), t).Get("message_id").String(), "code": "0"}
+	}
 	if ctx.Being.GroupID[0:1] != "-" {
 		return rosm.H{"id": tool.Int64ToString(SendGroupMessage(ctx, tool.StringToInt64(ctx.Being.GroupID), t)), "code": "0"}
-	} else {
-		return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.GroupID[1:]), t)), "code": "0"}
 	}
+	return rosm.H{"id": tool.Int64ToString(SendPrivateMessage(ctx, tool.StringToInt64(ctx.Being.GroupID[1:]), t)), "code": "0"}
 }
 
 func (c *Config) BotSendCustom(ctx *rosm.Ctx, Count any) rosm.H {

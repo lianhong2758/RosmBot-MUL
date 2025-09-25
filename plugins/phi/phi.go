@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/FloatTech/floatbox/file"
 	"github.com/lianhong2758/PhigrosAPI/phigros"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/plugins/phi/qr"
@@ -42,7 +41,7 @@ func init() {
 	output = en.DataFolder + "output/"
 	//头图
 	avatar = en.DataFolder + "avatar/"
-	if file.IsNotExist(en.DataFolder + "sessions") {
+	if tool.IsNotExist(en.DataFolder + "sessions") {
 		_ = os.MkdirAll(en.DataFolder+"sessions", 0755)
 	}
 
@@ -105,7 +104,7 @@ func init() {
 			ctx.Send(message.Text("ERROR: ", err))
 			return
 		}
-		ctx.Send(message.Image("file://" + file.BOTPATH + "/" + output + Session + ".png"))
+		ctx.Send(message.Image("file://" + tool.BOTPATH + "/" + output + Session + ".png"))
 	})
 	en.OnRex(`^/bind\s*(.*)$`).Handle(func(ctx *rosm.Ctx) {
 		if ctx.Being.ResultWord[1] == "" {

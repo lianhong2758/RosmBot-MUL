@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FloatTech/floatbox/file"
 	"github.com/lianhong2758/RosmBot-MUL/message"
 	"github.com/lianhong2758/RosmBot-MUL/rosm"
 	"github.com/lianhong2758/RosmBot-MUL/tool"
@@ -38,7 +37,7 @@ func init() {
 			}
 		}
 		card := cards[tool.RandSenderPerDayN(int64(id), len(cards))]
-		path := file.BOTPATH + "/" + en.DataFolder + "pic/" + card
+		path := tool.BOTPATH + "/" + en.DataFolder + "pic/" + card
 		card = strings.Split(card, ".")[0]
 		ctx.Send(message.AT(ctx.Being.User.ID), message.Text("今天的二次元老婆是~【", card, "】哒"), message.Image("file://"+path))
 	})

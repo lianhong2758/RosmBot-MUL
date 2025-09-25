@@ -3,11 +3,22 @@ package tool
 import (
 	"hash/crc64"
 	"math/rand"
+	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
 	"unsafe"
 )
+
+var BOTPATH string
+
+func init() {
+	BOTPATH, _ = os.Getwd()
+	if runtime.GOOS == "windows" {
+		BOTPATH = strings.ReplaceAll(BOTPATH, "\\", "/")
+	}
+}
 
 // BytesToString 没有内存开销的转换
 func BytesToString(b []byte) string {
@@ -22,6 +33,18 @@ func StringToBytes(s string) (b []byte) {
 			Cap int
 		}{s, len(s)},
 	))
+}
+
+// IsExist 文件/路径存在
+func IsExist(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil || os.IsExist(err)
+}
+
+// IsNotExist 文件/路径不存在
+func IsNotExist(path string) bool {
+	_, err := os.Stat(path)
+	return err != nil && os.IsNotExist(err)
 }
 
 // 转int64
